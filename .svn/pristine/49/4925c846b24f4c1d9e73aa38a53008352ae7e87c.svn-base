@@ -1,0 +1,124 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="#{companyMainAssetBean.currentAsset.id == null ? '添加' : '编辑'}主要资产信息" widgetVar="company_main_asset_edit_var"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"
+		width="700" id="company_main_asset_edit_id">
+		<p:messages showDetail="true" showSummary="true" id="main_assert_edit_msg"/>
+		<h:form prependId="false" id="company_main_asset_edit_form">
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column41,column2">
+				<h:outputText value="项目：" />
+				<h:column>
+					<h:selectOneMenu value="#{companyMainAssetBean.currentAsset.asset.item}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxCompanyAssetsItem)}"
+							var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>
+					</h:selectOneMenu>
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+				<h:outputText value="折旧或摊销年限(年)："/>
+				<h:column>
+					<p:inputText value="#{companyMainAssetBean.currentAsset.asset.depreciationTimes}"
+						label="折旧或摊销年限：" />
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+				
+				<h:outputText value="项目数量："/>
+				<p:inputText value="#{companyMainAssetBean.currentAsset.asset.account}" />
+				<h:outputText value="数量单位："/>
+				<h:column>
+					<p:inputText value="#{companyMainAssetBean.currentAsset.asset.unit}"/>
+					<h:outputText value="*" style="color:red" />
+				</h:column>
+			</h:panelGrid>
+
+			<p:dataTable var="dep" value="#{companyMainAssetBean.lazyDepres}"
+				paginator="true" rows="10" paginatorPosition="bottom" rowIndexVar="index"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '1/1' : '{currentPage}/{totalPages}'} "
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				emptyMessage="#{msgs.dataTable_empty}">
+				<f:facet name="header">
+					<div class="header">
+						折旧或摊销信息列表
+						<p:commandButton styleClass="header_button" value="添加" icon="ui-icon ui-icon-plus" 
+							oncomplete="company_depreciation_edit_var.show();"
+							update=":company_depreciation_edit_id"
+							action="#{companyMainAssetBean.initAddDepre}">
+							<f:setPropertyActionListener target="#{companyMainAssetBean.model}" value="add"/>
+						</p:commandButton>
+					</div>
+				</f:facet>
+
+				<p:column style="text-align: center; width:15%;" headerText="年度">
+					<h:outputText value="#{dep.depre.year}" title="#{dep.depre.year}">
+						<f:convertDateTime pattern="yyyy" timeZone="GMT+8"/>
+					</h:outputText>
+				</p:column>
+				<p:column style="width:23%;" headerText="原值(万元)">
+					<div style="text-align: right;">
+						<h:outputText value="#{dep.depre.cost}" title="#{dep.depre.cost}" />
+					</div>
+				</p:column>
+				<p:column style="width:23%;" headerText="净值(万元)">
+					<div style="text-align: right;">
+						<h:outputText value="#{dep.depre.netWorth}" title="#{dep.depre.netWorth}" />
+					</div>
+				</p:column>
+				<p:column style="width:23%;" headerText="折旧或摊销">
+					<div style="text-align: right;">
+						<h:outputText value="#{dep.depre.cost - dep.depre.netWorth}" title="#{dep.depre.cost - dep.depre.netWorth}" />
+					</div>
+				</p:column>
+				<p:column style="text-align: center; width:10%;" headerText="有效">
+					<h:outputText
+						value="#{dep.depre.defunctInd eq 'Y' ? msgs.txt_effectiveLost : msgs.txt_effective}"
+						title="#{dep.depre.defunctInd eq 'Y' ? msgs.txt_effectiveLost : msgs.txt_effective}" />
+				</p:column>
+				<p:column style="text-align: center;" headerText="操作">
+					<p:commandButton title="#{msgs.btn_edit}"
+						icon="ui-icon ui-icon-pencil" 
+						style="width: 18px; height: 18px;"
+						oncomplete="company_depreciation_edit_var.show();"
+						update=":company_depreciation_edit_id">
+						<f:setPropertyActionListener target="#{companyMainAssetBean.depre}" value="#{dep}"/>
+						<f:setPropertyActionListener target="#{companyMainAssetBean.model}" value="edit"/>
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="#{msgs.txt_defunct}" />
+				<h:selectOneRadio value="#{companyMainAssetBean.currentAsset.asset.defunctInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			
+			<div style="margin: 5px 0 0 0; text-align: center">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" 
+					update=":company_main_asset_form,:main_assert_edit_msg,:assertGrowl"
+					oncomplete="handleAssert(xhr, status, args);"
+					action="#{companyMainAssetBean.editAssert()}" 
+					style="margin-right: 5px;"/>
+					
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+					oncomplete="company_main_asset_edit_var.hide();"/>
+			</div>
+		</h:form>
+		
+		<script type="text/javascript">
+			function handleAssert(xhr, status, args) {
+				if(args.option == "success") {
+					company_main_asset_edit_var.hide();
+				}
+			}
+		</script>
+	</p:dialog>
+</ui:composition>

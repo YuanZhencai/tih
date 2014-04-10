@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<style type="text/css">
+		#antiAvoidanceSummaryForm th.ui-state-default {
+			padding: 2px;
+		}
+	</style>
+	<h:form id="antiAvoidanceSummaryForm">
+		<p:growl id="antiMsg" showDetail="true" life="10000" />
+		<div class="style1" style="margin: 5px 0 5px 0;">
+			<h:panelGrid id="searchPanel" columns="6" columnClasses="column0,column2,column0,column2,column1,column2">
+				<h:outputText value="公司名称：" />
+				<h:column>
+					<p:selectCheckboxMenu id="companys" value="#{antiSummaryBean.companys}" style="width: 276px;">
+						<f:selectItems value="#{antiSummaryBean.companyItems}" var="c" itemLabel="#{c.stext}" itemValue="#{c.id}" />
+					</p:selectCheckboxMenu>
+ 					<p:commandButton icon="ui-icon ui-icon-search" style="width: 27px; height: 27px; vertical-align: top;margin-left:5px;" title="请选择" update=":commonCompany,:datatableform" actionListener="#{companyCommonBean.init(':antiAvoidanceSummaryForm:companys','antiSummaryBean','multiple','selectCompanys')}" oncomplete="commoncompanyvar.show();" />
+				</h:column>
+				<h:outputText value="任务处理时间：" />
+				<h:column>
+					<p:calendar value="#{antiSummaryBean.searchAntiAvoidanceVo.missionStartDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true">
+					</p:calendar>
+					<h:outputText value="到" style="margin: 0px 5px 0px 5px;"/>
+					<p:calendar value="#{antiSummaryBean.searchAntiAvoidanceVo.missionEndDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true">
+					</p:calendar>
+				</h:column>
+				<h:outputText value="任务状态：" />
+				<h:selectOneMenu value="#{antiSummaryBean.searchAntiAvoidanceVo.wfStatus}">
+					<f:selectItem itemLabel="请选择"/>
+					<f:selectItems value="#{antiSummaryBean.workflowStatus}" var="status" itemLabel="#{status.codeVal}" itemValue="#{status.codeCat}.#{status.codeKey}" />
+				</h:selectOneMenu>
+				<h:outputText value="调查/评估期间：" />
+				<h:column>
+					<p:calendar value="#{antiSummaryBean.searchAntiAvoidanceVo.investStartDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true">
+					</p:calendar>
+					<h:outputText value="到" style="margin: 0px 5px 0px 5px;"/>
+					<p:calendar value="#{antiSummaryBean.searchAntiAvoidanceVo.investEndDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true">
+					</p:calendar>
+				</h:column>
+				<h:outputText value="处理阶段：" />
+				<h:selectOneMenu value="#{antiSummaryBean.searchAntiAvoidanceVo.stage}">
+					<f:selectItem itemLabel="请选择"/>
+					<f:selectItems value="#{antiSummaryBean.stages}" var="stage" itemLabel="#{stage.codeVal}" itemValue="#{stage.codeCat}.#{stage.codeKey}"/>
+				</h:selectOneMenu>
+			</h:panelGrid>
+			<div>
+				<p:commandButton value="查询" action="#{antiSummaryBean.searchAntiAvoidancesBy()}" update=":antiAvoidanceSummaryForm:antiTabView:antiAvoidanceDataTable" icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
+				<p:commandButton value="重置" action="#{antiSummaryBean.resetSearchForm()}"  update=":antiAvoidanceSummaryForm:searchPanel" icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
+			</div>
+		</div>
+		<p:tabView id="antiTabView" activeIndex="#{antiSummaryBean.activeIndex}">
+			<p:tab title="反避税信息">
+				<p:dataTable emptyMessage="#{msgs.dataTable_empty}" selection="#{antiSummaryBean.selectedAntiAvoidanceVos}"
+			id="antiAvoidanceDataTable" value="#{antiSummaryBean.antiAvoidanceVos}" var="aa" rowKey="#{aa.id}"
+			rowIndexVar="index" style="margin-top:5px;"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+			<f:facet name="header">
+				<div class="header">
+					<h:outputText value="基本信息列表" />
+					<p:commandButton styleClass="header_button" value="汇总" action="#{antiSummaryBean.antiAvoidanceSummary()}" update=":antiAvoidanceSummaryForm"></p:commandButton>
+				</div>
+			</f:facet>
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column rowspan="2" selectionMode="multiple" />
+					<p:column rowspan="2" headerText="公司名称"/>
+					<p:column rowspan="2" headerText="公司代码"/>
+					<p:column rowspan="2" headerText="发起机关"/>
+					<p:column rowspan="2" headerText="实施机构"/>
+					<p:column rowspan="2" headerText="调查类型"/>
+					<p:column rowspan="2" headerText="任务处理时间"/>
+					<p:column rowspan="2" headerText="调查/评估期间"/>
+					<p:column rowspan="2" headerText="税种"/>
+					<p:column rowspan="2" headerText="企业所得税"/>
+					<p:column rowspan="2" headerText="任务状态"/>
+					<p:column rowspan="2" headerText="处理阶段"/>
+					<p:column rowspan="2" headerText="调查/结案结论"/>
+					<p:column colspan="5" headerText="调查调整（纳税评估）结果（元）"/>
+				</p:row>
+				<p:row>
+					<p:column headerText="补税金额" />
+					<p:column headerText="加收利息" />
+					<p:column headerText="加收罚款" />
+					<p:column headerText="调减亏损" />
+					<p:column headerText="操作" />
+				</p:row>
+			</p:columnGroup>
+			<p:column selectionMode="multiple" style="text-align: center;width:25px;"></p:column>
+			<p:column style="width:70px;">
+					<h:outputText value="#{aa.companyName}" />
+			</p:column>
+			<p:column style="width:20px;">
+					<h:outputText value="#{aa.companyCode}" />
+			</p:column>
+			<p:column style="width:50px;">
+					<h:outputText value="#{aa.sponsorOrg}" />
+			</p:column>
+			<p:column style="width:50px;">
+					<h:outputText value="#{aa.implementOrg}" />
+			</p:column>
+			<p:column style="width:50px;">
+					<h:outputText value="#{aa.investType}" />
+			</p:column>
+			<p:column style="width:85px;">
+				<div style="#{((aa.missionStartDatetime == null) and (aa.missionEndDatetime == null))?'display:none':''}">
+					<h:outputText value="#{aa.missionStartDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>~
+					<h:outputText value="#{aa.missionEndDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column style="width:85px;">
+				<div style="#{((aa.investStartDatetime == null) and (aa.investEndDatetime == null))?'display:none':''}">
+					<h:outputText value="#{aa.investStartDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>~
+					<h:outputText value="#{aa.investEndDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column style="width:50px;">
+					<h:outputText value="#{aa.taxTypes}" />
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{aa.riskAccount}" />
+			</p:column>
+			<p:column style="width:40px;">
+					<h:outputText value="#{aa.wfStatus}" />
+			</p:column>
+			<p:column style="width:50px;">
+					<h:outputText value="#{aa.stage}" />
+			</p:column>
+			<p:column style="width:90px;">
+					<h:outputText value="#{aa.conclusion}" />
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{aa.citAndVat}" />
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{aa.addInterest}" />
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{aa.addFine}" />
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{aa.reducedLoss}" />
+			</p:column>
+			<p:column style="text-align: center;width:20px">
+				<p:commandButton action="#{antiSummaryBean.handleHistoryChange()}" icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;" oncomplete="antiAvoidanceDetailDialogVar.show();" update=":antiHistoryForm,:antiDetailForm">
+					<f:setPropertyActionListener value="#{aa}" target="#{antiSummaryBean.selectedAntiAvoidanceVo}" />
+					<f:setPropertyActionListener value="#{''}" target="#{antiSummaryBean.operateInd}" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+			</p:tab>
+			<p:tab title="汇总历史">
+					<p:dataTable emptyMessage="#{msgs.dataTable_empty}" value="#{antiSummaryBean.antiAvoidanceHistories}" var="h"
+			id="antiAvoidanceSummaryDataTable" paginator="true" rows="5"
+			paginatorPosition="bottom"
+			paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+			rowIndexVar="index" style="margin-top:5px;"
+			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+			<f:facet name="header">
+				<h:outputText value="反避税信息汇总历史列表" />
+			</f:facet>
+			<p:column headerText="名称">
+				<h:outputText value="#{h.name}" />
+			</p:column>
+			<p:column headerText="汇总时间">
+				<h:outputText value="#{h.createdDatetime}" >
+					<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8"/>
+				</h:outputText>
+			</p:column>
+			<p:column headerText="创建人">
+				<h:outputText value="#{antiSummaryBean.getUserName(h.createdBy)}" />
+			</p:column>
+			<p:column headerText="操作" style="text-align: center;width:18px;">
+				<p:commandButton ajax="false" title="下载"
+					icon="ui-icon ui-icon-arrowthick-1-s"
+					style="width: 18px;height: 18px;">
+					<p:fileDownload
+						value="#{antiSummaryBean.download(h.fileId)}" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+			</p:tab>
+		</p:tabView>
+	</h:form>
+</ui:composition>

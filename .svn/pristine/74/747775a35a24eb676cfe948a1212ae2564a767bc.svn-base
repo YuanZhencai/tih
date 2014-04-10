@@ -1,0 +1,64 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="edit_task_dialog_id" widgetVar="edit_task_dialog_var" resizable="false" modal="true" 
+		header="#{projectBean.taskModel eq 'add' ? '添加任务' : (projectBean.taskModel eq 'edit' ? '编辑任务' : '查看任务')}">
+		<h:form id="edit_task_form_id" prependId="false">
+			<p:messages autoUpdate="true" showSummary="true" showDetail="true"/>
+			<h:panelGrid columns="4" columnClasses="column1,column2">
+				<h:outputText value="任务名称："/>
+				<h:column>
+					<p:inputText value="#{projectBean.task.name}" disabled="#{projectBean.taskModel eq 'query' ? true : false}" maxlength="50"/>
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="任务负责人："/>
+				<h:column>
+					<p:inputText value="#{projectBean.chargedBy}" disabled="true" id="taskChargedBy" style="width: 105px; margin-right: 3px;"/>
+					<p:commandButton icon="ui-icon ui-icon-search" title="#{msgs.btn_query}"
+						update=":query_projectmembers_form_id" oncomplete="query_projectmembers_dialog_var.show();"
+						disabled="#{projectBean.taskModel eq 'add' ? false : true}" 
+						style="width: 26px; height: 26px; vertical-align: top;"
+						action="#{projectBean.searchMembers}">
+						<f:setPropertyActionListener target="#{projectBean.memberflag}" value="task"/>
+					</p:commandButton>
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="开始日期："/>
+				<p:calendar value="#{projectBean.task.startDate}" locale="cn" navigator="true"
+					disabled="#{projectBean.taskModel eq 'query' ? true : false}" pattern="yyyy-MM-dd"/>
+				
+				<h:outputText value="结束日期："/>
+				<p:calendar value="#{projectBean.task.closeDate}" locale="cn" navigator="true"
+					disabled="#{projectBean.taskModel eq 'query' ? true : false}" pattern="yyyy-MM-dd"/>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" columnClasses="column1">
+				<h:outputText value="任务状态："/>
+				<h:column>
+					<h:selectOneMenu value="#{projectBean.task.status}" disabled="#{projectBean.taskModel eq 'query' ? true : false}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems value="#{commonBean.getDictByCat(projectBean.taskState)}" var="dict"
+							itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>
+					</h:selectOneMenu>
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="任务描述："/>
+				<p:inputTextarea value="#{projectBean.task.desc}" style="width: 367px; height: 50px;"
+					disabled="#{projectBean.taskModel eq 'query' ? true : false}"
+					autoResize="true" rows="4" effectDuration="200" maxlength="200"/>
+			</h:panelGrid>
+			
+			<div style="text-align: center;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" update=":edit_task_form_id,:projectForm"
+					oncomplete="handleTask(xhr, status, args);"
+					style="margin: 5px 5px 5px 5px;" action="#{projectBean.modelTask}"
+					rendered="#{projectBean.taskModel eq 'query' ? false : true}"/>
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}" style="margin: 5px 5px 5px 5px;"
+					onclick="edit_task_dialog_var.hide()" type="button"/>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

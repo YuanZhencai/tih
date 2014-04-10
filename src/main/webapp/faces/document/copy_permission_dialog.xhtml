@@ -1,0 +1,70 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="600" height="500" id="copy_permission_dialog_id"
+		header="权限复制" widgetVar="copy_permission_dialog_var" resizable="false"
+		modal="true">
+		<p:messages autoUpdate="true" showDetail="true" showSummary="true" id="copy_permission_messages_id"/>
+		
+		<h:form id="copy_permission_form_id" prependId="false">
+			<div class="style1">
+				<h:panelGrid columns="5"
+					columnClasses="column1,column2,column2,column1,column2">
+					<h:outputLabel value="文档名称：" />
+					<p:inputText value="#{documentBean.queryCopyDoc['name']}" />
+				</h:panelGrid>
+				<div align="right">
+					<p:commandButton icon="ui-icon ui-icon-search"
+						value="#{msgs.btn_query}" style="margin-right: 5px;"
+						action="#{documentBean.searchDocs}"
+						update=":copy_permission_form_id" >
+						<f:param name="documentTableName" value="copy_permission_dataTable_id" />
+						</p:commandButton>
+					<p:commandButton icon="ui-icon ui-icon-cancel" type="reset"
+						update=":copy_permission_form_id" value="#{msgs.btn_reset}" />
+				</div>
+			</div>
+
+			<p:dataTable var="cdoc" value="#{documentBean.copyDocs}" id="copy_permission_dataTable_id"
+				paginatorPosition="bottom" paginator="true" rows="10" reset="false"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				selection="#{documentBean.cDoc}" emptyMessage="#{msgs.dataTable_empty}"
+				style="margin-bottom: 5px;">
+				<p:ajax event="page" id="page" oncomplete="handelTable();" />
+				<f:facet name="header">
+					<h:outputText value="文档列表" />
+				</f:facet>
+				<p:column selectionMode="single" headerText="选择" />
+				<p:column headerText="文档名称">
+					<h:outputText value="#{cdoc.documentTitle}" />
+				</p:column>
+			</p:dataTable>
+			<div style="text-align: center;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					update=":copy_permission_messages_id,:copy_permission_form_id,:growl"
+					action="#{documentBean.copyPermission}"
+					oncomplete="handlefile(xhr, status, args);" />
+					
+				<p:commandButton icon="ui-icon ui-icon-cancel" type="button"
+					value="#{msgs.btn_cancel}" style="margin: 5px 5px 5px 5px;"
+					onclick="copy_permission_dialog_var.hide();" />
+			</div>
+		</h:form>
+		
+		<script type="text/javascript">
+			function handlefile(xhr, status, args) {
+				if(args.info == "yes") {
+					copy_permission_dialog_var.hide();
+				}
+			}
+			
+			function handelTable() {
+	        	 PrimeFaces.ab({formId:'copy_permission_form_id',source:'copy_permission_form_id:page',process:'@all',update:'copy_permission_dataTable_id'});
+	        } 
+		</script>
+		
+	</p:dialog>
+</ui:composition>

@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="房产明细信息" widgetVar="company_estate_var"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"
+		width="700" id="company_estate_id">
+		<p:growl showDetail="true" showSummary="true" life="10000" id="estateGrow"/>
+		<h:form prependId="false" id="company_estate_form">
+			<div class="style1" style="margin: 0 0 5px 0;">
+				<h:panelGrid columns="4"
+					columnClasses="column41,column2,column1,column2">
+					<h:outputText value="房产证编号：" />
+					<p:inputText value="#{companyEstateBean.query['no']}"/>
+					
+					<h:outputText value="房产名称："/>
+					<p:inputText value="#{companyEstateBean.query['name']}"/>
+					
+					<h:outputText value="#{msgs.txt_defunct}" />
+					<h:selectOneMenu value="#{companyEstateBean.query['defunct']}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+						<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+					</h:selectOneMenu>
+				</h:panelGrid>
+				<div>
+					<p:commandButton value="#{msgs.btn_query}"
+						action="#{companyEstateBean.search()}"
+						icon="ui-icon ui-icon-search" style="margin-right: 5px;"
+						update=":company_estate_form:company_estate_datatable"/>
+					<p:commandButton value="#{msgs.btn_reset}"
+						icon="ui-icon ui-icon-cancel" update=":company_estate_form"
+						type="reset" style="margin-right: 5px;" />
+				</div>
+			</div>
+
+			<p:dataTable var="est" value="#{companyEstateBean.lazyEstates}" paginator="true" rows="5"
+				id="company_estate_datatable" paginatorPosition="bottom" rowIndexVar="index"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '1/1' : '{currentPage}/{totalPages}'} "
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				emptyMessage="#{msgs.dataTable_empty}">
+				<f:facet name="header">
+					<div class="header">
+						房产明细信息列表
+						<p:commandButton styleClass="header_button" value="添加" icon="ui-icon ui-icon-plus" 
+							action="#{companyEstateBean.initAddEstate}"
+							oncomplete="company_estate_edit_var.show();"
+							update=":company_estate_edit_id"/>
+					</div>
+				</f:facet>
+
+				<p:column headerText="房产证编号">
+					<h:outputText value="#{est.estate.estateNo}" title="#{est.estate.estateNo}" />
+				</p:column>
+				<p:column headerText="房产名称">
+					<h:outputText value="#{est.estate.name}" title="#{est.estate.name}" />
+				</p:column>
+				<p:column headerText="建筑面积(平方米)">
+					<h:outputText value="#{est.estate.area}" title="#{est.estate.area}" />
+				</p:column>
+				<p:column headerText="房产类型">
+					<h:outputText value="#{commonBean.getValueByDictCatKey(est.estate.type)}" 
+						title="#{commonBean.getValueByDictCatKey(est.estate.type)}" />
+				</p:column>
+				<p:column style="text-align: center;" headerText="有效">
+					<h:outputText value="#{est.estate.defunctInd eq 'Y' ? msgs.txt_effectiveLost : msgs.txt_effective}" 
+						title="#{est.estate.defunctInd eq 'Y' ? msgs.txt_effectiveLost : msgs.txt_effective}" />
+				</p:column>
+				<p:column style="text-align: center;" headerText="操作">
+					<p:commandButton title="#{msgs.btn_edit}" 
+						icon="ui-icon ui-icon-pencil"
+						style="width: 18px;height: 18px;"
+						oncomplete="company_estate_edit_var.show();"
+						update=":company_estate_edit_id">
+						<f:setPropertyActionListener target="#{companyEstateBean.currentEstate}" value="#{est}"/>
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-attachment" title="附件" id="companyEstateAttachmentId"
+						style="width: 18px;height: 18px;" oncomplete="uploadOrDownloadAttachment.show();"
+						action="#{attachmentBean.searchFilemstr()}" update=":uploadOrDownloadAttachmentID">
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.tableName}" value="COMPANY_ESTATE" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.entityId}" value="#{est.estate.id}" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.operationType}" value="100" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

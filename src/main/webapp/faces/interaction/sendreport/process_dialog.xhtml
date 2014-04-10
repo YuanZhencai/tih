@@ -1,0 +1,241 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<style>
+.aa+td {
+	width: 10px;
+}
+
+.firstText {
+	font-size: 15px;
+	color: red;
+}
+
+.columnA {
+	text-align: left;
+	padding-left: 10px;
+}
+</style>
+	<p:dialog header="报送报表单#{sendReportBean.excelStatus}"
+		widgetVar="processReportDlgVar" showEffect="fade" hideEffect="fade"
+		modal="true" resizable="false" height="500" width="540"
+		id="processReportDlgId">
+		<p:ajax event="close"
+			listener="#{sendReportBean.createDialogClearPage()}"
+			update=":processReportFormId" />
+		<p:growl id="processReportGrowlId" life="10000" showDetail="true" />
+		<p:messages id="processReportMsgId" showDetail="true" />
+		<h:form id="processReportFormId" rependId="false">
+			<p:accordionPanel id="detailAccordion" style="width:500px;">
+				<p:tab titleStyle="width:498px;" title="报送报表单详情">
+					<h:panelGrid columns="4"
+						columnClasses="column1,column2,column1,column2">
+						<h:outputText value="填制日期：" />
+						<p:calendar locale="cn" pattern="yyyy-MM-dd" disabled="true"
+							value="#{sendReportBean.processDialogMap['submitTime']}" />
+
+						<h:outputText value="填制人：" />
+						<p:inputText
+							value="#{sendReportBean.processDialogMap['submitUser']}"
+							disabled="true" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="4"
+						columnClasses="column1,column2,column1,column2">
+						<h:outputText value="重要程度：" />
+						<h:selectOneMenu disabled="true"
+							value="#{sendReportBean.processDialogMap['importance']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+
+							<f:selectItems
+								value="#{commonBean.getDictByCat(applyQuestionBean.dropDownImportance)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+
+						<h:outputText value="紧急程度：" />
+						<h:selectOneMenu disabled="true"
+							value="#{sendReportBean.processDialogMap['urgency']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+
+							<f:selectItems
+								value="#{commonBean.getDictByCat(applyQuestionBean.dropDownUrgency)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid columns="4"
+						columnClasses="column1,column2,column1,column2">
+
+						<h:outputText value="报表类型：" />
+						<h:selectOneMenu disabled="true"
+							value="#{sendReportBean.processDialogMap['reportType']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="请选择" itemValue="" />
+							<f:selectItems
+								value="#{commonBean.getDictByCat(sendReportBean.reportType)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+					</h:panelGrid>
+					<h:panelGrid columns="4"
+						rendered="#{'Y' == sendReportBean.wfRemindVo.wfTimeoutInd}"
+						columnClasses="column1,column2,column1,column2">
+						<h:outputText value="完成日期：" />
+						<p:calendar locale="cn" pattern="yyyy-MM-dd" disabled="true"
+							showButtonPanel="true" navigator="true"
+							value="#{sendReportBean.wfRemindVo.wfCompleteDate}" />
+						<h:outputText value="提醒频率（天）：" />
+						<p:inputText value="#{sendReportBean.wfRemindVo.wfIntervalDays}"
+							disabled="true" />
+						<h:outputText value="催促日期：" />
+						<p:calendar locale="cn" pattern="yyyy-MM-dd"
+							showButtonPanel="true" navigator="true" disabled="true"
+							value="#{sendReportBean.wfRemindVo.wfUrgeDate}" />
+					</h:panelGrid>
+
+				</p:tab>
+			</p:accordionPanel>
+
+
+
+
+			<p:accordionPanel id="stepAccordion" style="width:500px;"
+				value="#{sendReportBean.workflowdetail}" var="queryFlow"
+				multiple="true">
+				<p:tab titleStyle="width:498px;"
+					rendered="#{queryFlow.value == null ? 'false':(queryFlow.value.length() == 0 ? 'false':'true')}"
+					title="#{queryFlow.wfStepmstr.name=='提交' ? '提交人':queryFlow.wfStepmstr.name } #{userCommonBean.getUserRealName(queryFlow.wfStepmstr.updatedBy)} #{queryFlow.wfStepmstr.name eq '公司报表处理岗'?'提交':(commonBean.getValueByDictCatKey(queryFlow.wfStepmstr.dealMethod) eq '完成'?'通过':commonBean.getValueByDictCatKey(queryFlow.wfStepmstr.dealMethod))} #{commonBean.formatDate(queryFlow.wfStepmstr.completedDatetime)}">
+					<h:panelGrid columns="1" columnClasses="columnA">
+						<h:outputText value="详细信息：" />
+						<h:outputLabel
+							style="FONT-FAMILY: Arial, Helvetica, sans-serif;word-break: break-all;width: 432px;display: inline-block;text-indent: 2em;"
+							value="#{queryFlow.value}" />
+					</h:panelGrid>
+				</p:tab>
+			</p:accordionPanel>
+
+
+
+		</h:form>
+		<h:form id="processReportTwoFormId" rependId="false">
+
+			<p:accordionPanel id="fillAccordion" style="width:500px;">
+				<p:tab titleStyle="width:498px;"
+					title="#{sendReportBean.sumbitButtonShow==false?'请您阅读':'您需要上传'}报送报表信息">
+					<input type="text" style="width: 1px; height: 1px; border: 0px;" />
+					<h:panelGrid columns="4" id="lastGrid"
+						columnClasses="column1,column2,column1,column2">
+						<h:outputText value="统计时间：" />
+						<h:panelGroup>
+							<p:calendar id="canlen" locale="cn" pattern="yyyy-MM"
+								style="width:100px;" readOnlyInputText="true" navigator="true"
+								value="#{sendReportBean.excelPageCollectTime}"
+								disabled="#{sendReportBean.sumbitButtonShow==false?true:false}" />
+							<p:commandButton title="清空统计时间" icon="ui-icon ui-icon-cancel"
+								style="width:27px;height:27px;"
+								disabled="#{sendReportBean.sumbitButtonShow==false?true:false}"
+								actionListener="#{sendReportBean.resetTimeData}" update="canlen" />
+							<h:outputText style="color:red;" value="*"
+								rendered="#{sendReportBean.sumbitButtonShow}" />
+						</h:panelGroup>
+					</h:panelGrid>
+					<h:panelGrid columns="4"
+						columnClasses="column1,column2,column1,column2">
+						<h:outputText value="公司：" />
+						<p:inputText disabled="true"
+							value="#{sendReportBean.processDialogMap['company']}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="6"
+						columnClasses="column1,column2,column2,column2">
+						<h:outputText value="报表附件：" />
+						<div style="width: 165px">#{sendReportBean.fileName}</div>
+						<p:commandButton value="下载/查看" ajax="false"
+							disabled="#{sendReportBean.fileId eq ''?true:false}">
+							<p:fileDownload
+								value="#{sendReportBean.downloadFile(sendReportBean.fileId)}" />
+						</p:commandButton>
+						<p:commandButton value="上传/替换"
+							rendered="#{sendReportBean.sumbitButtonShow}"
+							style="margin-left:8px"
+							update=":sendRpAttFormId:attachmentUploadA,:processReportGrowlId,:processReportMsgId,:processReportTwoFormId"
+							oncomplete="processDateReportRequest(xhr, status, args);loadUpload();"
+							actionListener="#{sendReportBean.uploadCount()}" />
+					</h:panelGrid>
+					<h:panelGrid rendered="#{sendReportBean.processPanelShow}"
+						columns="1" columnClasses="columnA">
+						<h:outputText value="说明信息：" />
+						<p:inputTextarea style="width: 422px;" maxlength="200"
+							value="#{sendReportBean.txtUserOpinion}">
+						</p:inputTextarea>
+					</h:panelGrid>
+
+				</p:tab>
+			</p:accordionPanel>
+
+			<p:accordionPanel id="currentAccordion" style="width:500px;"
+				rendered="#{sendReportBean.whoProcessShow}">
+				<p:tab titleStyle="width:498px;"
+					title=" #{sendReportBean.processUser} 正在处理" disabled="true">
+				</p:tab>
+			</p:accordionPanel>
+
+
+			<p:spacer width="10px" height="10px"></p:spacer>
+
+			<div id="sendReportOprateDiv"
+				style="text-align: center; margin-top: 5px;">
+				<p:commandButton value="提交" style="margin-right:5px"
+					rendered="#{sendReportBean.sumbitButtonShow}"
+					actionListener="#{sendReportBean.processDialogSumbitData('send')}"
+					oncomplete="processReportRequest(xhr, status, args)"
+					update=":processReportGrowlId,:processReportMsgId,:treeForm,:taskFrom" />
+				<p:commandButton value="通过" style="margin-right:5px"
+					rendered="#{sendReportBean.passOrNotBtnShow}"
+					actionListener="#{sendReportBean.processDialogSumbitData('pass')}"
+					oncomplete="processReportRequest(xhr, status, args)"
+					update=":processReportGrowlId,:processReportMsgId,:treeForm,:taskFrom" />
+				<p:commandButton value="驳回" style="margin-right:5px"
+					rendered="#{sendReportBean.passOrNotBtnShow}"
+					actionListener="#{sendReportBean.processDialogSumbitData('nopass')}"
+					oncomplete="processReportRequest(xhr, status, args)"
+					update=":processReportGrowlId,:processReportMsgId,:treeForm,:taskFrom" />
+				<p:commandButton value="#{sendReportBean.cancelBtnTxt}"
+					rendered="#{sendReportBean.passOrNotBtnShow eq '退出'?false:true}"
+					onclick="processReportDlgVar.hide();" type="button" />
+			</div>
+
+			<p:spacer width="5px" height="15px" />
+			<p:spacer width="5px" height="15px" />
+
+		</h:form>
+		<script type="text/javascript">
+			function processReportRequest(xhr, status, args) {
+				if (args.applyInfo == "yes") {
+					processReportDlgVar.hide();
+				}
+			}
+			
+			function processDateReportRequest(xhr, status, args) {
+				if (args.dateInfo == "yes") {
+					sendRpAttachmentDlgVar.show()
+				}
+			}
+			/*  $(document).ready(
+					function(){
+						calendarWidth();}
+					);
+			function calendarWidth(){
+				 document.getElementById("processReportTwoFormId:j_idt690:canlen_input").style.width="100px"; 
+			}  */
+		</script>
+	</p:dialog>
+
+</ui:composition>

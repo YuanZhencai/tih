@@ -1,0 +1,59 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<style>
+
+</style>
+	<p:dialog  id="upload_dialog_id" width="620" height="130"
+		widgetVar="upload_dialog_var" resizable="false" modal="true"
+		header="选择文件">
+		<h:form id="upload_document_form" prependId="false" enctype="multipart/form-data">
+			 		<p:fileUpload fileUploadListener="#{documentAuditBean.replaceDoc}"  
+            mode="advanced"   styleClass="inputfile"   oncomplete="upload_dialog_var.hide();" label="选择" uploadLabel="上传" cancelLabel="取消" update=":query_document_property_form" id="test" 
+          />
+          	<div style="display:none;" >
+        	<p:commandButton value="test" actionListener="#{documentAuditBean.errorMessage}" update=":growl"  id="errorMessage"/>
+        	</div>
+		</h:form>
+		<script>
+
+	
+		
+			$(document).ready(function(){
+			    $("#test_input").attr("style","margin-right:60px");
+				fileUploadStyle.addlistener("test_input");
+				var aa=document.getElementsByClassName("ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left fileinput-button","label"); 
+				for(var i=0;i &lt; aa.length;i++){
+					aa[i].attr("class","ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left");
+				}
+				
+					});
+			$("#test_input").live('click',function(){
+				var aa=document.getElementsByClassName("files","table");
+				var htmlstr = "";
+				for(var i=0;i &lt; aa.length;i++){
+					if(aa[i].html()!='')
+					htmlstr=aa[i].html();
+				}
+				if(htmlstr.length>50){
+					PrimeFaces.ab({
+						formId:'upload_document_form',
+						source:'errorMessage',
+						process:'@all',
+						update:'growl'});
+					return false;
+				}
+			});
+			document.getElementsByClassName=function(className,elementName) {
+			    var elements=new Array();
+			    $(elementName).each(function(){
+			    if($(this).attr("class")==className){
+			    elements.push($(this));
+			    }
+			    });
+			return elements;
+			   };
+		</script>
+	</p:dialog>
+</ui:composition>

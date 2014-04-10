@@ -1,0 +1,338 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<style>
+.columnA {
+	text-align: left;
+	padding-left: 10px;
+}
+</style>
+
+	<p:dialog header="提问申请单" widgetVar="applyQuestionDlgVar"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"
+		id="applyQuestionDlgId" height="500" width="550">
+		<p:ajax event="close"
+			listener="#{applyQuestionBean.secondcancelButton()}"
+			update=":createDlgFirstId:sumbitAccId:supervisorAs" />
+		<p:growl id="questionGrowlIdX" life="8000" showDetail="true" />
+		<p:messages id="questionMsgIdX" showDetail="true" />
+		<h:form id="createDlgFirstId" prependId="false">
+			<p:accordionPanel style="width:510px;" id="firstAccordionPanel">
+				<p:tab titleStyle="width:507px;" title="问题信息:" id="firstTab">
+					<h:panelGrid columns="4"
+						columnClasses="column1,column2,column1,column2">
+
+						<h:outputText value="填制日期：" />
+						<p:calendar locale="cn" pattern="yyyy-MM-dd" disabled="true"
+							value="#{applyQuestionBean.processDlgParamMap['createDate']}" />
+						<h:outputText value="填制人：" />
+						<p:inputText
+							value="#{applyQuestionBean.processDlgParamMap['createUser']}"
+							disabled="true" />
+
+						<h:outputText value="重要程度：" />
+						<h:selectOneMenu
+							value="#{applyQuestionBean.processDlgParamMap['importance']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+							disabled="true">
+
+							<f:selectItems
+								value="#{commonBean.getDictByCat(applyQuestionBean.dropDownImportance)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+
+						<h:outputText value="紧急程度：" />
+						<h:selectOneMenu
+							value="#{applyQuestionBean.processDlgParamMap['urgency']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+							disabled="true">
+
+							<f:selectItems
+								value="#{commonBean.getDictByCat(applyQuestionBean.dropDownUrgency)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+
+						<h:outputText value="地域：" />
+						<h:selectOneMenu
+							value="#{applyQuestionBean.processDlgParamMap['region']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+							disabled="true">
+							<f:selectItem itemLabel="请选择" itemValue="" />
+							<f:selectItems
+								value="#{commonBean.getDictByCat(applyQuestionBean.dropDownRegion)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+
+						<h:outputText value="税种：" />
+						<h:selectOneMenu
+							value="#{applyQuestionBean.processDlgParamMap['taxType']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+							disabled="true">
+							<f:selectItem itemLabel="请选择" itemValue="" />
+							<f:selectItems
+								value="#{commonBean.getDictByCat(applyQuestionBean.dropDownTaxType)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+					</h:panelGrid>
+					<h:panelGrid columns="4"
+						rendered="#{'Y' == applyQuestionBean.wfRemindVo.wfTimeoutInd}"
+						columnClasses="column1,column2,column1,column2">
+						<h:outputText value="完成日期：" />
+						<h:column>
+							<p:calendar locale="cn" pattern="yyyy-MM-dd"
+								showButtonPanel="true" navigator="true" disabled="true"
+								value="#{applyQuestionBean.wfRemindVo.wfCompleteDate}" />
+						</h:column>
+						<h:outputText value="提醒频率（天）：" />
+						<h:column>
+							<p:inputText value="#{applyQuestionBean.wfRemindVo.wfIntervalDays}"
+								disabled="true" />
+						</h:column>
+						<h:outputText value="催促日期：" />
+						<h:column>
+							<p:calendar locale="cn" pattern="yyyy-MM-dd"
+								showButtonPanel="true" navigator="true" disabled="true"
+								value="#{applyQuestionBean.wfRemindVo.wfUrgeDate}" />
+						</h:column>
+					</h:panelGrid>
+
+
+
+					<h:panelGrid columns="2" columnClasses="column1,column3">
+						<h:outputText value="问题标题：" />
+						<p:inputText
+							value="#{applyQuestionBean.processDlgParamMap['queHead']}"
+							style="width:357px" disabled="true" />
+						<h:outputText value="收件人：" />
+						<h:column>
+							<p:selectCheckboxMenu
+								value="#{applyQuestionBean.recipientsSelectList}"
+								label="#{applyQuestionBean.recipientsTitle}"
+								disabled="#{applyQuestionBean.recipientsMap.size()==0?true:false}"
+								id="recipientsId" style="width:342px">
+								<f:selectItems value="#{applyQuestionBean.recipientsMap}" />
+							</p:selectCheckboxMenu>
+							<p:commandButton
+								actionListener="#{userCommonBean.init(':createDlgFirstId:firstAccordionPanel:recipientsId','multiple','applyQuestionBean','queryManyEmailUserName')}"
+								update=":commonUserDialog,:questionMsgIdX,:questionGrowlIdX"
+								oncomplete="controlCommonUserDlg();"
+								icon="ui-icon ui-icon-search" title="请选择"
+								style="width: 23px; height: 23px;vertical-align: top;" />
+						</h:column>
+
+					</h:panelGrid>
+
+				</p:tab>
+			</p:accordionPanel>
+
+			<p:accordionPanel var="flow"
+				value="#{applyQuestionBean.processDlgStepsAndProList}"
+				style="width:510px;" multiple="true">
+				<p:tab titleStyle="width:507px;"
+					rendered="#{flow.opionion == null ? 'false':(flow.opionion.length() == 0?'false':'true')}"
+					title="#{flow.wfs.name=='LaunchStep' ? '提交人':flow.wfs.name } #{documentAuditBean.getUserName(flow.wfs.updatedBy)} #{commonBean.getValueByDictCatKey(flow.wfs.dealMethod)} #{commonBean.formatDate(flow.wfs.completedDatetime)} ">
+					<h:panelGrid columns="1" columnClasses="columnA">
+						<h:outputText
+							value="#{flow.wfs.name=='LaunchStep' ? '问题描述：':'回答描述：' }" />
+						<h:outputLabel
+							style="FONT-FAMILY: Arial, Helvetica, sans-serif;word-break: break-all;width: 432px;display: inline-block;text-indent: 2em;"
+							value="#{flow.opionion}" />
+						<p:dataTable var="ff" value="#{flow.fileList}" rowIndexVar="index"
+							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+							style="margin-top: 5px;" emptyMessage="#{msgs.dataTable_empty }"
+							rendered="#{flow.fileList.size()==0?false:true }">
+							<p:column style="text-align:left;width:276px;">
+								<f:facet name="header">
+									<h:outputText value="附件名称" />
+								</f:facet>
+								<div
+									style="width: 250px; word-wrap: break-word; overflow: hidden;">
+									<h:outputText value="#{ff.fileName}" />
+								</div>
+							</p:column>
+							<p:column style="text-align: center;width:100px;">
+								<f:facet name="header">
+									<h:outputText value="操作" />
+								</f:facet>
+								<p:commandButton title="下载"
+									icon="ui-icon ui-icon-arrowthick-1-s"
+									style="width: 18px; height: 18px;" ajax="false">
+									<p:fileDownload value="#{wizardAnswerBean.getFile(ff.fileId)}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:tab>
+			</p:accordionPanel>
+
+
+			<p:accordionPanel
+				rendered="#{applyQuestionBean.workShow=='no'?flase:true}"
+				id="sumbitAccId">
+				<p:tab title="#{applyQuestionBean.nowWorkflowPlace}"
+					titleStyle="width:507px;">
+
+					<h:panelGrid columns="4" columnClasses="column1,column3"
+						id="tab2Panel2Id" rendered="#{applyQuestionBean.showDesignee}">
+						<h:outputText value="指定人员：" />
+						<p:inputText id="supervisorAs"
+							value="#{applyQuestionBean.showSupervisor}" maxlength="18" />
+						<p:commandButton
+							actionListener="#{userCommonBean.init(':createDlgFirstId','single','applyQuestionBean','getNeedSupervisor')}"
+							update=":commonUserDialog"
+							oncomplete="commonUserDialogWidgetVar.show()"
+							icon="ui-icon ui-icon-search" title="请选择" />
+						<p:commandButton title="重置"
+							disabled="#{applyQuestionBean.showSupervisor == null ? true : false}"
+							update="tab2Panel2Id"
+							actionListener="#{applyQuestionBean.showSupervisorClean}"
+							icon="ui-icon ui-icon-cancel" type="resert" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" columnClasses="columnA">
+						<h:outputText value="回答描述：" />
+						<p:inputTextarea style="width: 422px;" maxlength="500"
+							value="#{applyQuestionBean.txtOpionion}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" columnClasses="columnA">
+						<p:dataTable var="attTwo"
+							value="#{applyQuestionBean.processDlgFileList}"
+							paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+							rows="5"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+							style="margin-top: 5px;" emptyMessage="#{msgs.dataTable_empty }">
+							<f:facet name="header">
+							附件清单
+							<div
+									style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+									<p:commandButton value="添加附件" icon="ui-icon ui-icon-plus"
+										actionListener="#{applyQuestionBean.enterPlace('2')}"
+										oncomplete="loadUploadX();processShowAttDlgRequest(xhr, status, args);"
+										update=":questionGrowlIdX,:questionMsgIdX,:addAttachmentDlgFormId" />
+								</div>
+							</f:facet>
+
+							<p:column style="width:289px;" headerText="附件名称">
+								<div
+									style="width: 285px; word-wrap: break-word; overflow: hidden;">
+									<h:outputText value="#{attTwo.fileName}" />
+								</div>
+							</p:column>
+							<p:column style="text-align: center;width:100px;" headerText="操作">
+								<p:commandButton title="下载"
+									icon="ui-icon ui-icon-arrowthick-1-s"
+									style="width: 18px; height: 18px;" ajax="false">
+									<p:fileDownload
+										value="#{wizardAnswerBean.getFile(attTwo.fileId)}" />
+								</p:commandButton>
+								<p:commandButton title="删除"
+									actionListener="#{applyQuestionBean.deleteFile(attTwo.fileId,attTwo.fileName,false)}"
+									update=":createDlgFirstId:sumbitAccId"
+									style="width: 18px; height: 18px;" icon="ui-icon ui-icon-close" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:tab>
+			</p:accordionPanel>
+
+
+			<p:accordionPanel rendered="#{applyQuestionBean.lastChargedByShow}">
+				<p:tab title="#{applyQuestionBean.lastChargedByUser} 正在处理"
+					titleStyle="width:507px;" disabled="true" />
+			</p:accordionPanel>
+
+			<p:spacer width="5px" height="15px" />
+			<p:spacer width="5px" height="15px" />
+			<p:spacer width="5px" height="15px" />
+			<div id="applyQuestionOprateDiv"
+				style="text-align: center; margin-top: 5px;">
+				<p:commandButton value="回答"
+					rendered="#{applyQuestionBean.answerBtnShow}"
+					actionListener="#{applyQuestionBean.submitProcess('ansAnswer')}"
+					style="margin-right:5px" icon="ui-icon ui-icon-check"
+					oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+					update=":createDlgFirstId,:questionMsgIdX,:questionGrowlIdX,:treeForm,:taskFrom" />
+				<p:commandButton value="转签"
+					rendered="#{applyQuestionBean.answerBtnShow}"
+					actionListener="#{applyQuestionBean.submitProcess('ansAssigner')}"
+					style="margin-right:5px" icon="ui-icon ui-icon-check"
+					oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+					update=":createDlgFirstId,:questionMsgIdX,:questionGrowlIdX,:treeForm,:taskFrom" />
+				<p:commandButton value="协助"
+					rendered="#{applyQuestionBean.answerBtnShow}"
+					actionListener="#{applyQuestionBean.submitProcess('ansHelper')}"
+					style="margin-right:5px" icon="ui-icon ui-icon-check"
+					oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+					update=":createDlgFirstId,:questionMsgIdX,:questionGrowlIdX,:treeForm,:taskFrom" />
+
+				<p:commandButton value="回答"
+					rendered="#{applyQuestionBean.assignerBtnShow}"
+					actionListener="#{applyQuestionBean.submitProcess('assAsker')}"
+					style="margin-right:5px" icon="ui-icon ui-icon-check"
+					oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+					update=":createDlgFirstId,:questionMsgIdX,:questionGrowlIdX,:treeForm,:taskFrom" />
+				<p:commandButton value="协助"
+					rendered="#{applyQuestionBean.assignerBtnShow}"
+					actionListener="#{applyQuestionBean.submitProcess('assHelper')}"
+					style="margin-right:5px" icon="ui-icon ui-icon-check"
+					oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+					update=":createDlgFirstId,:questionMsgIdX,:questionGrowlIdX,:treeForm,:taskFrom" />
+				<p:commandButton value="拒绝"
+					rendered="#{applyQuestionBean.assignerRefuseBtnShow}"
+					actionListener="#{applyQuestionBean.submitProcess('assAnswer')}"
+					style="margin-right:5px" icon="ui-icon ui-icon-check"
+					oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+					update=":createDlgFirstId,:questionMsgIdX,:questionGrowlIdX,:treeForm,:taskFrom" />
+
+				<p:commandButton value="反馈"
+					rendered="#{applyQuestionBean.helperBtnShow}"
+					actionListener="#{applyQuestionBean.submitProcess('helper')}"
+					style="margin-right:5px" icon="ui-icon ui-icon-check"
+					oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+					update=":createDlgFirstId,:questionMsgIdX,:questionGrowlIdX,:treeForm,:taskFrom" />
+
+				<p:commandButton value="通过"
+					rendered="#{applyQuestionBean.askerBtnShow}"
+					actionListener="#{applyQuestionBean.submitProcess('askerOver')}"
+					style="margin-right:5px" icon="ui-icon ui-icon-check"
+					oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+					update=":createDlgFirstId,:questionMsgIdX,:questionGrowlIdX,:treeForm,:taskFrom" />
+				<p:commandButton value="驳回"
+					rendered="#{applyQuestionBean.askerBtnShow}"
+					actionListener="#{applyQuestionBean.submitProcess('askerReject')}"
+					style="margin-right:5px" icon="ui-icon ui-icon-check"
+					oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+					update=":createDlgFirstId,:questionMsgIdX,:questionGrowlIdX,:treeForm,:taskFrom" />
+
+
+			</div>
+			<p:spacer width="5px" height="15px" />
+			<p:spacer width="5px" height="15px" />
+		</h:form>
+		<script type="text/javascript">
+			function handleSumbitProcessRequest(xhr, status, args) {
+				if (args.sumbitProcess=="yes") {
+					applyQuestionDlgVar.hide();
+				}
+			}
+			function processShowAttDlgRequest(xhr, status, args) {
+				if (args.attShow == "yes") {
+					addAttachmentDlgVar.show();
+				}
+			}
+		</script>
+	</p:dialog>
+
+</ui:composition>

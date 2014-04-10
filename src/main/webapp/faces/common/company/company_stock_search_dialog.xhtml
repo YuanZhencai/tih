@@ -1,0 +1,143 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<script>
+		function addTime(){
+			var first=document.getElementById("firstTime_input").value;
+			document.getElementById("secondTime").value=first
+		}
+	</script>
+	<p:dialog modal="true" resizable="false"
+		header="#{companyStockBean.insert  == 'false' ?'编辑股权结构列表' :'添加股权结构列表' }"
+		widgetVar="stockSearchdialogvar" id="stockSearchdialog" width="600">
+		<input type="text" style="width: 1px; height: 1px; border: 0px;" />
+
+
+		<h:form id="stockSearchdialogvarForm" prependId="false">
+			<p:messages id="time" autoUpdate="false" showDetail="true" />
+
+			<div class="style1" style="margin-top: 5px; margin-bottom: 5px;">
+				<h:panelGrid columns="2"
+					columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+
+					<h:outputText value="统计时间：" />
+					<h:panelGroup>
+						<p:calendar locale="cn" navigator="true" readonly="true"
+							disabled="#{companyStockBean.insertDatetime}"
+							pattern="yyyy-MM-dd" id="firstTime"
+							value="#{companyStockBean.insertDate}" readOnlyInputText="true" />
+						<h:outputText style="color:red;" value="*" />
+					</h:panelGroup>
+				</h:panelGrid>
+
+
+			</div>
+
+			<p:dataTable id="stockInserttable" var="stock"
+				value="#{companyStockBean.insertList}"
+				emptyMessage="#{msgs.dataTable_empty}" sortOrder="descending"
+				sortBy="#{companyStockBean.formatStockDatetime(stock.statisticsDatetime)} ">
+
+				<f:facet name="header">
+					<div class="header">
+						<h:outputText value="股权信息列表" />
+						<p:commandButton styleClass="header_button" value="添加"
+							oncomplete="addTime();beFore();"
+							update=":stockInsertForm,:stockInsertDialog"
+							action="#{companyStockBean.changeAgainInsert}"
+							icon="ui-icon ui-icon-plus" />
+					</div>
+				</f:facet>
+				<p:column headerText="股东名称">  
+            #{stock.shareholder}  
+        </p:column>
+				<p:column headerText="注册资本(万元)">
+					<div style="text-align: right;">#{stock.registeredCapital}</div>
+				</p:column>
+				<p:column headerText="币种 ">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(stock.currency)}" />
+				</p:column>
+				<p:column headerText="比例">
+					<div style="text-align: right">
+						<h:outputText
+							value="#{companyStockBean.formatDouble(stock.ratio)}%">
+						</h:outputText>
+					</div>
+				</p:column>
+				<p:column headerText="统计时间" style="text-align:center;width:90px;">
+					<h:outputText value="#{stock.statisticsDatetime}">
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</p:column>
+
+
+				<p:column headerText="有效" style="text-align:center">
+					<h:outputText value="#{stock.defunctInd=='Y' ?'否':'是'}" />
+				</p:column>
+				<p:column headerText="操作" style="text-align:center;width:39px;">
+
+					<p:commandButton oncomplete="stockInsertDialogvar.show();"
+						update=":stockInsertForm,:stockInsertDialog" title="编辑" action="#{companyStockBean.changeListUpdate()}"
+						icon="ui-icon ui-icon-pencil" style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener value="#{stock}"
+							target="#{companyStockBean.savemodel}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-attachment" title="附件"
+						id="companyStockAttachment"
+						style="width: 18px;height: 18px;float:right"
+						oncomplete="uploadOrDownloadAttachment.show();"
+						action="#{attachmentBean.searchFilemstr()}"
+						update=":uploadOrDownloadAttachmentID">
+						<f:setPropertyActionListener
+							target="#{attachmentBean.attachmentVo.tableName}"
+							value="COMPANY_STOCK_STRUCTURE" />
+						<f:setPropertyActionListener
+							target="#{attachmentBean.attachmentVo.entityId}"
+							value="#{stock.id}" />
+						<f:setPropertyActionListener
+							target="#{attachmentBean.attachmentVo.operationType}" value="100" />
+					</p:commandButton>
+				</p:column>
+				<p:summaryRow>
+					<p:column colspan="7" style="text-align:left">  
+               #{companyStockBean.searchStr}
+            </p:column>
+				</p:summaryRow>
+			</p:dataTable>
+		</h:form>
+		<h:form id="stockClose">
+			<div align="center" style="margin-top: 5px;">
+				<p:commandButton value="确定" icon="ui-icon ui-icon-check"
+					update=":stockSearchdialogvarForm:time,:stockForm,:growl"
+					actionListener="#{companyStockBean.realInsertUpdate}"
+					oncomplete="handleStockDialogRealDialog(xhr, status, args);" />
+				<p:commandButton value="取消"
+					oncomplete="stockSearchdialogvar.hide();"
+					icon="ui-icon ui-icon-cancel" />
+			</div>
+			<div style="display: none;">
+				<p:commandButton value="dont't remove" id="addError" update=":growl"
+					actionListener="#{companyStockBean.addErroMessage}"></p:commandButton>
+			</div>
+		</h:form>
+	</p:dialog>
+	<script>
+	function handleStockDialogRealDialog(xhr, status, args) {
+		if (args.dataInfoSumbit == "yes") {
+			stockSearchdialogvar.hide();
+		}
+	}
+	function beFore(){
+		if(document.getElementById("firstTime_input").value==''){
+		PrimeFaces.ab({formId:'stockClose',source:'stockClose:addError',process:'@all',update:'stockSearchdialogvarForm'});return false;
+		}else{
+			stockInsertDialogvar.show();
+		}
+		
+	}
+	</script>
+</ui:composition>

@@ -1,0 +1,166 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="folder_tree_dialog_id" header="#{documentBean.folderModel eq 'add' ? '添加文件夹' : ''}#{documentBean.folderModel eq 'copy' ? '复制文件夹' : ''}#{documentBean.folderModel eq 'move' ? '移动文件夹' : ''}#{documentBean.docModel eq 'move' ? '移动文档' : ''}#{documentBean.docModel eq 'copy' ? '复制文档' : ''}" width="400"
+		height="480" widgetVar="folder_tree_dialog_var" resizable="false"
+		modal="true">
+		<h:form id="folder_tree_form" prependId="false">
+			<p:tree value="#{documentBean.rootFolder}" var="folder"
+				style="width: 360px; height: 420px; overflow: auto;"
+				selectionMode="single" selection="#{documentBean.folderSelected}">
+
+				<p:treeNode expandedIcon="ui-icon ui-icon-folder-open"
+					collapsedIcon="ui-icon ui-icon-folder-collapsed">
+					<h:outputText value="#{folder.folderName}" />
+				</p:treeNode>
+			</p:tree>
+
+			<div style="text-align: center;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					update=":add_folder_form_id:new_folder_parentpath_id,:folder_tree_form"
+					actionListener="#{documentBean.selectParentFolder}"
+					oncomplete="folder_tree_dialog_var.hide()"
+					rendered="#{documentBean.folderModel eq 'add' ? true : false}" />
+
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					rendered="#{documentBean.folderModel eq 'copy' ? true : false}"
+					oncomplete="copyfolder_confirm_dialog_var.show();" />
+
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					rendered="#{documentBean.folderModel eq 'move' ? true : false}"
+					oncomplete="movefolder_confirm_dialog_var.show();" />
+
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					rendered="#{documentBean.docModel eq 'move' ? true : false}"
+					oncomplete="movedoc_confirm_dialog_var.show();" />
+
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					rendered="#{documentBean.docModel eq 'copy' ? true : false}"
+					oncomplete="copydoc_confirm_dialog_var.show();" />
+
+				<p:commandButton icon="ui-icon ui-icon-cancel"
+					value="#{msgs.btn_cancel}" style="margin: 5px 5px 5px 5px;"
+					update=":folder_tree_form"
+					oncomplete="folder_tree_dialog_var.hide()" />
+			</div>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="copyfolder_confirm_dialog_id" resizable="false"
+		modal="true" header="复制文件夹" widgetVar="copyfolder_confirm_dialog_var">
+		<h:outputText
+			styleClass="ui-icon ui-icon-alert ui-confirm-dialog-severity" />
+		<h:outputText value="确定要复制到此文件夹吗？" />
+		<br />
+		<br />
+		<h:form prependId="false" id="copyfolder_confirm_form_id"
+			style="text-align: center;">
+			<p:commandButton value="#{msgs.btn_ok}"
+				update=":left_folder_tree_form_id,:growl"
+				action="#{documentBean.copyFolder}"
+				oncomplete="handleFolderOption(xhr, status, args);copyfolder_confirm_dialog_var.hide();removeTextShadow();" />
+
+			<p:commandButton type="button" value="#{msgs.btn_cancel}"
+				onclick="copyfolder_confirm_dialog_var.hide()" />
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="movefolder_confirm_dialog_id" resizable="false"
+		modal="true" header="移动文件夹" widgetVar="movefolder_confirm_dialog_var">
+		<h:outputText
+			styleClass="ui-icon ui-icon-alert ui-confirm-dialog-severity" />
+		<h:outputText value="确定要移动到此文件夹吗？" />
+		<br />
+		<br />
+		<h:form prependId="false" id="movefolder_form_id"
+			style="text-align: center;">
+			<p:commandButton value="#{msgs.btn_ok}"
+				update=":left_folder_tree_form_id,:growl"
+				actionListener="#{documentBean.moveFolder}"
+				oncomplete="movefolder_confirm_dialog_var.hide();handleFolderOption(xhr, status, args);removeTextShadow();" />
+
+			<p:commandButton type="button" value="#{msgs.btn_cancel}"
+				onclick="movefolder_confirm_dialog_var.hide()" />
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="movedoc_confirm_dialog_id" resizable="false" modal="true"
+		header="移动文档" widgetVar="movedoc_confirm_dialog_var">
+		<h:outputText
+			styleClass="ui-icon ui-icon-alert ui-confirm-dialog-severity" />
+		<h:outputText value="确定要移动到此文件夹吗？" />
+		<br />
+		<br />
+		<h:form prependId="false" id="movedoc_form_id"
+			style="text-align: center;">
+			<p:commandButton value="#{msgs.btn_ok}"
+				update=":left_folder_tree_form_id,:growl"
+				actionListener="#{documentBean.moveDocument(false)}"
+				oncomplete="handleMoveDoc(xhr, status, args);removeTextShadow();" />
+
+			<p:commandButton type="button" value="#{msgs.btn_cancel}"
+				onclick="movedoc_confirm_dialog_var.hide()" />
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="copydoc_confirm_dialog_id" resizable="false" modal="true"
+		header="复制文档" widgetVar="copydoc_confirm_dialog_var">
+		<h:outputText
+			styleClass="ui-icon ui-icon-alert ui-confirm-dialog-severity" />
+		<h:outputText value="确定要复制到此文件夹吗？" />
+		<br />
+		<br />
+		<h:form prependId="false" id="copydoc_form_id"
+			style="text-align: center;">
+			<p:commandButton value="#{msgs.btn_ok}"
+				update=":left_folder_tree_form_id,:growl"
+				actionListener="#{documentBean.copyDocument(false)}"
+				oncomplete="handleCopyDoc(xhr, status, args);removeTextShadow();" />
+
+			<p:commandButton type="button" value="#{msgs.btn_cancel}"
+				onclick="copydoc_confirm_dialog_var.hide()" />
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="movedoc_again_confirm_dialog_id" resizable="false"
+		modal="true" header="移动文档，名称重复"
+		widgetVar="movedoc_again_confirm_dialog_var">
+		<h:outputText
+			styleClass="ui-icon ui-icon-alert ui-confirm-dialog-severity" />
+		<h:outputText value="文件夹下有重名文件，确认移动将会修改文件名称。" />
+		<br />
+		<br />
+		<h:form prependId="false" id="movedoc_again_form_id"
+			style="text-align: center;">
+			<p:commandButton value="#{msgs.btn_ok}"
+				update=":left_folder_tree_form_id,:growl"
+				actionListener="#{documentBean.moveDocument(true)}"
+				oncomplete="handleMoveDoc(xhr, status, args);removeTextShadow();" />
+
+			<p:commandButton type="button" value="#{msgs.btn_cancel}"
+				onclick="movedoc_again_confirm_dialog_var.hide()" />
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="copydoc_again_confirm_dialog_id" header="复制文档，名称重复"
+		widgetVar="copydoc_again_confirm_dialog_var" resizable="false"
+		modal="true">
+		<h:outputText
+			styleClass="ui-icon ui-icon-alert ui-confirm-dialog-severity" />
+		<h:outputText value="文件夹下有重名文件，确认复制将会修改文件名称。" />
+		<br />
+		<br />
+		<h:form prependId="false" id="copydoc_again_form_id"
+			style="text-align: center;">
+			<p:commandButton value="#{msgs.btn_ok}"
+				update=":left_folder_tree_form_id,:growl"
+				actionListener="#{documentBean.copyDocument(true)}"
+				oncomplete="handleCopyDoc(xhr, status, args);removeTextShadow();" />
+
+			<p:commandButton type="button" value="#{msgs.btn_cancel}"
+				onclick="copydoc_again_confirm_dialog_var.hide()" />
+		</h:form>
+	</p:dialog>
+</ui:composition>

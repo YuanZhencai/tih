@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="timeoutEmailForm">
+		<p:growl id="timeoutEmailMessages" showDetail="true" />
+		<p:panel id="timeoutEmailPanl" style="border: none; "
+			rendered="#{taskManagementBean.taskNodeMailTimeout == taskManagementBean.nodeName}">
+			<p:treeTable id="timeoutEmailTable" value="#{timeoutEmailBean.root}"
+				var="timerTreeVo" paginator="true" rows="10"
+				paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+				rowIndexVar="index" style="margin-top:5px;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}">
+				<f:facet name="header">
+					<div class="header">
+						<h:outputText value="超时发送（邮件）" />
+						<p:commandButton value="添加" update=":timeoutEmailDialogForm"
+							action="#{timeoutEmailBean.initAddTimeoutJob()}"
+							oncomplete="timeoutEmailDialogVar.show()" style="float:right">
+							<f:setPropertyActionListener
+								target="#{timeoutEmailBean.jobOprateType}" value="add" />
+						</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column headerText="名称">
+					<h:outputText value="#{timerTreeVo.jobInfoVo.jobName}" />
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(timerTreeVo.remindVo.type)}" />
+				</p:column>
+				<p:column headerText="描述">
+					<h:outputText value="#{timerTreeVo.jobInfoVo.description}" />
+				</p:column>
+				<p:column headerText="开始时间">
+					<h:outputText value="#{timerTreeVo.jobInfoVo.startDate}">
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="结束时间">
+					<h:outputText value="#{timerTreeVo.jobInfoVo.endDate}">
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="下一个执行时间">
+					<h:outputText value="#{timerTreeVo.jobInfoVo.nextTimeout}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="操作">
+					<p:commandButton title="编辑"
+						oncomplete="timeoutEmailDialogVar.show();disableItems();"
+						rendered="#{'job' == timerTreeVo.type}"
+						action="#{timeoutEmailBean.getTimeoutEmailJobInfo()}"
+						update=":timeoutEmailDialog" icon="ui-icon ui-icon-pencil"
+						style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener value="#{timerTreeVo.jobInfoVo}"
+							target="#{timeoutEmailBean.selectedJobInfoVo}" />
+						<f:setPropertyActionListener
+							target="#{timeoutEmailBean.jobOprateType}" value="edit" />
+					</p:commandButton>
+					<p:commandButton title="删除" icon="ui-icon ui-icon-close"
+						rendered="#{'job' == timerTreeVo.type}"
+						action="#{timeoutEmailBean.deleteTimeoutJob()}"
+						update=":timeoutEmailForm" style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener value="#{timerTreeVo.jobInfoVo}"
+							target="#{timeoutEmailBean.selectedJobInfoVo}" />
+					</p:commandButton>
+				</p:column>
+
+			</p:treeTable>
+		</p:panel>
+	</h:form>
+
+
+</ui:composition>

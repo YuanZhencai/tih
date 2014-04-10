@@ -1,0 +1,172 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="query_document_property_dialog_id" header="文档属性信息" width="590"
+		widgetVar="query_document_property_dialog_var" resizable="false" modal="true">
+		<p:ajax event="close"  listener="#{documentBean.clearData}" update=":query_document_property_form"/>
+		<p:messages showDetail="true" showSummary="true" id="doc_property"/>
+		<h:form id="query_document_property_form" prependId="false">
+		<p:panel header="基本属性">
+			<h:panelGrid columns="2" columnClasses="pcolumnName">
+				<h:outputText value="文档名称："/>
+				<p:column>
+					<div style="word-break:break-all;width:100%;font-weight:bold; ">
+						<h:outputText value="#{documentBean.doc.documentTitle}"/>
+					</div>
+				</p:column>
+			</h:panelGrid>
+				
+			<h:panelGrid columns="2" columnClasses="pcolumn1">
+				<h:outputText value="归档路径："/>
+				<h:outputText value="#{documentBean.doc.foldersFiledIn}" style="font-weight:bold;"/>
+			</h:panelGrid>
+			<h:panelGrid columns="4" style="word-break:break-all;width:100% " columnClasses="pcolumn1,pcolumn2,pcolumn1,column2">
+				<h:outputText value="文档类型："/>
+				<h:outputText value="#{documentBean.doc.mimeType}" style="font-weight:bold;"/>
+				<h:outputText value="文档大小："/>
+				<h:outputText value="#{documentBean.getDocSize(documentBean.doc.size)}" style="font-weight:bold;"/>
+				<h:outputText value="版本号："/>
+				<h:outputText value="#{documentBean.doc.majorVersion}" style="font-weight:bold;"/>
+				<h:outputText value="检出："/>
+				<h:outputText value="#{documentBean.doc.isFrozen == true ? '是' : '否'}" style="font-weight:bold;"/>
+				<h:outputText value="添加人："/>
+				<h:outputText value="#{documentBean.findUsernameByAccount(documentBean.doc.createdBy)}" style="font-weight:bold;"/>
+				<h:outputText value="添加时间："/>
+				<h:outputText value="#{commonBean.formatDate(documentBean.doc.createdDate)}" style="font-weight:bold;"/>
+				<h:outputText value="修改人："/>
+				<h:outputText value="#{documentBean.findUsernameByAccount(documentBean.doc.updatedBy)}" style="font-weight:bold;"/>
+				<h:outputText value="修改时间："/>
+				<h:outputText value="#{commonBean.formatDate(documentBean.doc.updatedDate)}" style="font-weight:bold;"/>
+			</h:panelGrid>
+			</p:panel>
+			
+			<p:panel header="业务属性">
+				<h:panelGrid columns="4" columnClasses="pcolumn1,column2,pcolumn1,column2">
+					<h:outputLabel value="文档类别："/>
+					<h:selectOneMenu value="#{documentBean.doc.category}" disabled="true"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+						<f:selectItems value="#{documentBean.cateListNoSpace}" var="dict" 
+							itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>
+					</h:selectOneMenu>
+					<h:outputLabel value="文档分类：" />
+					<p:selectCheckboxMenu id="docType" value="#{documentBean.docTypeList}" label="请选择" style="width: 142px;">
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxDoctype)}" 
+							var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" itemDisabled="#{documentBean.updatePro? 'false':'true'}">
+						</f:selectItems>  
+					</p:selectCheckboxMenu>
+					<h:outputLabel value="行业："/>
+					<h:selectOneMenu value="#{documentBean.doc.industry}" 
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+						disabled="#{!documentBean.updatePro}">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxIndustry)}"
+								var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputLabel value="地域：" />
+					<h:selectOneMenu value="#{documentBean.doc.region}" 
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+						disabled="#{!documentBean.updatePro}">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxRegion)}"
+							var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					
+					<h:outputLabel value="税种：" />
+					<p:selectCheckboxMenu value="#{documentBean.taxTypeList}" label="请选择" style="width: 142px;">
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxType)}" 
+							var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" itemDisabled="#{documentBean.updatePro? 'false':'true'}">
+						</f:selectItems>  
+					</p:selectCheckboxMenu>
+					<h:outputLabel value="发文机关：" />
+					<p:autoComplete dropdown="true"
+						value="#{documentBean.selectedPublishOrg}" var="publishOrg"
+						itemLabel="#{publishOrg.codeVal}#{' '}" itemValue="#{publishOrg}"
+						converter="publishDictConverter"
+						completeMethod="#{commonBean.completePublishOrg}"
+						forceSelection="true">
+					</p:autoComplete>
+
+					<h:outputLabel value="发文字号：" />
+					<p:autoComplete dropdown="true"
+						value="#{documentBean.selectedPublishNo}" var="publishNo"
+						itemLabel="#{publishNo.codeVal}#{' '}" itemValue="#{publishNo}"
+						converter="publishDictConverter"
+						completeMethod="#{commonBean.completePublishNo}"
+						forceSelection="true">
+					</p:autoComplete>
+					<h:outputLabel value="发文年度：" />
+					<p:inputText value="#{documentBean.doc.publishYear}" disabled="#{!documentBean.updatePro}" maxlength="4"
+						onkeyup="if(this.value == null || this.value == '')return;if(this.value.search(/^[1-9]\d*$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"
+						onblur="if(this.value == null || this.value == '')return;if(this.value.search(/^[1-9]\d*$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"/>
+	
+					<h:outputLabel value="发文序号：" />
+					<p:inputText value="#{documentBean.doc.publishSeqNo}" disabled="#{!documentBean.updatePro}" maxlength="50"/>
+					<h:outputLabel value="发文日期：" />
+					<p:calendar value="#{documentBean.doc.publishTime}" locale="cn" navigator="true" 
+						disabled="#{!documentBean.updatePro}" pattern="yyyy-MM-dd"/>
+	
+					<h:outputLabel value="所属公司：" />
+					<h:column>
+						<p:inputText value="#{documentBean.doc.belongtoCompany}" id="pbelongtoCompanyId" style="width: 105px; margin-right: 3px;" readonly="true"/>
+						<p:commandButton icon="ui-icon ui-icon-search"
+							title="#{msgs.btn_query}" update=":commonCompany,:datatableform"
+							style="width: 26px; height: 26px; vertical-align: top;"
+							actionListener="#{companyCommonBean.init(':query_document_property_form:pbelongtoCompanyId','documentBean','single','selectBelongCompany')}"
+							oncomplete="commoncompanyvar.show();" />
+					</h:column>
+					<h:outputLabel value="有效性：" />
+					<h:selectOneMenu value="#{documentBean.doc.effectStatus}" 
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+						disabled="#{!documentBean.updatePro}">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxDocstatus)}"
+							var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					
+					<h:outputLabel value="提交资料公司："/>
+					<h:column>
+						<p:inputText value="#{documentBean.doc.submitCompany}" id="psubmitCompanyId" style="width: 105px; margin-right: 3px;" readonly="true"/>
+						<p:commandButton icon="ui-icon ui-icon-search"
+							title="#{msgs.btn_query}" update=":commonCompany,:datatableform"
+							style="width: 26px; height: 26px; vertical-align: top;"
+							actionListener="#{companyCommonBean.init(':query_document_property_form:psubmitCompanyId','documentBean','single','selectSubmitCompany')}"
+							oncomplete="commoncompanyvar.show();" />
+					</h:column>
+					<h:outputLabel value="提交资料日期："/>
+					<p:calendar value="#{documentBean.doc.submitYear}" locale="cn" navigator="true" 
+						disabled="#{!documentBean.updatePro}" pattern="yyyy-MM-dd"/>
+	
+					<h:outputLabel value="资料提交状态："/>
+					<h:selectOneMenu value="#{documentBean.doc.submitStatus}" 
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+						disabled="#{!documentBean.updatePro}">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihDocSubmitstatus)}"
+							var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputLabel value="审核状态："/>
+					<h:outputText value="#{commonBean.getValueByDictCatKey(documentBean.doc.auditStatus)}" style="font-weight:bold;"/>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" columnClasses="pcolumn1">
+					<h:outputLabel value="简单描述：" />
+					<p:inputText value="#{documentBean.doc.desc}" disabled="#{!documentBean.updatePro}"
+						style="width: 396px; height: 30px;" autoResize="true" maxlength="200"/>
+				</h:panelGrid>
+			</p:panel>
+			
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					update=":growl,:doc_property" oncomplete="handleModifyProperty(xhr, status, args);"
+					action="#{documentBean.editDocumentProperty}" style="margin-right: 5px;"
+					disabled="#{!documentBean.updatePro}" />
+					
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+					type="button" onclick="query_document_property_dialog_var.hide()"/>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

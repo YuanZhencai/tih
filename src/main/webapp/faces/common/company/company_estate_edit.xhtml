@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="#{companyEstateBean.currentEstate.id == null ? '添加' : '编辑'}房产明细信息" widgetVar="company_estate_edit_var"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false" id="company_estate_edit_id">
+
+		<h:form prependId="false" id="company_estate_edit_form">
+			<p:messages showDetail="true" showSummary="true" autoUpdate="true"/>
+			<h:panelGrid columns="4"
+				columnClasses="column41,column2,column41,column2">
+				<h:outputText value="房产证编号：" />
+				<h:column>
+					<p:inputText value="#{companyEstateBean.currentEstate.estate.estateNo}" />
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+				<h:outputText value="房产名称："/>
+				<h:column>
+					<p:inputText value="#{companyEstateBean.currentEstate.estate.name}" />
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+				
+				<h:outputText value="建筑面积(平方米)："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.area}" />
+				<h:outputText value="房产类型："/>
+				<h:column>
+				<h:selectOneMenu value="#{companyEstateBean.currentEstate.estate.type}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxCompanyEstateType)}"
+						var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>
+				</h:selectOneMenu>
+				<h:outputText value="*" style="color: red;"/>
+				</h:column>
+
+				<h:outputText value="所属土地证编号："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.landNo}" />
+				<h:outputText value="宗地容积率："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.landVolumnRate}" />
+				
+				<h:outputText value="宗地单位成本(元/平方米)："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.landUnitCost}" />
+				<h:outputText value="土地原值(元)："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.landCost}" />
+				
+				<h:outputText value="房产竣工日期："/>
+				<p:calendar navigator="true" locale="cn" pattern="yyyy-MM-dd"
+					value="#{companyEstateBean.currentEstate.estate.estateCompletionDatetime}" />
+				<h:outputText value="资本化日期："/>
+				<p:calendar navigator="true" locale="cn" pattern="yyyy-MM-dd"
+					value="#{companyEstateBean.currentEstate.estate.capitalizationDatetime}" />
+				
+				<h:outputText value="投入使用日期："/>
+				<p:calendar navigator="true" locale="cn" pattern="yyyy-MM-dd"
+					value="#{companyEstateBean.currentEstate.estate.usageStartDatetime}" />
+				<h:outputText value="开始缴纳房产税日期："/>
+				<p:calendar navigator="true" locale="cn" pattern="yyyy-MM-dd"
+					value="#{companyEstateBean.currentEstate.estate.payTaxStartDatetime}" />
+				
+				<h:outputText value="计税类型："/>
+				<h:selectOneMenu value="#{companyEstateBean.currentEstate.estate.calTaxType}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxCompanyEstateTaxtype)}"
+						var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>
+				</h:selectOneMenu>
+				<h:outputText value="房产账面原值(万元)："/>
+				<h:column>
+					<p:inputText value="#{companyEstateBean.currentEstate.estate.estateAccountCost}" />
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+				
+				<h:outputText value="计入房产税纳税的土地价值(万元)："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.calTaxLandCost}" />
+				<h:outputText value="房产税计税原值(万元)："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.calTaxEstateCost}" />
+				
+				<h:outputText value="扣除比例(%)："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.deductionRate}"/>
+				<h:outputText value="税率(%)："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.taxRate}" />
+				
+				<h:outputText value="税额："/>
+				<p:inputText value="#{companyEstateBean.currentEstate.estate.taxAccount}" />
+				<h:outputText value="#{msgs.txt_defunct}" />
+				<h:selectOneRadio value="#{companyEstateBean.currentEstate.estate.defunctInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			
+			<div style="margin: 5px 0 0 0; text-align: center">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" 
+					update=":company_estate_edit_form,:company_estate_form,:estateGrow"
+					oncomplete="handleEstate(xhr, status, args);"
+					action="#{companyEstateBean.saveEstate}" 
+					style="margin-right: 5px;"/>
+					
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+					oncomplete="company_estate_edit_var.hide();"/>
+			</div>
+		</h:form>
+		
+		<script type="text/javascript">
+			function handleEstate(xhr, status, args) {
+				if(args.option == "success") {
+					company_estate_edit_var.hide();
+				}
+			}
+		</script>
+	</p:dialog>
+</ui:composition>

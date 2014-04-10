@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="content">
+		<p:growl id="synchronousGrowl" showDetail="true" life="10000" />
+		<h:form id="synchronousFrom" prependId="false">
+			<p:panel id="synchronous" styleClass="panel1">
+				<p:breadCrumb preview="true" expandEffectDuration="200"
+					previewWidth="24" style="width: 99.1%">
+					<p:menuitem value="系统管理" url="#" />
+					<p:menuitem value="组织用户管理" url="#" />
+					<p:menuitem value="主数据同步" url="#" />
+				</p:breadCrumb>
+				<div class="style1" style="margin-top: 5px;">
+					<h:panelGrid id="synchronousFormItems" columns="8"
+						columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+						<h:outputText value="同步日期：" />
+						<p:calendar
+							value="#{dataSynchronousBean.synclogSearchVo.syncStartDatetime}"
+							pattern="yyyy-MM-dd" locale="cn" navigator="true"
+							readOnlyInputText="true" />
+						<h:column>
+							<h:outputLabel value="到" />
+						</h:column>
+						<p:calendar
+							value="#{dataSynchronousBean.synclogSearchVo.syncEndDatetime}"
+							pattern="yyyy-MM-dd" locale="cn" navigator="true"
+							readOnlyInputText="true" />
+						<h:outputText value="同步类型：" />
+						<p:inputText
+							value="#{dataSynchronousBean.synclogSearchVo.syncType}"
+							maxlength="50" />
+						<h:outputText value="备注：" />
+						<p:inputText
+							value="#{dataSynchronousBean.synclogSearchVo.remarks}"
+							maxlength="100" />
+					</h:panelGrid>
+					<div>
+						<p:commandButton actionListener="#{dataSynchronousBean.querySynclog()}"
+							update=":synchronousFrom:synchronousDataTable"
+							value="#{msgs.btn_query}" icon="ui-icon ui-icon-search"
+							style="margin-right: 5px;" />
+						<p:commandButton type="reset" value="#{msgs.btn_reset}"
+							update="synchronousFormItems" icon="ui-icon ui-icon-cancel"
+							style="margin-right: 5px;" />
+						<p:commandButton oncomplete="mdsConfirmationWidgetVar.show()"
+							style="margin-right: 5px;" value="MDS->TIH"
+							icon="ui-icon ui-icon-review" />
+						<p:commandButton oncomplete="tdsConfirmationWidgetVar.show()"
+							style="margin-right: 5px;" value="TIH->TDS"
+							icon="ui-icon ui-icon-arrowthick-1-n" />
+					</div>
+				</div>
+				<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+					id="synchronousDataTable" var="slv"
+					value="#{dataSynchronousBean.lazySynclogVoModel}" paginator="true"
+					rows="20" paginatorPosition="bottom"
+					paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+					rowIndexVar="index" style="margin-top:5px;"
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+					rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+					<f:facet name="header">
+						<h:outputText value="系统日志列表" />
+					</f:facet>
+					<p:column headerText="ID">
+						<h:outputText value="#{slv.synclog.id}" />
+					</p:column>
+					<p:column headerText="版本">
+						<h:outputText
+							value="#{commonBean.formatDate(slv.synclog.version)}" />
+					</p:column>
+					<p:column headerText="类型">
+						<h:outputText value="#{slv.synclog.syncType}" />
+					</p:column>
+					<p:column headerText="同步时间">
+						<h:outputText
+							value="#{commonBean.formatDate(slv.synclog.syncDatetime)}" />
+					</p:column>
+					<p:column headerText="备注">
+						<h:outputText value="#{slv.synclog.remarks}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:confirmDialog id="mdsConfirmDialogId"
+				message="该过程操作数据量比较大，需要耐心等待，确认批量从MDS上同步数据到TIH吗？" header="确认对话框"
+				severity="alert" widgetVar="mdsConfirmationWidgetVar">
+				<p:commandButton id="mdsYes" value="是"
+					actionListener="#{dataSynchronousBean.mdsToTihSynchronous}"
+					update="synchronousDataTable,:synchronousGrowl"
+					oncomplete="mdsConfirmationWidgetVar.hide()" />
+				<p:commandButton id="mdsNo" value="否" type="button"
+					onclick="mdsConfirmationWidgetVar.hide()" />
+			</p:confirmDialog>
+			<p:confirmDialog id="tdsConfirmDialogId"
+				message="该过程操作数据量比较大，需要耐心等待，确认批量从TIH上同步数据到TDS吗？" header="确认对话框"
+				severity="alert" widgetVar="tdsConfirmationWidgetVar">
+				<p:commandButton id="tdsYes" value="是"
+					actionListener="#{dataSynchronousBean.tihToTdsSynchronous}"
+					update="synchronousDataTable,:synchronousGrowl"
+					oncomplete="tdsConfirmationWidgetVar.hide()" />
+				<p:commandButton id="tdsNo" value="否" type="button"
+					onclick="tdsConfirmationWidgetVar.hide()" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

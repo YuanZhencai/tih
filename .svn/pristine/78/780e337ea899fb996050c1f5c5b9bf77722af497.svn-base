@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	
+	<p:dialog header="上传文件" widgetVar="sendRpAttachmentDlgVar"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"  width="620" height="130"
+		id="sendRpAttachmentDlgId">
+		
+		<h:form id="sendRpAttFormId" prependId="false" enctype="multipart/form-data">
+		<p:messages id="sendRpMsg" showDetail="true"/>
+		<p:growl id="attSendRpGrowl" life="8000" />
+		<p:fileUpload fileUploadListener="#{sendReportBean.uploadSingleExcel}"   id="attachmentUploadA"  
+            mode="advanced"  update=":sendRpAttFormId:attSendRpGrowl,:processReportTwoFormId,:processReportGrowlId,:processReportMsgId" 
+              allowTypes="/(\.|\/)(xls|xlsx)$/" invalidFileMessage="文件格式错误！请确保你上传的文件格式是“Excel 97-2003 工作簿(*.xls)”, 或 “Excel工作簿(*.xlsx)”"  
+              oncomplete="sendRpAttachmentDlgVar.hide();"
+            multiple="false"  uploadLabel="上传" cancelLabel="取消" label="选择" 
+             />  
+		</h:form>
+		<script>
+		$(document).ready(function(){
+			loadUpload();
+				});
+		function loadUpload(){
+			 $("#attachmentUploadA_input").attr("style","margin-right:60px");
+				fileUploadStyle.addlistener("attachmentUploadA_input");
+				var aa=document.getElementsByClassName("ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left fileinput-button","label"); 
+				for(var i=0;i &lt; aa.length;i++){
+					aa[i].attr("class","ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left");
+				}
+		}
+		document.getElementsByClassName=function(className,elementName) {
+		    var elements=new Array();
+		    $(elementName).each(function(){
+		    if($(this).attr("class")==className){
+		    elements.push($(this));
+		    }
+		    });
+		return elements;
+		   };
+		</script>
+	</p:dialog>
+</ui:composition>

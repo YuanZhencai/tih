@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="inspectionForm" prependId="false">
+		<p:dataTable emptyMessage="#{msgs.dataTable_empty}" id="inspectionDataTable"
+			var="inspect"  paginator="true" value="#{feedBackInspectationBean.invsInspectationLists}"
+			rows="5" paginatorPosition="bottom"
+			paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+			rowIndexVar="index"
+			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+			<f:facet name="header">
+				<h:outputText value="基本信息列表" />
+			</f:facet>
+			
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column rowspan="2" headerText="公司名称"/>
+					<p:column rowspan="2" headerText="检查类型"/>
+					<p:column rowspan="2" headerText="检查机关"/>
+					<p:column rowspan="2" headerText="稽（检）查业务期间"/>
+					<p:column rowspan="2" headerText="稽（检）查时间"/>
+					<p:column rowspan="2" headerText="税种"/>
+					<p:column rowspan="2" headerText="主要问题描述"/>
+					<p:column rowspan="2" headerText="任务状态"/>
+					<p:column rowspan="2" headerText="处理阶段"/>
+					<p:column colspan="7" headerText="稽查结果" />
+				</p:row>
+				<p:row>
+					<p:column headerText="补税金额" />
+					<p:column headerText="滞纳金" />
+					<p:column headerText="罚款" />
+					<p:column headerText="调减亏损" />
+					<p:column headerText="进项税转出" />
+					<p:column headerText="小计" />
+					<p:column headerText="操作" />
+				</p:row>
+			</p:columnGroup>
+			
+			<p:column>
+				<div style="width:60px;word-wrap:break-word;">
+					<h:outputText value="#{inspect.companyName}" />
+				</div>
+			</p:column>
+			<p:column >
+				<div style="width:50px;word-wrap:break-word;">
+					<h:outputText value="#{inspect.inspectType}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:50px;word-wrap:break-word;">
+					<h:outputText value="#{inspect.inspectOrg}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="#{((inspect.inspectStartDatetime == null) and (inspect.inspectEndDatetime == null))?'display:none':''}">
+					<h:outputText value="#{inspect.inspectStartDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>~
+					<h:outputText value="#{inspect.inspectEndDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column>
+				<div style="#{((inspect.missionStartDatetime == null) and (inspect.missionEndDatetime == null))?'display:none':''}">
+					<h:outputText value="#{inspect.missionStartDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>~
+					<h:outputText value="#{inspect.missionEndDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:40px;word-wrap:break-word;">
+					<h:outputText value="#{inspect.taxTypes}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="word-break:break-all;width: 100px;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;" title="#{inspect.mainProblemDesc}">
+					<h:outputText value="#{inspect.mainProblemDesc}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:40px;word-wrap:break-word;">
+					<h:outputText value="#{inspect.wfStatus}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:50px;word-wrap:break-word;">
+					<h:outputText value="#{inspect.stage}" />
+				</div>
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.overdueTax}"/>
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.penalty}" />
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.fine}" />
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.reductionPrevLoss}"/>
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.inputTaxTurnsOut}"/>
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.sum}" />
+			</p:column>
+			
+			<p:column style="text-align: center;width:80px" headerText="操作">
+				<p:commandButton title="编辑" icon="ui-icon ui-icon-pencil" update=":add_edit_inspectation,:historyForm" 
+					action="#{feedBackInspectationBean.findHistoryByID()}"
+					style="width: 18px;height: 18px;" oncomplete="addOrInspectationVar.show();" >
+					<f:setPropertyActionListener target="#{feedBackInspectationBean.id}" value="#{inspect.id}"/>
+					<f:setPropertyActionListener target="#{feedBackInspectationBean.companyNameId}" value="#{inspect.companymstrId}"/>
+				</p:commandButton>
+				<p:commandButton title="删除" 
+					icon="ui-icon ui-icon-close" update=":inspectionForm,:specialGrowl"
+					style="width: 18px;height: 18px;"
+					oncomplete="confirmation.show();" 
+					disabled="#{inspect.defunctInd eq 'Y' ? true : false}">
+					<f:setPropertyActionListener target="#{feedBackInspectationBean.id}" value="#{inspect.id}"/>
+					<f:setPropertyActionListener target="#{feedBackInspectationBean.companyNameId}" value="#{inspect.companymstrId}"/>
+				</p:commandButton>
+				<p:commandButton action="#{feedBackInspectationBean.findHistoryByID()}"
+					title="历史" icon="ui-icon ui-icon-clock" update=":add_edit_inspectation,:historyForm"
+					oncomplete="addOrInspectationVar.show();"
+					style="width: 18px;height: 18px;">
+					<f:setPropertyActionListener target="#{feedBackInspectationBean.id}" value="#{inspect.id}"/>
+				</p:commandButton>
+				<p:commandButton icon="ui-icon-attachment"
+					style="width: 18px; height: 18px;" oncomplete="uploadOrDownloadAttachment.show();" title="附件"
+					action="#{attachmentBean.searchFilemstr()}" update=":uploadOrDownloadAttachmentID">
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.tableName}" value="INVS_INSPECTATION" />
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.entityId}" value="#{inspect.wfId}" />
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.operationType}" value="001" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	
+	
+
+</ui:composition>

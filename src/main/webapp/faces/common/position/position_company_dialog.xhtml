@@ -1,0 +1,55 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="position_company_id" widgetVar="position_company_dialog"
+		resizable="false" width="600" header="分配所属公司" modal="true">
+		<h:form prependId="false" id="position_company_form">
+		<div class="style1">
+			<h:panelGrid columns="1">
+				<h:panelGrid columns="4"
+					columnClasses="column1, column2, column1, column2">
+					<h:outputText value="岗位名称： " />
+					<p:inputText value="#{positionBean.position.name}" disabled="true"/>
+					<h:outputText value="岗位描述： " />
+					<p:inputText value="#{positionBean.position.desc}" disabled="true"/>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+			<p:dataTable id="position_company_datatable" var="c" value="#{positionBean.companyLazyModel}" paginatorPosition="bottom"
+				rowIndexVar="index" paginator="true" rows="6" style="margin-top: 5px;"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				selection="#{positionBean.positionCompany}" emptyMessage="没有记录">
+				<f:facet name="header">
+					<div class="header">
+						所属公司列表
+						<p:commandButton value="#{msgs.btn_add}" styleClass="header_button"
+							oncomplete="company_dialog.show()" icon="ui-icon ui-icon-plus"
+							update=":company_form"
+							action="#{positionBean.beforeAddPositionorg}" />
+					</div>
+				</f:facet>
+				<p:column selectionMode="multiple" style="width: 10%; text-align: center;" />
+				<p:column headerText="公司名称" style="width: 40%;">
+					<h:outputText value="#{c.stext}" title="#{c.stext}" />
+				</p:column>
+				<p:column headerText="公司地址">
+					<h:outputText value="#{c.address}" title="#{c.address}" />
+				</p:column>
+			</p:dataTable>
+
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton icon="ui-icon ui-icon-check"
+					value="#{msgs.btn_ok}"
+					oncomplete="position_company_dialog.hide();"
+					action="#{positionBean.addPositionorg}" style="margin-right: 5px;" />
+				<p:commandButton icon="ui-icon ui-icon-cancel"
+					value="#{msgs.btn_cancel}" type="button"
+					onclick="position_company_dialog.hide();" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

@@ -1,0 +1,32 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="role_resource_id" widgetVar="role_resource_dialog"
+		resizable="false" width="380" header="分配角色权限" modal="true">
+			<h:form prependId="false" id="role_resource_form">
+				<p:messages showDetail="true" showSummary="true"/>
+				<h:panelGrid columns="2" columnClasses="column1">
+					<h:outputLabel value="角色名称："/>
+					<p:inputText value="#{roleBean.role.name}" disabled="true" style="width: 250px;"/>
+					
+					<h:outputLabel value="角色资源："/>
+					<p:tree value="#{roleBean.root}" var="node" id="resourcesTree"
+						style="width: 245px; height: 300px; overflow: auto;" selectionMode="checkbox" selection="#{roleBean.selectedNodes}">
+						<p:treeNode>
+							<h:outputText value="#{node.name}" />
+						</p:treeNode>
+					</p:tree>
+				</h:panelGrid>
+	
+				<div style="text-align: center; margin-top: 5px;">
+					<p:commandButton value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check" update=":role_resource_form,:roleQueryForm:rowGrowl"
+						style="margin-right: 5px;" oncomplete="handleTreeRequest(xhr, status, args);"
+						action="#{roleBean.roleResourceCommunicate}" />
+					<p:commandButton value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" type="button"
+						onclick="role_resource_dialog.hide();" />
+				</div>
+			</h:form>
+	</p:dialog>
+</ui:composition>

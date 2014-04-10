@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="transPriceForm">	
+		<div class="style1" style="margin: 5px 0 5px 0;">
+			<h:panelGrid columns="6">
+				<h:outputText value="公司名称：" />
+				<p:inputText value="#{transferPriceBean.searchTransPrice.companyName}" style="width:308px"/>
+				<h:outputText value="年度：" />
+				<p:calendar value="#{transferPriceBean.searchTransPrice.decade}"
+					pattern="yyyy" locale="cn" navigator="true"
+					readOnlyInputText="true">
+				</p:calendar>
+				<h:outputText value="有效：" />
+				<h:selectOneMenu value="#{transferPriceBean.searchTransPrice.defunctInd}" >
+							<f:selectItem itemLabel="请选择" />
+							<f:selectItem itemLabel="是" itemValue="N" />
+							<f:selectItem itemLabel="否" itemValue="Y" />
+						</h:selectOneMenu>
+			</h:panelGrid>
+			<div>
+				<p:commandButton value="查询" icon="ui-icon ui-icon-search" action="#{transferPriceBean.searchTransPricesBy()}" update=":transPriceForm:transPriceDataTable" style="margin-right: 5px;" />
+				<p:commandButton value="重置" icon="ui-icon ui-icon-search" action="#{transferPriceBean.resetSearchForm()}" update=":transPriceForm" style="margin-right: 5px;" />
+			</div>
+		</div>
+		<p:dataTable id="transPriceDataTable" value="#{transferPriceBean.transPriceVos}" var="transPriceVo" emptyMessage="#{msgs.dataTable_empty}"
+			paginator="true" rows="10" paginatorPosition="bottom"
+			paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+			rowIndexVar="index" style="margin-top:5px;"
+			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+			rowStyleClass="#{transPriceVo.id mod 2 == 1 ? 'table_row_1' : 'table_row_2'}">
+			<f:facet name="header">
+				<div class="header" style="visibility:#{transferPriceBean.addButton?'visible':'hidden'} " >
+					<h:outputText value="基本信息列表" />
+					<p:commandButton styleClass="header_button" value="添加" action="#{transferPriceBean.initAddTransPrice()}" icon="ui-icon ui-icon-plus" update=":addTransferPriceDialog,:addTransPriceForm,:priceHistoryForm" oncomplete="addTransferPriceVar.show();" >
+						<f:setPropertyActionListener value="add" target="#{transferPriceBean.operate}" />
+					</p:commandButton>
+				</div>
+			</f:facet>
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column rowspan="2" headerText="公司名称"/>
+					<p:column rowspan="2" headerText="年度"/>
+					<p:column rowspan="2" headerText="关联债资比"/>
+					<p:column rowspan="2" headerText="准备同期资料"/>
+					<p:column rowspan="2" headerText="同期资料提交税务局"/>
+					<p:column colspan="7" headerText="验证的交易类型" />
+				</p:row>
+				<p:row>
+					<p:column headerText="交易类型" />
+					<p:column headerText="验证方法" />
+					<p:column headerText="可比公司中位值(%)" />
+					<p:column headerText="调整前比例(%)" />
+					<p:column headerText="调整后比例(%)" />
+					<p:column headerText="调整的特殊因素" />
+					<p:column headerText="操作" />
+				</p:row>
+			</p:columnGroup>
+			<p:column headerText="公司名称" style="font-weight:bolder;" styleClass="#{transPriceVo.parent?'':'table_col_2'}">
+					<h:outputText value="#{transPriceVo.transferPrice.companyName}" />
+			</p:column>
+			<p:column headerText="年度" style="font-weight:bolder;" styleClass="#{transPriceVo.parent?'':'table_col_2'}">
+				<h:outputText value="#{transPriceVo.transferPrice.decade}" >
+					<f:convertDateTime pattern="yyyy" timeZone="GMT+8"/>
+				</h:outputText>
+			</p:column>
+			<p:column headerText="关联债资比" style="text-align: right;font-weight:bolder;" styleClass="#{transPriceVo.parent?'':'table_col_2'}">
+				<h:outputText value="#{transPriceVo.parent?transPriceVo.transferPrice.assoDebtEquityRatio:''}" />
+			</p:column>
+			<p:column headerText="准备同期资料" style="font-weight:bolder;" styleClass="#{transPriceVo.parent?'':'table_col_2'}">
+				<h:outputText rendered="#{transPriceVo.parent}" value="#{transPriceVo.transferPrice.prepareDocInd == 'Y'?'是':'否'}" />
+			</p:column>
+			<p:column headerText="同期资料提交税务局" style="font-weight:bolder;" styleClass="#{transPriceVo.parent?'':'table_col_2'}">
+				<h:outputText rendered="#{transPriceVo.parent}" value="#{transPriceVo.transferPrice.submitDocInd == 'Y'?'是':'否'}" />
+			</p:column>
+			<p:column headerText="交易类型">
+				<h:outputText value="#{commonBean.getValueByDictCatKey(transPriceVo.transTypeVo.transType)}"/>
+			</p:column>
+			<p:column headerText="验证方法">
+				<h:outputText value="#{commonBean.getValueByDictCatKey(transPriceVo.transTypeVo.validationMethod)}" />
+			</p:column>
+			<p:column headerText="可比公司中位值(%)" style="text-align: right">
+				<h:outputText value="#{transPriceVo.transTypeVo.compareCompanyMedian}" />
+			</p:column>
+			<p:column headerText="调整前比例(%)" style="text-align: right">
+				<h:outputText value="#{transPriceVo.transTypeVo.beforeAdjustRatio}"/>
+			</p:column>
+			<p:column headerText="调整后比例(%)" style="text-align: right">
+				<h:outputText value="#{transPriceVo.transTypeVo.afterAdjustRatio}"/>
+			</p:column>
+			<p:column headerText="调整的特殊因素" >
+				<div style="width:100px;word-wrap:break-word;">
+					<ui:repeat var="adjustSpecialReason"
+							value="#{transPriceVo.transTypeVo.adjustSpecialReasons}">
+						<h:outputText value="#{adjustSpecialReason}"/><br/>
+					</ui:repeat>
+				</div>
+			</p:column>
+			<p:column headerText="操作" style="width: 78px;">
+				<p:commandButton action="#{transferPriceBean.handleHistoryChange()}" rendered="#{transPriceVo.parent}"
+					oncomplete="addTransferPriceVar.show();" style="width: 18px;height: 18px;"
+					update=":addTransferPriceDialog,:addTransPriceForm,:priceHistoryForm" icon="ui-icon ui-icon-pencil">
+					<f:setPropertyActionListener target="#{transferPriceBean.selectedTransPrice}" value="#{transPriceVo.transferPrice}" />
+					<f:setPropertyActionListener value="edit" target="#{transferPriceBean.operate}" />
+				</p:commandButton>
+				<p:commandButton icon="ui-icon ui-icon-close" rendered="#{transPriceVo.parent}" disabled="#{transferPrice.defunctInd == 'Y'}" 
+					oncomplete="deleteTransTypeConfirmDialogVar.show();" style="width: 18px;height: 18px;">
+					<f:setPropertyActionListener target="#{transferPriceBean.transPriceId}" value="#{transPriceVo.transferPrice.id}" />
+				</p:commandButton>
+				<p:commandButton action="#{transferPriceBean.handleHistoryChange()}" rendered="#{transPriceVo.parent}"
+					oncomplete="addTransferPriceVar.show();" style="width: 18px;height: 18px;"
+					update=":addTransferPriceDialog,:addTransPriceForm,:priceHistoryForm" icon="ui-icon ui-icon-clock">
+					<f:setPropertyActionListener target="#{transferPriceBean.selectedTransPrice}" value="#{transPriceVo.transferPrice}" />
+					<f:setPropertyActionListener value="log" target="#{transferPriceBean.operate}" />
+				</p:commandButton>
+				<p:commandButton icon="ui-icon-attachment" rendered="#{transPriceVo.parent}"
+					style="width: 18px;height: 18px;" oncomplete="uploadOrDownloadAttachment.show();" title="附件"
+					action="#{attachmentBean.searchFilemstr()}" update=":uploadOrDownloadAttachmentID">
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.tableName}" value="INVS_TRANSFER_PRICE" />
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.entityId}" value="#{transPriceVo.transferPrice.id}" />
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.operationType}" value="#{transferPriceBean.judgeTransAdminAttachment(transPriceVo.transferPrice.companymstrId) eq true ? '100' : '001'}" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+</ui:composition>

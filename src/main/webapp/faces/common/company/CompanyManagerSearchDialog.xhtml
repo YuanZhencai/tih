@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+		<p:dialog modal="true" resizable="false"  header="选择税种" widgetVar="searchFormDialog2" id="searchFormDialog" width="500" height="400">
+	<h:form id="inertForm2">
+			<h:panelGrid id="zzz" columns="2">
+				<h:outputText value="税务机关名称：" />
+				<p:inputText value="#{companyBean.taxauthority.contacterName}" />
+			</h:panelGrid>
+			<div align="right" style="margin-bottom: 5px;">
+				<p:commandButton  value="查询"
+					icon="ui-icon ui-icon-search" actionListener="#{companyBean.searchTaxauthority}" update="companyInsertDataTablez" style="margin-right: 5px;" />
+				<p:commandButton  value="重置" actionListener="#{companyBean.resetdataform1}" update=":inertForm2" icon="ui-icon ui-icon-cancel" />
+			</div>
+			
+					<p:dataTable id="companyInsertDataTablez" var="companyInsert"
+			value="#{companyBean.taxauthorityLazyModel}" 
+			paginator="true" rows="6" paginatorPosition="bottom"
+			paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+			 rowIndexVar="index"
+		 selection="#{companyBean.selectt}"  rowStyleClass="#{index mod 2 == 1 ? 'changeColor' : null}">
+				<p:ajax listener="#{companyBean.updateLast}" event="rowSelect" update=":inertForm2" />
+				<f:facet name="header">
+				<h:outputText value="税种列表" />
+			
+			</f:facet>
+			
+			 <p:column selectionMode="single" />  
+			  <p:column headerText="机关名称">  
+			  	<h:outputText value="#{companyInsert.name}" />
+       		 </p:column>  
+			
+			 
+       		 
+       		   <p:column headerText="机关地址">  
+			  	<h:outputText value="#{companyInsert.address}" />
+       		 </p:column>  
+       		 
+       		  <p:column headerText="联系电话">  
+			  	<h:outputText value="#{companyInsert.contacterTelphone}"  />
+       		 </p:column>  
+		
+			</p:dataTable>
+			
+		<div align="center" style="margin-top: 5px;">
+				<p:commandButton  value="确定"
+					icon="ui-icon ui-icon-check" style="margin-right: 5px;" disabled="#{!companyBean.flag2}"  actionListener="#{companyBean.findJgName}" oncomplete="searchFormDialog2.hide();" update=":insertConfirmForm" />
+				<p:commandButton  value="关闭"  oncomplete="searchFormDialog2.hide();" icon="ui-icon ui-icon-cancel" />
+			</div>
+</h:form>
+	
+	</p:dialog>
+	</ui:composition>

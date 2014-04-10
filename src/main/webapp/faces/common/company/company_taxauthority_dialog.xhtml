@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+		<p:dialog modal="true" resizable="false"  header="税务机关信息" widgetVar="taxDialogvar" id="taxDialogid">
+	<h:form id="taxdialogForm">
+			<p:messages id="taxMessagesId" showDetail="true"   /> 
+			<h:panelGrid  columns="4">
+				<h:outputText value="税务机关名称：" />
+				<h:panelGroup>
+				<p:inputText value="#{companyTaxauthorityBean.tax.name}" id="taxname" disabled="true" />
+				<p:commandButton title="选择"    icon="ui-icon ui-icon-search"   update=":taxForm,:taxdialogForm" style="margin-right: 5px;vertical-align: middle;"    oncomplete="taxFormDialogvar.show();" actionListener="#{companyTaxauthorityBean.clearBefore}"/><h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				纳税人识别号
+				<h:panelGroup>
+				<p:inputText value="#{companyTaxauthorityBean.insertName}"  />
+				<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+			</h:panelGrid>
+			<div align="right" style="margin-bottom: 5px;">
+				<p:commandButton  value="添加" 
+					icon="ui-icon ui-icon-plus" actionListener="#{companyTaxauthorityBean.changeInsert}"  update=":taxdialogForm,:growl,:taxdialogForm:taxMessagesId" style="margin-right: 5px;"   />
+			</div>
+			
+					<p:dataTable id="companyInsertDataTablezzz" var="companyInsert"
+			value="#{companyTaxauthorityBean.showList}" 
+			paginator="true" rows="6" paginatorPosition="bottom"
+			paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+			 rowIndexVar="index" emptyMessage="#{msgs.dataTable_empty}"
+		    rowStyleClass="#{index mod 2 == 1 ? 'changeColor' : null}">
+			
+				<f:facet name="header">
+				<h:outputText value="税种列表" />
+			</f:facet>
+			
+			 
+			 
+			 <p:column headerText="类型">  
+			  	<h:outputText value="#{commonBean.getValueByDictCatKey(companyInsert.taxauthority.type)}" />
+       		 </p:column> 
+       		 
+       		 
+			  <p:column headerText="税务机关名称">  
+			  	<h:outputText value="#{companyInsert.taxauthority.name}" />
+       		 </p:column>  
+			
+			 
+       		 
+       		   <p:column headerText="纳税人识别编号">  
+			  	<h:outputText value="#{companyInsert.taxpayerIdentifier}" />
+       		 </p:column>  
+       		 
+       		 <p:column headerText="操作" style="text-align:center;">  
+				<p:commandButton  title="删除" icon="ui-icon ui-icon-close"  style="margin-right: 5px;width: 15px; height: 15px; "   
+					action="#{companyTaxauthorityBean.delete(companyInsert.taxauthority.id)}" update=":taxdialogForm" />
+				<p:commandButton icon="ui-icon-attachment" title="附件" id="companyTaxAuthorityAttachment"
+					style="width: 15px; height: 15px;" oncomplete="uploadOrDownloadAttachment.show();"
+					action="#{attachmentBean.searchFilemstr()}" update=":uploadOrDownloadAttachmentID">
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.tableName}" value="TAXAUTHORITY_COMPANYMSTR" />
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.entityId}" value="#{companyInsert.id}" />
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.operationType}" value="100" />
+				</p:commandButton>
+       		 </p:column>  
+		
+			</p:dataTable>
+			
+		
+</h:form>
+	</p:dialog>
+	
+	<script>
+	function handleTaxDialogvar(xhr, status, args) {
+		if (args.dataInfoSumbit == "yes") {
+			taxDialogvar.hide();
+		}
+	}
+	</script>
+	</ui:composition>

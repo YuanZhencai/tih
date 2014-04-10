@@ -1,0 +1,52 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="600" id="project_member_dialog_id"
+		widgetVar="project_member_dialog_var" resizable="false" modal="true"
+		header="干系人列表">
+		<h:form id="project_member_form_id" prependId="false">
+			<p:dataTable var="mb" value="#{projectBean.membermstres}" rowIndexVar="ri"
+				paginatorPosition="bottom" paginator="true" rows="5"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				emptyMessage="#{msgs.dataTable_empty}" selection="#{projectBean.selectedMembers}">
+				<f:facet name="header">
+					项目干系人列表
+					<div style="text-align: right; position: relative; margin: -13px -5px 0px 0px; vertical-align: middle">
+					<p:commandButton icon="ui-icon ui-icon-plus" value="#{msgs.btn_add}" update=":edit_member_dialog_id" 
+						style="margin-right: 5px;" 
+						disabled="#{!(projectBean.proadmin or projectBean.project.p.createdBy eq currentUser.currentUsermstr.adAccount)}"
+						actionListener="#{projectBean.initMember}" oncomplete="edit_member_dialog_var.show()">
+						<f:setPropertyActionListener target="#{projectBean.memberModel}" value="add"/>
+					</p:commandButton>
+					
+					<p:commandButton icon="ui-icon ui-icon-close" value="#{msgs.btn_delete}" update=":confirm_form_id"
+						oncomplete="confirm_dialog_var.show()"
+						disabled="#{!(projectBean.proadmin or projectBean.project.p.createdBy eq currentUser.currentUsermstr.adAccount)}">
+						<f:setPropertyActionListener target="#{projectBean.deleteModel}" value="member"/>
+					</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column selectionMode="multiple" style="width: 10%; text-align: center;"/>
+				<p:column headerText="姓名" style="width: 20%;">
+					<h:outputText value="#{projectBean.getUsernameByAccount(mb.m.member)}"/>
+				</p:column>
+				<p:column headerText="角色">
+					<h:outputText value="#{mb.m.role}"/>
+				</p:column>
+				<p:column headerText="操作" style="width: 10%; text-align: center;">
+					<p:commandButton title="#{msgs.btn_edit}" icon="ui-icon ui-icon-pencil" update=":edit_member_dialog_id"
+						oncomplete="edit_member_dialog_var.show()" style="width: 18px; height: 18px;" actionListener="#{projectBean.initMember}"
+						disabled="#{!(projectBean.proadmin or projectBean.project.p.createdBy eq currentUser.currentUsermstr.adAccount)}">
+						<f:setPropertyActionListener target="#{projectBean.memberModel}" value="edit"/>
+						<f:setPropertyActionListener target="#{projectBean.membermstr}" value="#{mb}"/>
+						<f:setPropertyActionListener target="#{projectBean.projectUserName}" 
+							value="#{projectBean.getUsernameByAccount(mb.m.member)}"/>
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

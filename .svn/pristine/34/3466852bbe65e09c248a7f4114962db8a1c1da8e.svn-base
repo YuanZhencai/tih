@@ -1,0 +1,197 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="add_document_dialog_id" header="添加文档" width="600"
+		widgetVar="add_document_dialog_var" resizable="false" modal="true">
+		<h:form id="add_document_form" prependId="false"
+			enctype="multipart/form-data">
+			<p:messages autoUpdate="true" showDetail="true" showSummary="true" />
+
+			<h:panelGrid columns="4"
+				columnClasses="pcolumn1,column2,pcolumn1,column2">
+				<h:outputLabel value="文件：" />
+				<p:fileUpload id="upComponent" mode="simple"
+					value="#{documentBean.upFile}" style="height: 25px;" />
+
+				<h:outputLabel value="文档名称：" />
+				<h:column>
+					<p:inputText value="#{documentBean.doc.documentTitle}" id="docName"
+						onclick="byAttachName();">
+					</p:inputText>
+					<h:outputText value="*" style="color: red;" />
+				</h:column>
+				<h:outputLabel value="文档类别：" />
+				<h:column>
+					<h:selectOneMenu value="#{documentBean.doc.category}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems value="#{documentBean.cateList}" var="dict"
+							itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputText value="*" style="color: red;" />
+				</h:column>
+				<h:outputLabel value="文档分类：" />
+				<h:column>
+					<p:selectCheckboxMenu value="#{documentBean.docTypeList}"
+						label="请选择" style="width: 142px;">
+						<f:selectItems
+							value="#{commonBean.getDictByCat(commonBean.tihTaxDoctype)}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}">
+						</f:selectItems>
+					</p:selectCheckboxMenu>
+					<h:outputText value="*" style="color: red;" />
+				</h:column>
+				<h:outputLabel value="行业：" />
+				<h:selectOneMenu value="#{documentBean.doc.industry}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihTaxIndustry)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+				<h:outputLabel value="地域：" />
+				<h:selectOneMenu value="#{documentBean.doc.region}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihTaxRegion)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+
+				<h:outputLabel value="税种：" />
+				<p:selectCheckboxMenu value="#{documentBean.taxTypeList}"
+					label="请选择" style="width: 142px;">
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihTaxType)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}">
+					</f:selectItems>
+				</p:selectCheckboxMenu>
+				<h:outputLabel value="发文机关：" />
+				<p:autoComplete dropdown="true"
+					value="#{documentBean.selectedPublishOrg}" var="publishOrg"
+					itemLabel="#{publishOrg.codeVal}#{' '}" itemValue="#{publishOrg}"
+					converter="publishDictConverter"
+					completeMethod="#{commonBean.completePublishOrg}"
+					forceSelection="true">
+				</p:autoComplete>
+
+				<h:outputLabel value="发文字号：" />
+				<p:autoComplete dropdown="true"
+					value="#{documentBean.selectedPublishNo}" var="publishNo"
+					itemLabel="#{publishNo.codeVal}#{' '}" itemValue="#{publishNo}"
+					converter="publishDictConverter"
+					completeMethod="#{commonBean.completePublishNo}"
+					forceSelection="true">
+				</p:autoComplete>
+
+				<h:outputLabel value="发文年度：" />
+				<p:inputText value="#{documentBean.doc.publishYear}" />
+
+				<h:outputLabel value="发文序号：" />
+				<p:inputText value="#{documentBean.doc.publishSeqNo}" />
+				<h:outputLabel value="发文日期：" />
+				<p:calendar value="#{documentBean.doc.publishTime}" locale="cn"
+					navigator="true" pattern="yyyy-MM-dd" />
+
+				<h:outputLabel value="所属公司：" />
+				<h:column>
+					<p:inputText value="#{documentBean.doc.belongtoCompany}"
+						id="belongtoCompanyId" style="width: 105px; margin-right: 3px;"
+						readonly="true" />
+					<p:commandButton icon="ui-icon ui-icon-search" process="@this"
+						title="#{msgs.btn_query}" update=":commonCompany,:datatableform"
+						style="width: 26px; height: 26px; vertical-align: top;"
+						actionListener="#{companyCommonBean.init(':add_document_form:belongtoCompanyId','documentBean','single','selectBelongCompany')}"
+						oncomplete="commoncompanyvar.show();" />
+					<h:outputText value="*" style="color: red;" />
+				</h:column>
+				<h:outputLabel value="有效性：" />
+				<h:selectOneMenu value="#{documentBean.doc.effectStatus}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihTaxDocstatus)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+
+				<h:outputLabel value="提交资料公司：" />
+				<h:column>
+					<p:inputText value="#{documentBean.doc.submitCompany}"
+						id="submitCompanyId" style="width: 105px; margin-right: 3px;"
+						readonly="true" />
+					<p:commandButton icon="ui-icon ui-icon-search" process="@this"
+						title="#{msgs.btn_query}" update=":commonCompany,:datatableform"
+						style="width: 26px; height: 26px; vertical-align: top;"
+						actionListener="#{companyCommonBean.init(':add_document_form:submitCompanyId','documentBean','single','selectSubmitCompany')}"
+						oncomplete="commoncompanyvar.show();" />
+				</h:column>
+				<h:outputLabel value="提交资料日期：" />
+				<p:calendar value="#{documentBean.doc.submitYear}" locale="cn"
+					navigator="true" pattern="yyyy-MM-dd" />
+
+				<h:outputLabel value="资料提交状态：" />
+				<h:selectOneMenu value="#{documentBean.doc.submitStatus}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihDocSubmitstatus)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+			</h:panelGrid>
+			<h:panelGrid columns="4"
+				rendered="#{'Y' == documentBean.wfRemindVo.wfTimeoutInd}"
+				columnClasses="pcolumn1,column2,pcolumn1,column2">
+				<h:outputText value="完成日期：" />
+				<h:column>
+					<p:calendar locale="cn" pattern="yyyy-MM-dd" showButtonPanel="true"
+						navigator="true" value="#{documentBean.wfRemindVo.wfCompleteDate}" />
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="提醒频率（天）：" />
+				<h:column>
+					<p:inputText value="#{documentBean.wfRemindVo.wfIntervalDays}" />
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="催促日期：" />
+				<h:column>
+					<p:calendar locale="cn" pattern="yyyy-MM-dd" showButtonPanel="true"
+						navigator="true" value="#{documentBean.wfRemindVo.wfUrgeDate}" />
+					<span style="color: red">*</span>
+				</h:column>
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="pcolumn1">
+				<h:outputLabel value="简单描述：" />
+				<p:inputTextarea value="#{documentBean.doc.desc}"
+					style="width: 400px; height: 30px;" autoResize="true" />
+			</h:panelGrid>
+
+			<div style="text-align: center; margin-top: 5px;">
+				<p:outputPanel id="submit_fileupload">
+					<p:commandButton icon="ui-icon ui-icon-check"
+						value="#{msgs.btn_ok}"
+						update=":add_document_form,:document_permission_form,:growl"
+						ajax="false" actionListener="#{documentBean.addDocument}"
+						style="margin-right: 5px;"
+						oncomplete="bui_fileupload.hide();weatherShowDialog();"
+						onclick="bui_fileupload.show();" />
+
+					<p:commandButton icon="ui-icon ui-icon-cancel"
+						value="#{msgs.btn_cancel}" type="button"
+						onclick="add_document_dialog_var.hide()" />
+				</p:outputPanel>
+			</div>
+
+			<p:blockUI block="submit_fileupload" widgetVar="bui_fileupload" />
+		</h:form>
+
+	</p:dialog>
+</ui:composition>

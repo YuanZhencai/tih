@@ -1,0 +1,54 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="320" id="edit_member_dialog_id" widgetVar="edit_member_dialog_var"
+		resizable="false" modal="true" 
+		header="#{projectBean.memberModel eq 'add' ? '添加干系人' : (projectBean.memberModel eq 'edit' ? '编辑干系人' : '查看干系人')}">
+		<h:form id="edit_member_form_id" prependId="false">
+			<p:messages autoUpdate="true" showSummary="true" showDetail="true"/>
+			<h:panelGrid columns="3" rendered="#{projectBean.memberModel eq 'add' ? true : false}">
+				<h:outputText value="干系人："/>
+				<p:selectCheckboxMenu value="#{projectBean.projectUserNameList}" label="请选择" id="userpnachns" style="width: 185px; height: 25px;margin-right: 3px;">
+					<f:selectItems value="#{projectBean.projectUserNameMap}" />
+				</p:selectCheckboxMenu>
+				<h:column>
+				<p:commandButton actionListener="#{userCommonBean.init(':edit_member_form_id:userpnachns','multiple','projectBean','selectedUser')}"
+					update=":commonUserDialog" oncomplete="commonUserDialogWidgetVar.show();" icon="ui-icon ui-icon-search" title="#{msgs.btn_query}" 
+					style="width: 25px; height: 25px; vertical-align: top;"
+					disabled="#{projectBean.memberModel == 'add' ? false : true}"/>
+				<span style="color: red">*</span>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" rendered="#{projectBean.memberModel eq 'edit' ? true : false}">
+				<h:outputText value="干系人："/>
+				<h:column>
+					<p:inputText value="#{projectBean.projectUserName}" disabled="true" style="width: 210px; margin-right: 3px;"/>
+					<span style="color: red">*</span>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2">
+				<h:outputText value="角　色："/>
+				<h:column>
+					<p:inputText value="#{projectBean.membermstr.m.role}" style="width: 210px;" maxlength="50"/>
+				</h:column>
+
+				<h:outputText value="备　注："/>
+				<p:inputTextarea value="#{projectBean.membermstr.m.remarks}" style="width: 210px;"
+					rows="3" autoResize="true" effectDuration="200" maxlength="200"/>
+			</h:panelGrid>
+			
+			<div style="text-align: center;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" 
+					update=":edit_member_form_id,:project_member_form_id,:projectForm:pGrowl"
+					oncomplete="handleMember(xhr, status, args);" style="margin: 5px 5px 5px 5px;"
+					action="#{projectBean.modelMember}"/>
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}" type="button"
+					onclick="edit_member_dialog_var.hide()"/>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

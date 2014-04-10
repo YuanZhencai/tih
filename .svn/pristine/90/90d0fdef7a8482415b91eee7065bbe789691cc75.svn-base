@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="#{companyTaxTypeRatioBean.model eq 'add' ? '添加' : '编辑'}年度纳税金额信息" widgetVar="company_annualtaxpay_edit_var"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"
+		id="company_annualtaxpay_edit_id">
+		<style type="text/css">
+			.taxpay_column1 {width: 120px; text-align: right;}
+		</style>
+		
+		<h:form prependId="false" id="company_annualtaxpay_edit_form">
+			<p:messages showDetail="true" showSummary="true" id="msg_taxpay" />
+			<h:panelGrid columns="3" columnClasses="taxpay_column1,column2">
+				<h:outputText value="纳税金额(万元)："/>
+				<p:inputText value="#{companyTaxTypeRatioBean.currentTaxPay.taxPayAccount}"
+					style="width: 200px;" label="纳税金额：" />
+				<h:column>
+					<h:outputText value=""/>
+				</h:column>
+				
+				<h:outputText value="最新税率：" />
+				<h:column>
+					<p:inputText value="#{companyTaxTypeRatioBean.currentTaxPay.taxRate}" id="taxRate"
+						style="width: 200px;" label="最新税率："/>
+					<p:watermark value="填写格式：xx%,xx%,xx%..." for="taxRate"/>
+				</h:column>
+				<h:column>
+					<h:outputText value="" />
+				</h:column>
+				
+				<h:column>
+					<h:outputText value="" />
+				</h:column>
+				<h:outputText value="最新税率填写格式：xx%,xx%,xx%..." style="color: red;"/>
+				<h:outputText value="" />
+
+				<h:outputText value="纳税年度："/>
+				<h:selectOneMenu id="taxAnnual"
+					value="#{companyTaxTypeRatioBean.currentTaxPay.taxPayYear}" converter="annualConverter">
+					<p:ajax event="change" update="taxAnnual" />
+					<f:selectItem itemLabel="请选择" />
+					<f:selectItems value="#{commonBean.getAnnuals(companyTaxTypeRatioBean.currentTaxPay.taxPayYear)}" var="annual"
+						itemLabel="#{annual.itemLabel}" itemValue="#{annual.itemValue}" />
+				</h:selectOneMenu>
+				<h:column>
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" columnClasses="taxpay_column1">
+				<h:outputText value="税率变化说明："/>
+				<p:inputTextarea autoResize="true" style="width: 200px; height: 40px;"
+					value="#{companyTaxTypeRatioBean.currentTaxPay.remarks}"/>
+				
+				<h:outputText value="#{msgs.txt_defunct}" />
+				<h:selectOneRadio value="#{companyTaxTypeRatioBean.currentTaxPay.defunctInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			
+			<div style="margin: 5px 0 0 0; text-align: center">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" 
+					update=":company_annualtaxpay_edit_form:msg_taxpay,:company_taxtype_ratio_edit_form,:taxtypeRatioGrowl"
+					oncomplete="handleAnnualTaxPay(xhr, status, args);"
+					action="#{companyTaxTypeRatioBean.saveAnnualTaxPay()}" 
+					style="margin-right: 5px;"/>
+					
+				<p:commandButton type="button" icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+					onclick="company_annualtaxpay_edit_var.hide();"/>
+			</div>
+		</h:form>
+		
+		<script type="text/javascript">
+			function handleAnnualTaxPay(xhr, status, args) {
+				if(args.option == "success") {
+					company_annualtaxpay_edit_var.hide();
+				}
+			}
+		</script>
+	</p:dialog>
+</ui:composition>

@@ -1,0 +1,56 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="600" id="query_usermstr_dialog_id"
+		widgetVar="query_usermstr_dialog_var" resizable="false" modal="true"
+		header="用户选择列表">
+		<h:form id="query_usermstr_form_id" prependId="false">
+			<div class="style1">
+				<h:panelGrid columns="4" columnClasses="column1,column2,column1,column2">
+					<h:outputLabel value="用户姓名："/>
+					<p:inputText value="#{projectBean.userQuery['name']}" />
+
+					<h:outputLabel value="员工编号："/>
+					<p:inputText value="#{projectBean.userQuery['code']}" />
+				</h:panelGrid>
+				<div align="right">
+					<p:commandButton icon="ui-icon ui-icon-search" value="#{msgs.btn_query}" style="margin-right: 5px;"
+						action="#{projectBean.searchUsermstres}" update=":query_usermstr_form_id" />
+					<p:commandButton icon="ui-icon ui-icon-cancel" update=":query_usermstr_form_id"
+						value="#{msgs.btn_reset}" action="#{projectBean.resetQueryUsermstr}"/>
+				</div>
+			</div>
+
+			<p:dataTable var="u" value="#{projectBean.users}" paginatorPosition="bottom" paginator="true" rows="8"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				selection="#{projectBean.user}" emptyMessage="#{msgs.dataTable_empty}" style="margin-top: 5px;">
+				<f:facet name="header">
+					集团用户列表
+				</f:facet>
+				<p:column selectionMode="single" style="width: 10%; text-align: center;"/>
+				<p:column headerText="姓名">
+					<h:outputText value="#{u.p.nachn}" />
+				</p:column>
+				<p:column headerText="工号">
+					<h:outputText value="#{u.usermstr.pernr}" />
+				</p:column>
+				<p:column headerText="电话">
+					<h:outputText value="#{u.p.telno}"/>
+				</p:column>
+				<p:column headerText="邮箱">
+					<h:outputText value="#{u.p.email}"/>
+				</p:column>
+			</p:dataTable>
+			<div style="text-align: center;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" update=":edit_member_form_id:userpnachn,:query_usermstr_form_id"
+					oncomplete="query_usermstr_dialog_var.hide()" actionListener="#{projectBean.clearUsers}"/>
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}" style="margin: 5px 5px 5px 5px;"
+					update=":query_usermstr_form_id"
+					oncomplete="query_usermstr_dialog_var.hide()" actionListener="#{projectBean.clearUsers}"/>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

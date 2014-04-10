@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="timeoutEmailDialog" widgetVar="timeoutEmailDialogVar"
+		resizable="false" header="创建定时器" modal="true">
+		<h:form id="timeoutEmailDialogForm" prependId="false">
+			<h:panelGrid columns="6"
+				columnClasses="column1,column2,column1,column2,column1,column2">
+				<h:outputText value="名称:" />
+				<h:column>
+					<p:inputText id="jobName"
+						value="#{timeoutEmailBean.jobInfoVo.jobName}"
+						readonly="#{JobMBean.excuteMethod eq 'add' ? false:true}" />
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="开始时间:" />
+				<h:column>
+					<p:calendar id="startDate"
+						value="#{timeoutEmailBean.jobInfoVo.startDate}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true">
+					</p:calendar>
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="结束时间:" />
+				<p:calendar id="endDate"
+					value="#{timeoutEmailBean.jobInfoVo.endDate}" pattern="yyyy-MM-dd"
+					locale="cn" navigator="true">
+				</p:calendar>
+				<h:outputText value="日:" />
+				<h:selectOneMenu id="day"
+					value="#{timeoutEmailBean.jobInfoVo.dayOfMonth}" disabled="true">
+					<f:selectItem itemLabel="每天" itemValue="*" />
+					<f:selectItems value="#{timeoutEmailBean.days}" />
+				</h:selectOneMenu>
+				<h:outputText value="时:" />
+				<h:selectOneMenu id="hour"
+					value="#{timeoutEmailBean.jobInfoVo.hour}">
+					<f:selectItems value="#{timeoutEmailBean.hours}" />
+				</h:selectOneMenu>
+				<h:outputText value="分:" />
+				<h:selectOneMenu id="minute"
+					value="#{timeoutEmailBean.jobInfoVo.minute}">
+					<f:selectItems value="#{timeoutEmailBean.minutesOrSeconds}" />
+				</h:selectOneMenu>
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="描述:" />
+				<h:inputTextarea cols="59" rows="3" id="description"
+					value="#{timeoutEmailBean.jobInfoVo.description}"
+					style="width: 600px;" />
+			</h:panelGrid>
+			<p:dataTable emptyMessage="#{msgs.dataTable_empty}" id="configTable"
+				rowIndexVar="index" value="#{timeoutEmailBean.configVos}"
+				var="configVo"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+				<f:facet name="header">
+					<div class="header">
+						<h:outputText value="邮件配置列表列表" />
+						<p:commandButton value="添加" oncomplete="configDialogVar.show()"
+							update=":configForm"
+							action="#{timeoutEmailBean.initAddTimeoutConfig()}"
+							style="float:right">
+							<f:setPropertyActionListener
+								target="#{timeoutEmailBean.configOprateType}" value="add" />
+						</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column headerText="流程类型">
+					<h:selectOneMenu value="#{configVo.wfType}" disabled="true">
+						<f:selectItem itemLabel="请选择" itemValue="" />
+						<f:selectItems value="#{timeoutEmailBean.wfTypes}" />
+					</h:selectOneMenu>
+				</p:column>
+				<p:column headerText="流程申请单类型">
+					<p:selectCheckboxMenu value="#{configVo.requestforms}"
+						style="width: 130px;">
+						<f:selectItems
+							value="#{timeoutEmailBean.requestFormsMap[configVo.wfType]}"
+							itemDisabled="true" />
+					</p:selectCheckboxMenu>
+				</p:column>
+				<p:column headerText="超时类型">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(configVo.timeoutType)}" />
+				</p:column>
+				<p:column headerText="超时天数">
+					<h:outputText value="#{configVo.wpTimeoutDays}" />
+				</p:column>
+				<p:column headerText="提醒频率（天）">
+					<h:outputText value="#{configVo.wpIntervalDays}" />
+				</p:column>
+				<p:column headerText="催促天数">
+					<h:outputText value="#{configVo.wpUrgeDays}" />
+				</p:column>
+				<p:column headerText="有效天数">
+					<h:outputText value="#{configVo.effectiveDays}" />
+				</p:column>
+				<p:column headerText="发送邮件">
+					<h:outputText value="#{configVo.mail ? '是':'否'}" />
+				</p:column>
+				<p:column headerText="发送系统消息">
+					<h:outputText value="#{configVo.notice ? '是':'否'}" />
+				</p:column>
+				<p:column headerText="状态">
+					<h:outputText value="#{'Y' == configVo.enableInd ? '开启':'关闭'}" />
+				</p:column>
+				<p:column headerText="操作" style="text-align: center;">
+					<p:commandButton title="编辑" icon="ui-icon ui-icon-pencil"
+						oncomplete="configDialogVar.show()" update=":configForm"
+						action="#{timeoutEmailBean.findTimeoutConfigInfo()}"
+						style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener target="#{timeoutEmailBean.selectedConfigVo}"
+							value="#{configVo}" />
+						<f:setPropertyActionListener
+							target="#{timeoutEmailBean.configOprateType}" value="edit" />
+					</p:commandButton>
+					<p:commandButton title="删除" icon="ui-icon ui-icon-close"
+						action="#{timeoutEmailBean.deleteTimeoutConfig()}"
+						oncomplete="disableItems();" update=":timeoutEmailDialogForm"
+						style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener
+							target="#{timeoutEmailBean.selectedConfigVo}" value="#{configVo}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					rendered="#{'add' == timeoutEmailBean.jobOprateType}"
+					action="#{timeoutEmailBean.createTimeoutJob()}"
+					update=":timeoutEmailForm"
+					oncomplete="handleDialog(xhr, status, args);"
+					style="margin-right: 5px;" />
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					rendered="#{'edit' == timeoutEmailBean.jobOprateType}"
+					action="#{timeoutEmailBean.editTimeoutJob()}"
+					update=":timeoutEmailForm"
+					oncomplete="handleDialog(xhr, status, args);"
+					style="margin-right: 5px;" />
+				<p:commandButton icon="ui-icon ui-icon-cancel"
+					value="#{msgs.btn_cancel}" type="button"
+					onclick="timeoutEmailDialogVar.hide()" />
+			</div>
+		</h:form>
+	</p:dialog>
+
+
+</ui:composition>

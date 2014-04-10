@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+	<ui:define name="styleAndScript">
+		<style type="text/css">
+			.table_row_1 {
+				background: #DEEDF7;
+				height: 18px;
+				border-width: 0px;
+			}
+			.table_row_2 {
+				height: 18px;
+				border-width: 0px;
+			}
+			.table_col_1{
+				border-bottom-width: 0px;
+				border-top-width: 0px;
+			}
+			.table_col_2{
+				border-width: 0px !important;
+			}
+		</style>
+		<script>
+		function rowEdit(){
+			  var rowEditor = document.getElementById("addTransPriceForm:transTypeDataTable:0:rowEditor");
+			  var childNodes =  rowEditor.childNodes;
+			  childNodes.item(0).click();
+		};
+		function handleDialog(xhr, status, args) {
+			if(args.option == "close"){
+				eval(args.widgetVar).hide();
+			}
+		}
+		</script>
+	</ui:define>
+	<ui:define name="content">
+		<shiro:hasPermission name="affair:special:transferprice">
+			<p:panel styleClass="panel1" >
+				<p:breadCrumb preview="true" expandEffectDuration="200"
+					previewWidth="24" style="width: 99.1%">
+					<p:menuitem value="首页" url="#" />
+					<p:menuitem value="事务管理" url="#"/>
+					<p:menuitem value="专项管理" url="#"/>
+					<p:menuitem value="转让定价信息" url="#" />
+				</p:breadCrumb>
+				<ui:include src="transferPrice.xhtml"/>
+				<ui:include src="add_transferPrice.xhtml"/>
+				<ui:include src="confirm_dialog.xhtml"/>
+				<ui:include src="/faces/common/company/common_company_dialog.xhtml"/>
+				<ui:include src="/faces/common/attachment/common_attachment_dialog.xhtml"/>
+				<ui:include src="/faces/common/attachment/common_confirm_dialog.xhtml"/>
+			</p:panel>
+		</shiro:hasPermission>
+		<shiro:lacksPermission name="affair:special:transferprice">
+			<ui:include src="/errorshiro.xhtml"></ui:include>
+		</shiro:lacksPermission>
+	</ui:define>
+</ui:composition>

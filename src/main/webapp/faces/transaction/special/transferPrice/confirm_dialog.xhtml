@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:confirmDialog id="deleteTransTypeConfirmDialog" message="确认删除？" width="200"
+		header="确认对话框" severity="alert" widgetVar="deleteTransTypeConfirmDialogVar">
+		<h:form prependId="false">
+			<p:commandButton value="是"
+				oncomplete="deleteTransTypeConfirmDialogVar.hide()" update=":priceHistoryForm,:addTransPriceForm,:messages,:transPriceForm"
+				actionListener="#{transferPriceBean.deleteTransPrice()}" />
+			<p:commandButton value="否" onclick="deleteTransTypeConfirmDialogVar.hide()"
+				type="button" />
+		</h:form>
+	</p:confirmDialog>
+	<p:confirmDialog id="deleteTransConfirmDialog" message="确认删除？" width="200"
+		header="确认对话框" severity="alert" widgetVar="deleteTransConfirmDialogVar">
+		<h:form prependId="false">
+			<p:commandButton value="是"
+				oncomplete="deleteTransConfirmDialogVar.hide()" update=":addTransPriceForm"
+				actionListener="#{transferPriceBean.deleteTransType()}" />
+			<p:commandButton value="否" onclick="deleteTransConfirmDialogVar.hide()"
+				type="button" />
+		</h:form>
+	</p:confirmDialog>
+</ui:composition>

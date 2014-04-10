@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog header="常用功能信息设置" widgetVar="updateDlgVar" showEffect="fade"
+		hideEffect="fade" modal="true" resizable="false" id="updateDlgId">
+
+		<h:form id="updateFormId">
+			<div>
+			<div>&#160;</div>
+				<DIV>
+					<p:pickList var="player" id="picklistId" 
+						addLabel="#{msgs.pickList_addLabel}" addAllLabel="#{msgs.pickList_addAllLabel}" 
+						removeLabel="#{msgs.pickList_removeLabel}" removeAllLabel="#{msgs.pickList_removeAllLabel}" 
+						moveUpLabel="#{msgs.pickList_moveUpLabel}" moveTopLabel="#{msgs.pickList_moveTopLabel}" 
+						moveDownLabel="#{msgs.pickList_moveDownLabel}" moveBottomLabel="#{msgs.pickList_moveBottomLabel}" 
+						value="#{commonFunctionBean.pickListUsedVOs}"
+						itemValue="#{player}" itemLabel="#{player}" iconOnly="true"  
+						effect="fade" >
+						<f:facet name="sourceCaption">可选资源</f:facet>
+						<f:facet name="targetCaption">已选资源(可鼠标拖拽排序)</f:facet>
+
+					</p:pickList>
+				</DIV>
+				<DIV>&#160;</DIV>
+				<p:column>
+					<DIV align="center">
+						<p:commandButton value="#{msgs.btn_ok }"  icon="ui-icon ui-icon-check" 
+							actionListener="#{ commonFunctionBean.updatePickListData}"
+							oncomplete="handleUpdateRequest(xhr, status, args);"
+							update=":firstForm,:firstForm:growl"  style="margin-right:5px" />
+						<p:commandButton type="button" value="#{msgs.btn_cancel }" onclick="updateDlgVar.hide()"  icon="ui-icon ui-icon-cancel" />
+					</DIV>
+				</p:column>
+			</div>
+		</h:form>
+
+	</p:dialog>
+</ui:composition>

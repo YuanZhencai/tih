@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<style>
+body {
+	background: #F1F6FA;
+}
+
+#welcome {
+	width: 100%;
+	text-align: center;
+}
+</style>
+
+	<shiro:hasPermission name="home">
+		<ui:include src="/faces/homepage/main.xhtml" />
+	</shiro:hasPermission>
+	<shiro:lacksPermission name="home">
+		<div id="welcome">
+			<img src="#{facesContext.externalContext.requestContextPath}/images/bj.jpg" />
+		</div>
+	</shiro:lacksPermission>
+
+</ui:composition>
+

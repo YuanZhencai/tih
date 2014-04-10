@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="styleAndScript">
+		<style type="text/css">
+.op_btn {
+	width: 25px;
+	height: 25px;
+}
+
+.pcolumn1 {
+	text-align: right;
+	width: 110px;
+}
+
+.pcolumnName {
+	text-align: right;
+	width: 110px;
+	vertical-align: top;
+}
+
+.pcolumn2 {
+	width: 145px;
+}
+
+.pcolumn3 {
+	text-align: right;
+	width: 120px;
+}
+
+input[type='radio'] {
+	width: 30px;
+}
+input[type='checkbox'] {
+	width: 20px;
+}
+.ui-state-default {	/**去掉白线*/
+    box-shadow: 0 0px 0 #FFFFFF inset;
+}
+</style>
+		<script>
+		
+		/*$(document).ready(function(){
+		
+			$("#left_folder_tree_form_id span.ui-tree-node-label").each(function() {
+				$(this).css("width", "80px");
+				$(this).css("white-space", "nowrap");
+				$(this).css("word-break", "keep-all");
+				$(this).css("overflow", "hidden");
+				$(this).css("text-overflow", "ellipsis");
+			});
+		});*/
+		
+		/*document.onkeydown = function(event) {
+		alert(document.activeElement.id);
+		alert(event.keyCode);
+			if (event.keyCode == 13) {alert(document.getElementById("query_submit"));
+				document.getElementById("query_submit").click();
+			}
+		}*/
+		
+		$(document).ready(function(){
+			$("#doc_query_panel_id input").keydown(function(){
+				if (event.keyCode == 13) {
+					event.returnValue= false; // 取消此事件的默认操作
+					document.getElementById("query_submit").click();
+				}
+			});
+		});
+
+		function removeTextShadow() {
+			$("#left_folder_tree_form_id span.ui-tree-node-label").each(function(index){
+				$(this).css("text-shadow", "none");
+			});
+			
+			$("#folder_tree_form span.ui-tree-node-label").each(function(index){
+				$(this).css("text-shadow", "none");
+			});
+		}
+		
+		function weatherShowDialog() {
+			//alert($("#opModel").val() + "," + $("#docModel").val());
+			if($("#opModel").val() != "successful" &amp;&amp; $("#docModel").val() == "add") {
+				//alert(add_document_dialog_var);
+				add_document_dialog_var.show();
+			}
+			if($("#opModel").val() != "successful" &amp;&amp; $("#docModel").val() == "checkin") {
+				checkin_document_dialog_var.show();
+			}
+		}	
+
+		function byAttachName() {
+			var filename = $('#upComponent').val();
+			var i = filename.lastIndexOf(".");
+			if(i != -1) {
+				filename = filename.substring(0, i);
+			}
+			i = filename.lastIndexOf("\\");
+			if(i != -1) {
+				filename = filename.substring(i+1);
+			}
+			$('#docName').val(filename);
+		}
+		function ensureQuery() {
+			//$("span.ui-fieldset-toggler").each(function(index){
+				/*if(index == 1 &amp;&amp; $(this).hasClass("ui-icon-minusthick")) {
+					extendCondition.toggle();
+				} else if(index == 2 &amp;&amp; $(this).hasClass("ui-icon-minusthick")) {
+					advancedCondition.toggle();
+				}*/
+			//});
+			$("span.ui-icon-minusthick").each(function(index){
+				//doc_query_panel_var
+				if($(this).attr("id") != undefined &amp;&amp; $(this).attr("id").match(/doc_query_panel_id/)) {
+					doc_query_panel_var.toggle();
+				}
+			});
+		}
+		
+		
+		function handleFolder(xhr, status, args){
+			if(args.addFolder == "success") {
+				add_folder_dialog_var.hide();
+			}
+			
+			if(args.editFolder == "success") {
+				edit_folder_dialog_var.hide()
+			}
+		}
+		function handlePermission(xhr, status, args) {
+			if(args.permiss == "success") {
+				document_permission_dialog_var.hide();
+			}
+		}
+		
+		function ensureFilename() {
+			alert($("#upComponent").val());
+			alert($("#docName"));
+		}
+		
+		function handleMoveDoc(xhr, status, args){
+			if(args.flag == 1) {
+				movedoc_confirm_dialog_var.hide();
+				folder_tree_dialog_var.hide();
+			} else if(args.flag == 2) {
+				movedoc_again_confirm_dialog_var.show();
+			} else if(args.flag == 3) {
+				movedoc_again_confirm_dialog_var.hide();
+				movedoc_confirm_dialog_var.hide();
+				folder_tree_dialog_var.hide();
+			} else if (args.flag == 4) {
+				movedoc_confirm_dialog_var.hide();
+			}
+		}
+		
+		function handleCopyDoc(xhr, status, args){
+			if(args.flag == 1) {
+				copydoc_confirm_dialog_var.hide();
+				folder_tree_dialog_var.hide();
+			} else if(args.flag == 2) {
+				copydoc_again_confirm_dialog_var.show();
+			} else if(args.flag == 3) {
+				copydoc_again_confirm_dialog_var.hide();
+				copydoc_confirm_dialog_var.hide();
+				folder_tree_dialog_var.hide();
+			}
+		}
+		
+		function handleModifyProperty(xhr, status, args){
+			if(args.modifyProperty == "success") {
+				query_document_property_dialog_var.hide();
+			}
+		}
+		
+		function handleFolderOption(xhr, status, args) {
+			if(args.option == "success") {
+				folder_tree_dialog_var.hide();
+			}
+		}
+		
+		function handleVersionsOption(xhr, status, args) {
+			if(args.queryversions == "success") {
+				document_versions_dialog_var.show();
+			}
+		}
+		
+		function focusInput(id){
+			document.getElementById(id).focus();
+		}
+		
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<shiro:hasPermission name="document">
+	
+		<p:growl id="growl" showDetail="true" showSummary="true" life="10000" />
+
+			<ui:include src="breadcrumb.xhtml" />
+			<p:layout style="min-height:93.5%;max-height:93.5%;min-width:500px;max-width:99%;margin-top:5px;margin-left:15px;margin-right:15px;" id="layout">
+				
+				<p:layoutUnit style="height:100%;" position="west" resizable="true"
+					size="236" minSize="20" rendered="true" collapsible="true">
+					<ui:include src="left_folder_tree.xhtml" />
+				</p:layoutUnit>
+
+				<p:layoutUnit style="height: 100%;" position="center">
+					<h:form prependId="false" id="main_form_id">
+						<h:inputHidden id="opModel" value="#{documentBean.opModel}" />
+						<h:inputHidden id="docModel" value="#{documentBean.docModel}" />
+						<ui:include src="right_document_query.xhtml" />
+						<ui:include src="right_document_list.xhtml" />
+					</h:form>
+				</p:layoutUnit>
+			</p:layout>
+
+		<ui:include src="query_folder_dialog.xhtml" />
+		<ui:include src="edit_folder_dialog.xhtml" />
+		<ui:include src="add_folder_dialog.xhtml" />
+		<ui:include src="confirm_dialog.xhtml" />
+		<ui:include src="add_document_dialog.xhtml" />
+		<ui:include src="query_document_property_dialog.xhtml" />
+		<ui:include src="folder_tree_dialog.xhtml" />
+		<ui:include src="document_versions_dialog.xhtml" />
+		<ui:include src="document_permission_dialog.xhtml" />
+		<ui:include src="add_permission_dialog.xhtml" />
+		<ui:include src="checkin_document_dialog.xhtml" />
+		<ui:include src="copy_permission_dialog.xhtml"/>
+		
+		<ui:include src="/faces/common/company/common_company_dialog.xhtml" />
+		</shiro:hasPermission>
+		<shiro:lacksPermission name="document">
+			<ui:include src="/errorshiro.xhtml" />
+		</shiro:lacksPermission>
+		
+		<script>
+			$(document).ready(function(){
+				weatherShowDialog();
+				removeTextShadow();
+			});
+		</script>
+		
+	</ui:define>
+
+</ui:composition>

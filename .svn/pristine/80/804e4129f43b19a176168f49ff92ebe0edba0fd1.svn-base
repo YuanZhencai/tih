@@ -1,0 +1,500 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<p:dialog id="query_document_property_dialog_id" header="文档审核流程"
+		widgetVar="query_document_property_dialog_var" resizable="false"
+		modal="true" height="500" width="600">
+		<style>
+.aa>div {
+	display: none
+}
+
+.bb>div {
+	text-align: right;
+}
+
+#query_document_property_form .tdsda td {
+	padding-left: 50px;
+	border-style: hidden;
+}
+</style>
+
+		<script type="text/javascript"
+			src="#{request.contextPath}/template/js/uploadStyle.js" />
+		<h:form id="query_document_property_form" prependId="false">
+			<p:messages id="messages" showDetail="true" autoUpdate="true" />
+			<p:accordionPanel id="detailAccordion" styleClass="bb">
+				<p:tab title="#{documentAuditBean.getfirstDetail()}  "
+					id="query_document_property_tab">
+					<h:panelGrid columns="4"
+						columnClasses="pcolumn1,column2,pcolumn1,column2">
+						<h:outputText value="上传日期：" style="margin-left:24px" />
+						<h:outputText value="#{documentAuditBean.doc.createdDate}">
+							<f:convertDateTime pattern="yyyy-MM-dd hh:mm" timeZone="GMT+8" />
+						</h:outputText>
+						<h:outputText value="添加人：" />
+
+						<h:outputText
+							value="#{documentAuditBean.getUserName(documentAuditBean.doc.createdBy)}" />
+						<h:outputLabel value="重要程度：" />
+
+						<p:selectOneMenu value="#{documentAuditBean.selectedhoto}" var="p"
+							converter="playerConverter"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+							style="width:130px;height:18px;">
+							<!-- 
+					<f:selectItem itemLabel="一般" itemValue="TIH.TAX.WORKFLOWIMPORTANCE.1"/>
+					 -->
+							<f:selectItems value="#{documentAuditBean.photos}"
+								var="DictPictureVO" itemLabel="#{DictPictureVO.name}"
+								itemValue="#{DictPictureVO}" />
+
+							<p:column>
+								<p:graphicImage value="/images/#{p.photo}"
+									style="width:50px;height:15px;" />
+							</p:column>
+
+							<p:column>
+								<span style="text-shadow: none;">#{p.name}</span>
+							</p:column>
+						</p:selectOneMenu>
+						<h:outputLabel value="紧急程度：" style="margin-left:24px" />
+						<p:selectOneMenu value="#{documentAuditBean.selectedUrgent}"
+							var="p" converter="playerConverter"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+							style="width:130px;height:18px;">
+							<!-- 
+					<f:selectItem itemLabel="一般" itemValue="TIH.TAX.WORKFLOWURGENCY.1"/>
+					 -->
+							<f:selectItems value="#{documentAuditBean.photosUrgent}"
+								var="DictPictureVO" itemLabel="#{DictPictureVO.name}"
+								itemValue="#{DictPictureVO}" />
+
+							<p:column>
+								<p:graphicImage value="/images/#{p.photo}"
+									style="width:50px;height:15px;" />
+							</p:column>
+
+							<p:column>
+								<span style="text-shadow: none;">#{p.name}</span>
+							</p:column>
+
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<h:outputLabel value="文档名称：" style="margin-left:24px" />
+						<h:column>
+							<div style="float: left;">
+								<p:commandLink ajax="false"
+									style="float: left;word-break: break-all;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: #{documentAuditBean.creator ? '343px':'363px'};"
+									value="#{documentAuditBean.doc.documentTitle}"
+									title="#{documentAuditBean.doc.documentTitle}">
+									<p:fileDownload
+										value="#{documentAuditBean.getFile(documentAuditBean.doc.id)}" />
+								</p:commandLink>
+							</div>
+							<div style="float: left;">
+								<p:commandButton title="下载"
+									icon="ui-icon ui-icon-arrowthick-1-s"
+									style="width: 18px; height: 18px;" ajax="false">
+									<p:fileDownload
+										value="#{documentAuditBean.getFile(documentAuditBean.doc.id)}" />
+								</p:commandButton>
+								<p:commandButton title="修改文档"
+									oncomplete="upload_dialog_var.show();"
+									style="width: 18px; height: 18px;"
+									icon="ui-icon ui-icon-pencil"
+									rendered="#{documentAuditBean.creator}" />
+							</div>
+						</h:column>
+					</h:panelGrid>
+					<h:panelGrid columns="4"
+						columnClasses="pcolumn1,column2,pcolumn1,column2">
+						<h:outputLabel value="文档类别：" />
+
+						<h:selectOneMenu value="#{documentAuditBean.doc.category}"
+							disabled="#{documentAuditBean.edit=='false'}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+							<f:selectItems value="#{documentAuditBean.cateListNoSpace}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+						<h:outputLabel value="文档分类：" />
+						<p:selectCheckboxMenu value="#{documentAuditBean.docTypeList}"
+							label="请选择" style="width: 142px;">
+							<f:selectItems
+								value="#{commonBean.getDictByCat(commonBean.tihTaxDoctype)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}"
+								itemDisabled="#{documentAuditBean.edit ? 'false':'true'}">
+							</f:selectItems>
+						</p:selectCheckboxMenu>
+
+						<h:outputLabel value="行业：" />
+						<h:selectOneMenu value="#{documentAuditBean.doc.industry}"
+							disabled="#{documentAuditBean.edit=='false'}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+							<f:selectItems
+								value="#{commonBean.getDictByCat(commonBean.tihTaxIndustry)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+						<h:outputLabel value="地域：" />
+						<h:selectOneMenu value="#{documentAuditBean.doc.region}"
+							disabled="#{documentAuditBean.edit=='false'}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+							<f:selectItems
+								value="#{commonBean.getDictByCat(commonBean.tihTaxRegion)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel value="税种：" />
+						<p:selectCheckboxMenu value="#{documentAuditBean.taxTypeList}"
+							label="请选择" style="width: 142px;">
+							<f:selectItems
+								value="#{commonBean.getDictByCat(commonBean.tihTaxType)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}"
+								itemDisabled="#{documentAuditBean.edit ? 'false':'true'}">
+							</f:selectItems>
+						</p:selectCheckboxMenu>
+						<h:outputLabel value="发文机关：" />
+						<p:autoComplete dropdown="true"
+							value="#{documentAuditBean.selectedPublishOrg}" var="publishOrg"
+							itemLabel="#{publishOrg.codeVal}#{' '}" itemValue="#{publishOrg}"
+							converter="publishDictConverter"
+							disabled="#{documentAuditBean.edit=='false'}"
+							completeMethod="#{commonBean.completePublishOrg}"
+							forceSelection="true">
+						</p:autoComplete>
+
+						<h:outputLabel value="发文字号：" />
+						<p:autoComplete id="publishNo" dropdown="true"
+							value="#{documentAuditBean.selectedPublishNo}" var="publishNo"
+							itemLabel="#{publishNo.codeVal}#{' '}" itemValue="#{publishNo}"
+							converter="publishDictConverter"
+							disabled="#{documentAuditBean.edit=='false'}"
+							completeMethod="#{commonBean.completePublishNo}"
+							forceSelection="true">
+						</p:autoComplete>
+						<h:outputLabel value="发文年度：" />
+						<p:inputText value="#{documentAuditBean.doc.publishYear}"
+							readonly="#{documentAuditBean.edit=='false'}">
+							<f:validator validatorId="customValidator" />
+
+							<w:validateRegex regex="^[1-2][0-9]{3}$"
+								regexMessage="请填写4位有效的发文年度值" />
+						</p:inputText>
+
+						<h:outputLabel value="发文序号：" />
+						<p:inputText value="#{documentAuditBean.doc.publishSeqNo}"
+							readonly="#{documentAuditBean.edit=='false'}" />
+						<h:outputLabel value="发文日期：" />
+						<p:calendar value="#{documentAuditBean.doc.publishTime}"
+							locale="cn" navigator="true" pattern="yyyy-MM-dd"
+							disabled="#{documentAuditBean.edit=='false'}" />
+
+						<h:outputLabel value="所属公司：" />
+						<h:column>
+							<p:inputText value="#{documentAuditBean.doc.belongtoCompany}"
+								id="pbelongtoCompanyId" style="width: 105px;" readonly="true" />
+							<p:commandButton icon="ui-icon ui-icon-search"
+								title="#{msgs.btn_query}" update=":commonCompany,:datatableform"
+								style="width: 26px; height: 26px; vertical-align: top; margin-left: 3px; "
+								oncomplete="commoncompanyvar.show();"
+								disabled="#{documentAuditBean.edit=='false'}"
+								actionListener="#{companyCommonBean.init(':query_document_property_form','documentAuditBean','single','setBelongComapny')}">
+							</p:commandButton>
+						</h:column>
+						<h:outputLabel value="有效性：" />
+						<h:selectOneMenu value="#{documentAuditBean.doc.effectStatus}"
+							disabled="#{documentAuditBean.edit=='false'}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+							<f:selectItems
+								value="#{commonBean.getDictByCat(commonBean.tihTaxDocstatus)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel value="提交资料公司：" />
+						<h:column>
+							<p:inputText value="#{documentAuditBean.doc.submitCompany}"
+								id="psubmitCompanyId" style="width: 105px;" readonly="true" />
+							<p:commandButton icon="ui-icon ui-icon-search"
+								title="#{msgs.btn_query}" update=":commonCompany,:datatableform"
+								style="width: 26px; height: 26px; vertical-align: top; margin-left: 3px; "
+								oncomplete="commoncompanyvar.show();"
+								disabled="#{documentAuditBean.edit=='false'}"
+								actionListener="#{companyCommonBean.init(':query_document_property_form','documentAuditBean','single','setCompanyNameBySubmit')}">
+							</p:commandButton>
+						</h:column>
+						<h:outputLabel value="提交资料年度：" />
+						<p:calendar value="#{documentAuditBean.doc.submitYear}"
+							locale="cn" navigator="true" pattern="yyyy-MM-dd"
+							disabled="#{documentAuditBean.edit=='false'}" />
+
+						<h:outputLabel value="资料提交状态：" />
+						<h:selectOneMenu value="#{documentAuditBean.doc.submitStatus}"
+							disabled="#{documentAuditBean.edit=='false'}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+							<f:selectItems
+								value="#{commonBean.getDictByCat(commonBean.tihDocSubmitstatus)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+						<h:outputLabel value="简单描述：" />
+						<p:inputText value="#{documentAuditBean.doc.desc}"
+							readonly="#{documentAuditBean.edit=='false'}" />
+
+						<h:outputLabel value=" 转签人："
+							rendered="#{documentAuditBean.showAssingerText}" />
+
+						<h:panelGroup rendered="#{documentAuditBean.showAssingerText}">
+							<h:column>
+								<p:inputText rendered="#{documentAuditBean.showAssingerText}"
+									value="#{documentAuditBean.showAssigner}"
+									id="showAssingerTextid" maxlength="18" disabled="true"
+									style="width: 79px;">
+									<f:validator validatorId="customValidator" />
+									<w:validateRequired required="true" requiredMark="机关名称：" />
+								</p:inputText>
+								<p:commandButton disabled="#{documentAuditBean.edit=='false'}"
+									process="@this"
+									actionListener="#{userCommonBean.init(':query_document_property_form','single','documentAuditBean','getNeedAssigner')}"
+									update=":commonUserDialog"
+									rendered="#{documentAuditBean.showAssingerText}"
+									oncomplete="commonUserDialogWidgetVar.show()"
+									icon="ui-icon ui-icon-search" title="请选择"
+									style="width: 26px; height: 26px;">
+								</p:commandButton>
+								<p:commandButton
+									disabled="#{documentAuditBean.showAssigner == null ? true : false}"
+									icon="ui-icon ui-icon-cancel"
+									actionListener="#{documentAuditBean.showAssignerClean}"
+									update="showAssingerTextid,showHelperTextid" title="重置"
+									style="width: 26px; height: 26px;" />
+							</h:column>
+
+						</h:panelGroup>
+
+						<h:outputLabel value=" 协助人："
+							rendered="#{documentAuditBean.showHelperText}" />
+						<h:panelGroup rendered="#{documentAuditBean.showHelperText}">
+							<h:column>
+								<p:inputText value="#{documentAuditBean.showHelper}"
+									rendered="#{documentAuditBean.showHelperText}" maxlength="18"
+									disabled="true" style="width: 79px;" id="showHelperTextid">
+									<f:validator validatorId="customValidator" />
+									<w:validateRequired required="true" requiredMark="机关名称：" />
+								</p:inputText>
+								<p:commandButton disabled="#{documentAuditBean.edit=='false'}"
+									rendered="#{documentAuditBean.showHelperText}"
+									actionListener="#{userCommonBean.init(':query_document_property_form','single','documentAuditBean','getNeedhelper')}"
+									update=":commonUserDialog" style="width: 26px; height: 26px;"
+									process="@this" oncomplete="commonUserDialogWidgetVar.show()"
+									icon="ui-icon ui-icon-search" title="请选择">
+								</p:commandButton>
+								<p:commandButton
+									disabled="#{documentAuditBean.showHelper == null ? true : false}"
+									icon="ui-icon ui-icon-cancel"
+									actionListener="#{documentAuditBean.showAssignerClean}"
+									update="showAssingerTextid,showHelperTextid" title="重置"
+									style="width: 26px; height: 26px;" />
+							</h:column>
+						</h:panelGroup>
+					</h:panelGrid>
+					<h:panelGrid columns="4" rendered="#{'Y' == documentAuditBean.wfRemindVo.wfTimeoutInd}"
+						columnClasses="pcolumn1,column2,pcolumn1,column2">
+						<h:outputText value="完成日期：" style="margin-left:24px" />
+						<h:column>
+							<p:calendar locale="cn" pattern="yyyy-MM-dd" disabled="true"
+								showButtonPanel="true" navigator="true"
+								value="#{documentAuditBean.wfRemindVo.wfCompleteDate}" />
+						</h:column>
+						<h:outputText value="提醒频率（天）：" style="margin-left:24px"/>
+						<h:column>
+							<p:inputText disabled="true"
+								value="#{documentAuditBean.wfRemindVo.wfIntervalDays}" />
+						</h:column>
+						<h:outputText value="催促日期：" />
+						<h:column>
+							<p:calendar locale="cn" pattern="yyyy-MM-dd" disabled="true"
+								showButtonPanel="true" navigator="true"
+								value="#{documentAuditBean.wfRemindVo.wfUrgeDate}" />
+						</h:column>
+					</h:panelGrid>
+				</p:tab>
+			</p:accordionPanel>
+
+
+			<p:accordionPanel id="stepAccordion"
+				value="#{documentAuditBean.workflowDetail}" var="player"
+				multiple="true">
+				<p:tab
+					rendered="#{player.value == null ? 'fasle':(player.value.length() == 0 ? 'false':'true')}"
+					title=" #{player.wfStepmstr.name} #{documentAuditBean.getUserName(player.wfStepmstr.createdBy)}  #{commonBean.getValueByDictCatKey(player.wfStepmstr.dealMethod)} #{documentAuditBean.formatDateFime(player.wfStepmstr.createdDatetime)}">
+					<p:panelGrid columns="1" style="border-style:hidden;"
+						styleClass="tdsda">
+						<h:outputText value="意见：" />
+						<h:outputLabel
+							style="FONT-FAMILY: Arial, Helvetica, sans-serif;word-break: break-all;width: 422px;display: inline-block;text-indent: 2em;"
+							value="#{player.value}" />
+					</p:panelGrid>
+				</p:tab>
+			</p:accordionPanel>
+
+			<p:accordionPanel id="currentAccordion" dynamic="false"
+				styleClass="aa" rendered="#{documentAuditBean.lastMessage}">
+				<p:tab disabled="true" title="#{documentAuditBean.lastChangeBy}">
+				</p:tab>
+			</p:accordionPanel>
+			<p:accordionPanel id="fillAccordion">
+
+				<p:tab title="意见" rendered="#{documentAuditBean.opinion}">
+					<p:panelGrid columns="1" style="border-style:hidden;"
+						styleClass="tdsda">
+						<h:outputText value="意见：" />
+						<p:inputTextarea value="#{documentAuditBean.auditOpinion}"
+							style="width:413px;"></p:inputTextarea>
+					</p:panelGrid>
+
+					<div id="uploadDocOprateDiv"
+						style="text-align: center; margin-top: 5px;">
+
+
+
+						<p:commandButton value="通过" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.passButton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="PASS" />
+
+						</p:commandButton>
+
+						<p:commandButton value="驳回" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.rejectbutton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="reject" />
+						</p:commandButton>
+
+
+
+						<p:commandButton update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.assignerbutton}" value="转签"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;"
+							oncomplete="handleAuditeRequest(xhr, status, args)">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="assigner" />
+						</p:commandButton>
+
+						<p:commandButton value="协助" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.helperbutton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="helper" />
+						</p:commandButton>
+
+
+
+
+
+						<p:commandButton value="拒绝" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.refusebutton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="refuse" />
+						</p:commandButton>
+
+
+						<p:commandButton value="完成" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.completebutton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="complete" />
+						</p:commandButton>
+
+
+						<p:commandButton value="修改提交" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.editSubmitAssignerbutton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="editSubmitToA" />
+						</p:commandButton>
+
+						<p:commandButton value="修改提交" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.editSubmitAuditerbutton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="editSubmitToAudit" />
+						</p:commandButton>
+
+						<p:commandButton value="反馈到审核" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.feedbackAuditerbutton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="feedbackB" />
+						</p:commandButton>
+
+						<p:commandButton value="反馈到转签" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.feedbackAssignerbutton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="feedbackA" />
+						</p:commandButton>
+
+						<p:commandButton value="不通过" update=":growl,:treeForm,:taskFrom"
+							rendered="#{documentAuditBean.notPassbutton}"
+							oncomplete="handleAuditeRequest(xhr, status, args)"
+							action="#{documentAuditBean.lunchWorkflow}"
+							style="margin-right: 5px;">
+							<f:setPropertyActionListener target="#{documentAuditBean.status}"
+								value="NOTPASS" />
+						</p:commandButton>
+					</div>
+				</p:tab>
+
+			</p:accordionPanel>
+
+
+		</h:form>
+	</p:dialog>
+	<script>
+	function handleAuditeRequest(xhr, status, args) {
+		if (args.dataInfoSumbit == "yes") {
+			query_document_property_dialog_var.hide();
+		}
+	}
+	
+	</script>
+
+</ui:composition>

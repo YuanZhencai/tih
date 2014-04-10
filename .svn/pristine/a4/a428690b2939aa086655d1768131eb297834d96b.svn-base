@@ -1,0 +1,38 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog id="position_profession_dialog"
+		widgetVar="position_profession_dialog_widgetVar" resizable="false" header="岗位业务设置" modal="true">
+		<h:form prependId="false" id="position_profession_form">
+			<p:messages autoUpdate="true" showDetail="true" showSummary="true" />
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="岗位：" />
+				<p:inputText
+					value="#{positionProfessionBean.selectedPositionName}"
+					style="width:355px;" disabled="true" />
+				<h:outputLabel value="岗位业务：" />
+				<p:tabView style="height: 340px;" id="position_profession_tabView">
+					<p:tab id="tax" title="税种">
+						<p:tree value="#{positionProfessionBean.taxationRoot}" var="node" id="taxTree" style="width: 313px; height: 270px; overflow: auto;" selectionMode="checkbox" selection="#{positionProfessionBean.selectedTaxationNodes}">
+							<p:treeNode>
+								<h:outputText value="#{node.codeVal}" />
+							</p:treeNode>
+						</p:tree>
+					</p:tab>
+					<p:tab id="doc" title="文档类别">
+						<p:tree value="#{positionProfessionBean.documentTypeRoot}" var="node" id="docTree" style="width: 313px; height: 270px; overflow: auto;" selectionMode="checkbox" selection="#{positionProfessionBean.selectedDocumentTypeNodes}">
+							<p:treeNode>
+								<h:outputText value="#{node.codeVal}" />
+							</p:treeNode>
+						</p:tree>
+					</p:tab>
+				</p:tabView>
+			</h:panelGrid>
+			<div style="text-align: center; position: relative; margin-top: 10px;">
+				<p:commandButton oncomplete="handlePositonProfessionRequest(xhr, status, args);" actionListener="#{positionProfessionBean.savePositionProfession()}" update=":positionQueryForm" value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check" style="margin-right: 5px;" />
+				<p:commandButton type="button" onclick="position_profession_dialog_widgetVar.hide()" value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

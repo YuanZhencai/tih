@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog
+		header="#{taxIncentiveBean.excuteMethod eq 'add' ? '添加税收优惠信息' : '编辑税收优惠信息'}"
+		widgetVar="taxIncentiveAddEditDialogWidgetVar"
+		id="taxIncentiveAddEditDialogId" resizable="false" modal="true">
+		<h:form id="taxIncentiveAddEditDialogForm" prependId="false">
+			<p:messages id="taxIncentiveMessages" showDetail="true" />
+			<h:panelGrid columns="10"
+				columnClasses="column1,column2,column3,column4,column5,column1,column2,column3,column4,column5">
+				<h:outputText value="税种：" />
+				<h:selectOneMenu value="#{taxIncentiveBean.taxIncentiveVo.taxType}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihTaxType)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+				<h:outputText value="*" style="color:red;" />
+				<h:outputText value="" />
+				<h:outputText value="" />
+
+				<h:outputText value="优惠项目：" />
+				<p:inputText id="preferentialItem"
+					value="#{taxIncentiveBean.taxIncentiveVo.preferentialItem}"
+					maxlength="49"/>
+				<p:commandButton id="preferentialItemBtn" type="button"
+					icon="ui-icon ui-icon-search" title="请选择" style="width:21px;height:21px;"/>
+				<p:overlayPanel id="preferentialItemOverlayPanel"
+					for="preferentialItemBtn" widgetVar="preferentialItemWv">
+					<p:dataTable id="preferentialItemDatatable" var="preferentialItem"
+						value="#{taxIncentiveBean.lazyPreferentialItemModel}"
+						paginatorPosition="bottom" rows="5" paginator="true">
+						<p:ajax event="rowSelect" listener="#{taxIncentiveBean.select}" />
+						<p:column selectionMode="single"
+							style="text-align: center;width: 20px;" />
+						<p:column headerText="优惠项目名称">
+							<h:outputText value="#{preferentialItem.name}" />
+						</p:column>
+					</p:dataTable>
+					<div
+						style="text-align: center; position: relative; margin-top: 5px; margin-bottom: 5px;">
+						<p:commandButton value="#{msgs.btn_ok}"
+							oncomplete="handleRequest(xhr, status, args ,'preferentialItem');"
+							actionListener="#{taxIncentiveBean.selectPreferentialItem()}"
+							update=":growl,:taxIncentiveAddEditDialogForm:preferentialItem"
+							icon="ui-icon ui-icon-check" />
+						<p:commandButton type="button" onclick="preferentialItemWv.hide()"
+							value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+					</div>
+				</p:overlayPanel>
+				<h:outputText value="*" style="color:red;" />
+			</h:panelGrid>
+			<h:panelGrid columns="3" columnClasses="column1,column2,column3">
+				<h:outputText value="审批或备案状态：" />
+				<h:selectOneMenu
+					value="#{taxIncentiveBean.taxIncentiveVo.situationStatus}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihTaxCompanyIncentivesStatus)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+				<h:outputText value="*" style="color:red;" />
+			</h:panelGrid>
+			<h:panelGrid columns="8"
+				columnClasses="column1,column2,column3,column4,column1,column2,column3,column4">
+				<h:outputText value="优惠时间：" />
+				<p:calendar
+					value="#{taxIncentiveBean.taxIncentiveVo.preferentialStartDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true" />
+				<h:outputText value="*" style="color:red;" />
+				<h:outputText value="" />
+				<h:outputText value="到" />
+				<p:calendar
+					value="#{taxIncentiveBean.taxIncentiveVo.preferentialEndDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true" />
+				<h:outputText value="*" style="color:red;" />
+				<h:outputText value="" />
+			</h:panelGrid>
+			<h:panelGrid columns="3" columnClasses="column1,column2,column3">
+				<h:outputText value="政策依据：" />
+				<p:inputTextarea value="#{taxIncentiveBean.taxIncentiveVo.policy}"
+					style="width:370px;height:40px;" autoResize="false"
+					effectDuration="400" maxlength="198" />
+				<h:outputText value="*" style="color:red;" />
+				<h:outputText value="审批机构：" />
+				<p:inputTextarea
+					value="#{taxIncentiveBean.taxIncentiveVo.approvalOrgan}"
+					style="width:370px;height:40px;" autoResize="false"
+					effectDuration="400" maxlength="198" />
+				<h:outputText value="*" style="color:red;" />
+				<h:outputText value="有效：" />
+				<h:selectOneRadio
+					value="#{taxIncentiveBean.taxIncentiveVo.effective}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+				<h:outputText value="" />
+			</h:panelGrid>
+			<div
+				style="text-align: center; position: relative; padding-top: 10px;">
+				<p:commandButton
+					actionListener="#{taxIncentiveBean.saveTaxIncentive()}"
+					update=":growl,:taxIncentiveAddEditDialogForm:taxIncentiveMessages,:taxIncentiveDialogForm:taxIncentiveDataTable"
+					oncomplete="handleRequest(xhr, status, args ,'taxIncentive');"
+					value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+					style="margin-right: 5px;" />
+				<p:commandButton type="button"
+					onclick="taxIncentiveAddEditDialogWidgetVar.hide()"
+					value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

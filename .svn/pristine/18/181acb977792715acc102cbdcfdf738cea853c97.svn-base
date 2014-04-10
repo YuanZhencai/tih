@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="antiForm" prependId="false">
+		<p:dataTable emptyMessage="#{msgs.dataTable_empty}" id="antiDataTable"
+			var="anti"  paginator="true" value="#{feedBackAntiBean.searchAntiTableVos}"
+			rows="5" paginatorPosition="bottom"
+			paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+			rowIndexVar="index"
+			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+			<f:facet name="header">
+				<h:outputText value="基本信息列表" />
+			</f:facet>
+			
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column rowspan="2" headerText="公司名称"/>
+					<p:column rowspan="2" headerText="发起机关"/>
+					<p:column rowspan="2" headerText="实施机构"/>
+					<p:column rowspan="2" headerText="调查类型"/>
+					<p:column rowspan="2" headerText="任务处理时间"/>
+					<p:column rowspan="2" headerText="调查/评估期间"/>
+					<p:column rowspan="2" headerText="税种"/>
+					<p:column rowspan="2" headerText="企业所得税"/>
+					<p:column rowspan="2" headerText="任务状态"/>
+					<p:column rowspan="2" headerText="处理阶段"/>
+					<p:column rowspan="2" headerText="调查/结案结论"/>
+					<p:column colspan="5" headerText="调查调整（纳税评估）结果（元）"/>
+				</p:row>
+				<p:row>
+					<p:column headerText="补税金额" />
+					<p:column headerText="加收利息" />
+					<p:column headerText="加收罚款" />
+					<p:column headerText="调减亏损" />
+					<p:column headerText="操作" />
+				</p:row>
+			</p:columnGroup>
+			
+			<p:column>
+				<div style="width:50px;word-wrap:break-word;">
+					<h:outputText value="#{anti.companyName}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:50px;word-wrap:break-word;">
+					<h:outputText value="#{anti.sponsorOrg}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:50px;word-wrap:break-word;">
+					<h:outputText value="#{anti.implementOrg}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:50px;word-wrap:break-word;">
+					<h:outputText value="#{anti.investType}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="#{((anti.missionStartDatetime == null) and (anti.missionEndDatetime == null))?'display:none':''}">
+					<h:outputText value="#{anti.missionStartDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>~
+					<h:outputText value="#{anti.missionEndDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column>
+				<div style="#{((anti.investStartDatetime == null) and (anti.investEndDatetime == null))?'display:none':''}">
+					<h:outputText value="#{anti.investStartDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>~
+					<h:outputText value="#{anti.investEndDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:40px;word-wrap:break-word;">
+					<h:outputText value="#{anti.taxTypes}" />
+				</div>
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{anti.riskAccount}" />
+			</p:column>
+			<p:column>
+				<div style="width:40px;word-wrap:break-word;">
+					<h:outputText value="#{anti.wfStatus}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:50px;word-wrap:break-word;">
+					<h:outputText value="#{anti.stage}" />
+				</div>
+			</p:column>
+			<p:column>
+				<div style="width:100px;word-wrap:break-word;">
+					<h:outputText value="#{anti.conclusion}" />
+				</div>
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{anti.citAndVat}" />
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{anti.addInterest}" />
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{anti.addFine}" />
+			</p:column>
+			<p:column style="width:50px;text-align: right">
+					<h:outputText value="#{anti.reducedLoss}" />
+			</p:column>
+			
+			<p:column style="text-align: center;width:80px;" headerText="操作">
+				<p:commandButton title="编辑" icon="ui-icon ui-icon-pencil"
+					action="#{feedBackAntiBean.history()}" update=":editAntiDialog"
+					oncomplete="endiAntiVar.show();" 
+					style="width: 18px;height: 18px;">
+					<f:setPropertyActionListener target="#{feedBackAntiBean.id}" value="#{anti.id}"/>
+					<f:setPropertyActionListener target="#{feedBackAntiBean.companyNameId}" value="#{anti.companymstrId}"/>
+				</p:commandButton>
+				<p:commandButton title="删除" icon="ui-icon ui-icon-close"
+					style="width: 18px;height: 18px;" 
+					disabled="#{anti.defunctInd eq 'Y' ? true : false}"
+					oncomplete="confirmation.show();">
+					<f:setPropertyActionListener target="#{feedBackAntiBean.id}" value="#{anti.id}"/>
+					<f:setPropertyActionListener target="#{feedBackAntiBean.companyNameId}" value="#{anti.companymstrId}"/>
+				</p:commandButton>
+				<p:commandButton action="#{feedBackAntiBean.history()}"
+					title="历史" icon="ui-icon ui-icon-clock" 
+					oncomplete="endiAntiVar.show();" update=":editAntiDialog"
+					style="width: 18px;height: 18px;">
+					<f:setPropertyActionListener target="#{feedBackAntiBean.id}" value="#{anti.id}"/>
+				</p:commandButton>
+				<p:commandButton icon="ui-icon-attachment" title="附件" id="antiAttachment"
+					style="width: 18px; height: 18px;" oncomplete="uploadOrDownloadAttachment.show();" 
+					action="#{attachmentBean.searchFilemstr()}" update=":uploadOrDownloadAttachmentID">
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.tableName}" value="INVS_ANTI_AVOIDANCE" />
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.entityId}" value="#{anti.wfId}" />
+					<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.operationType}" value="001" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+
+</ui:composition>

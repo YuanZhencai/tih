@@ -1,0 +1,583 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.wcs</groupId>
+	<artifactId>tih</artifactId>
+	<packaging>war</packaging>
+	<version>1.3.1-SNAPSHOT</version>
+	<name>Tax Info Hub</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<!-- JPA Datasource -->
+				<db.jndi>TIH</db.jndi>
+				<!-- CAS -->
+				<cas.server.url>http://10.228.191.203:9084/castest</cas.server.url>
+				<cas.client.url>http://10.228.191.211:9080</cas.client.url>
+				<app.url>http://10.228.191.211:9080/tihdev</app.url>
+				<!-- Filenet -->
+				<ce.uri>http\://10.228.191.202\:9080/wsi/FNCEWS40DIME/</ce.uri>
+				<ce.os>TIHObj</ce.os>
+				<pe.uri>http\://10.228.191.202\:9080/wsi/FNCEWS40MTOM/</pe.uri>
+				<pe.cp>tih_cp</pe.cp>
+				<admin.id>fnadmin</admin.id>
+				<admin.password>fnadmin123</admin.password>
+				<user.password>tihfilenet</user.password>
+				<fn.version>5.0</fn.version>
+				<!-- MDS -->
+				<mds.basepath>http://10.228.191.203:9085/rs</mds.basepath>
+				<!-- UNS -->
+				<mdsurl>http\://10.228.191.203\:9085/rs/sys/tih</mdsurl>
+				<uns_servergeturl>http\://10.229.12.153\:9086/rs/msg/rejected/tih?</uns_servergeturl>
+				<!-- TDS -->
+				<tds.url>ldap\://10.228.191.201\:389</tds.url>
+				<tds.search.dn>cn\=root</tds.search.dn>
+				<tds.psw>password</tds.psw>
+				<app.prefix.testapp />
+				<!--WAS -->
+				<app.context-root>/tihdev</app.context-root>
+			</properties>
+		</profile>
+		<profile>
+			<id>tst</id>
+			<properties>
+				<!-- JPA Datasource -->
+				<db.jndi>TIHQA</db.jndi>
+				<!-- CAS -->
+				<cas.server.url>http://10.228.191.203:9084/castest</cas.server.url>
+				<cas.client.url>http://10.228.191.211:9080</cas.client.url>
+				<app.url>http://10.228.191.211:9080/tihqa</app.url>
+				<!-- Filenet -->
+				<ce.uri>http\://10.228.191.202\:9080/wsi/FNCEWS40DIME/</ce.uri>
+				<ce.os>TIHObj</ce.os>
+				<pe.uri>http\://10.228.191.202\:9080/wsi/FNCEWS40MTOM/</pe.uri>
+				<pe.cp>tih_cp</pe.cp>
+				<admin.id>fnadmin</admin.id>
+				<admin.password>fnadmin123</admin.password>
+				<user.password>tihfilenet</user.password>
+				<fn.version>5.0</fn.version>
+				<!-- MDS -->
+				<mds.basepath>http://10.228.191.203:9085/rs</mds.basepath>
+				<!-- UNS -->
+				<mdsurl>http\://10.228.191.203\:9085/rs/sys/tih</mdsurl>
+				<uns_servergeturl>http\://10.229.12.153\:9086/rs/msg/rejected/tih?</uns_servergeturl>
+				<!-- TDS -->
+				<tds.url>ldap\://10.228.191.201\:389</tds.url>
+				<tds.search.dn>cn\=root</tds.search.dn>
+				<tds.psw>password</tds.psw>
+				<app.prefix.testapp />
+				<!--WAS -->
+				<app.context-root>/tihqa</app.context-root>
+			</properties>
+			<modules>
+			</modules>
+		</profile>
+		<profile>
+			<id>uat</id>
+			<properties>
+				<!-- JPA Datasource -->
+				<db.jndi>TIH_UAT</db.jndi>
+				<!-- CAS -->
+				<cas.server.url>http://10.229.12.153:9090/castest</cas.server.url>
+				<cas.client.url>http://10.229.12.213:9080</cas.client.url>
+				<app.url>http://10.229.12.213:9080/tihuatt</app.url>
+				<!-- Filenet -->
+				<ce.uri>http\://10.229.12.206\:9080/wsi/FNCEWS40MTOM/</ce.uri>
+				<ce.os>tihqos</ce.os>
+				<pe.uri>http\://10.229.12.206\:9080/wsi/FNCEWS40MTOM/</pe.uri>
+				<pe.cp>tihq_cp</pe.cp>
+				<admin.id>tih$fnadmin</admin.id>
+				<admin.password>tihfnadmin</admin.password>
+				<user.password>tihfilenet</user.password>
+				<fn.version>5.1</fn.version>
+				<!-- MDS -->
+				<mds.basepath>http://10.228.191.203\:9085/rs</mds.basepath>
+				<!-- UNS -->
+				<mdsurl>http\://10.228.191.203\:9085/rs/sys/tih</mdsurl>
+				<uns_servergeturl>http\://10.229.12.153\:9086/rs/msg/rejected/tih?</uns_servergeturl>
+				<!-- TDS -->
+				<tds.url>ldap\://10.229.12.135\:389</tds.url>
+				<tds.search.dn>cn\=root</tds.search.dn>
+				<tds.psw>Passw0rd</tds.psw>
+				<app.prefix.testapp>tih</app.prefix.testapp>
+				<!--WAS -->
+				<app.context-root>/tihuatt</app.context-root>
+			</properties>
+			<modules>
+			</modules>
+		</profile>
+		<profile>
+			<id>prd</id>
+			<properties>
+				<db.jndi>TIH_PRD</db.jndi>
+				<cas.server.url>https://cas.wilmar.cn</cas.server.url>
+				<cas.client.url>http://tih.wilmar.cn</cas.client.url>
+				<app.url>http://tih.wilmar.cn</app.url>
+				<!-- Filenet -->
+				<ce.uri>http\://10.229.12.206\:9080/wsi/FNCEWS40MTOM/</ce.uri>
+				<ce.os>tihos</ce.os>
+				<pe.uri>http\://10.229.12.206\:9080/wsi/FNCEWS40MTOM/</pe.uri>
+				<pe.cp>tih_cp</pe.cp>
+				<admin.id>tih$fnadmin</admin.id>
+				<admin.password>tihfnadmin</admin.password>
+				<user.password>tihfilenet</user.password>
+				<fn.version>5.1</fn.version>
+				<!-- MDS -->
+				<mds.basepath>http\://10.229.12.153\:9081/rs</mds.basepath>
+				<!-- UNS -->
+				<mdsurl>http\://10.229.12.153\:9081/rs/sys/tih</mdsurl>
+				<uns_servergeturl>http\://10.229.12.153\:9082/rs/msg/rejected/tih?</uns_servergeturl>
+				<!-- TDS -->
+				<tds.url>ldap\://10.229.12.135\:389</tds.url>
+				<tds.search.dn>cn\=root</tds.search.dn>
+				<tds.psw>Passw0rd</tds.psw>
+				<app.prefix.testapp>wtih</app.prefix.testapp>
+				<!--WAS -->
+				<app.context-root>/</app.context-root>
+			</properties>
+			<modules>
+			</modules>
+		</profile>
+		<profile>
+			<id>uat_new_fn</id>
+			<properties>
+				<!-- JPA Datasource -->
+				<db.jndi>TIH_UAT</db.jndi>
+				<!-- CAS -->
+				<cas.server.url>http://10.229.12.153:9090/castest</cas.server.url>
+				<cas.client.url>http://10.229.12.213:9080</cas.client.url>
+				<app.url>http://10.229.12.213:9080/tihuatt</app.url>
+				<!-- Filenet -->
+				<ce.uri>http\://10.229.12.202\:9080/wsi/FNCEWS40MTOM/</ce.uri>
+				<ce.os>tihqos</ce.os>
+				<pe.uri>http\://10.229.12.202\:9080/wsi/FNCEWS40MTOM/</pe.uri>
+				<pe.cp>tihq_cp</pe.cp>
+				<admin.id>tih$fnadmin</admin.id>
+				<admin.password>tihfnadmin</admin.password>
+				<user.password>tihfilenet</user.password>
+				<fn.version>5.1</fn.version>
+				<!-- MDS -->
+				<mds.basepath>http://10.228.191.203\:9085/rs</mds.basepath>
+				<!-- UNS -->
+				<mdsurl>http\://10.228.191.203\:9085/rs/sys/tih</mdsurl>
+				<uns_servergeturl>http\://10.229.12.153\:9086/rs/msg/rejected/tih?</uns_servergeturl>
+				<!-- TDS -->
+				<tds.url>ldap\://10.229.12.135\:389</tds.url>
+				<tds.search.dn>cn\=root</tds.search.dn>
+				<tds.psw>Passw0rd</tds.psw>
+				<app.prefix.testapp>tih</app.prefix.testapp>
+				<!--WAS -->
+				<app.context-root>/tihuatt</app.context-root>
+			</properties>
+			<modules>
+			</modules>
+		</profile>
+		<profile>
+			<id>prd_new_fn</id>
+			<properties>
+				<db.jndi>TIH_PRD</db.jndi>
+				<cas.server.url>https://cas.wilmar.cn</cas.server.url>
+				<cas.client.url>http://tih.wilmar.cn</cas.client.url>
+				<app.url>http://tih.wilmar.cn</app.url>
+				<!-- Filenet -->
+				<ce.uri>http\://10.229.12.202\:9080/wsi/FNCEWS40MTOM/</ce.uri>
+				<ce.os>tihos</ce.os>
+				<pe.uri>http\://10.229.12.202\:9080/wsi/FNCEWS40MTOM/</pe.uri>
+				<pe.cp>tih_cp</pe.cp>
+				<admin.id>tih$fnadmin</admin.id>
+				<admin.password>tihfnadmin</admin.password>
+				<user.password>tihfilenet</user.password>
+				<fn.version>5.1</fn.version>
+				<!-- MDS -->
+				<mds.basepath>http\://10.229.12.153\:9081/rs</mds.basepath>
+				<!-- UNS -->
+				<mdsurl>http\://10.229.12.153\:9081/rs/sys/tih</mdsurl>
+				<uns_servergeturl>http\://10.229.12.153\:9082/rs/msg/rejected/tih?</uns_servergeturl>
+				<!-- TDS -->
+				<tds.url>ldap\://10.229.12.135\:389</tds.url>
+				<tds.search.dn>cn\=root</tds.search.dn>
+				<tds.psw>Passw0rd</tds.psw>
+				<app.prefix.testapp>wtih</app.prefix.testapp>
+				<!--WAS -->
+				<app.context-root>/</app.context-root>
+			</properties>
+			<modules>
+			</modules>
+		</profile>		
+	</profiles>
+	<repositories>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>wcs-central</id>
+			<url>http://10.229.14.10:8080/nexus/content/groups/public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!-- CAS Repo -->
+		<repository>
+			<id>wcs-snapshots</id>
+			<url>http://10.229.14.10:8080/nexus/content/groups/public-snapshots</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>deluan.repo</id>
+			<name>DEluan's Projects Repository</name>
+			<url>http://deluan.googlecode.com/svn/releases</url>
+		</repository>
+		<repository>
+			<id>deluan.snapshorts</id>
+			<name>Deluan's Projects Snapshots Repository</name>
+			<url>http://deluan.googlecode.com/svn/snapshots</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>wcs-3rd party</id>
+			<name>wcs-3rd party</name>
+			<url>http://10.229.14.10:8080/nexus/content/repositories/thirdparty</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+			<version>1.1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.ejb</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
+			<version>2.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-lgpl</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-lgpl</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+
+		<!-- Myfaces -->
+
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>3.2</version>
+		</dependency>
+		<!-- OpenJPA -->
+		<dependency>
+			<groupId>org.apache.openjpa</groupId>
+			<artifactId>openjpa-all</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+
+		<!-- cas client 3.2.0 -->
+		<dependency>
+			<groupId>com.wcs.cas</groupId>
+			<artifactId>casclient</artifactId>
+			<version>3.2.0.1</version>
+		</dependency>
+		<!-- must before javaee-web-api -->
+		<dependency>
+			<groupId>com.ibm</groupId>
+			<artifactId>filenet</artifactId>
+			<version>${fn.version}</version>
+			<classifier>pe3pt</classifier>
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>6.0</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>2.1</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.2</version>
+			<type>jar</type>
+		</dependency>
+		<!-- shiro -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-web</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-ehcache</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-faces</artifactId>
+			<version>2.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.2</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<!-- 文件上传包 -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>rome</groupId>
+			<artifactId>rome</artifactId>
+			<version>1.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Myfaces -->
+		<dependency>
+			<groupId>org.apache.myfaces.core</groupId>
+			<artifactId>myfaces-api</artifactId>
+			<version>2.1.8</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.myfaces.core</groupId>
+			<artifactId>myfaces-impl</artifactId>
+			<version>2.1.8</version>
+			<type>jar</type>
+		</dependency>
+
+		<!-- FileNet -->
+		<dependency>
+			<groupId>com.ibm</groupId>
+			<artifactId>filenet</artifactId>
+			<version>${fn.version}</version>
+			<classifier>jace</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm</groupId>
+			<artifactId>filenet</artifactId>
+			<version>${fn.version}</version>
+			<classifier>pe</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm</groupId>
+			<artifactId>filenet</artifactId>
+			<version>${fn.version}</version>
+			<classifier>stax-api</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm</groupId>
+			<artifactId>filenet</artifactId>
+			<version>${fn.version}</version>
+			<classifier>xlxpScanner</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm</groupId>
+			<artifactId>filenet</artifactId>
+			<version>${fn.version}</version>
+			<classifier>xlxpScannerUtils</classifier>
+		</dependency>
+		<!-- tdsFilenet -->
+		<dependency>
+			<groupId>tdsFilenet </groupId>
+			<artifactId>tdsFilenet </artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- POI -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.8</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.8</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<!-- pinyin4j -->
+		<dependency>
+			<groupId>pinyin4j</groupId>
+			<artifactId>pinyin4j</artifactId>
+			<version>2.5.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/pinyin4j-2.5.0.jar</systemPath>
+		</dependency>
+		<!-- Junit 4 {scope: test} -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+		<!-- Ant-Zip -->
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		<!-- Jasper Report -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>4.7.0</version>
+		</dependency>
+		<!-- groovy -->
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>1.7.3</version>
+		</dependency>
+
+	</dependencies>
+
+	<scm>
+		<connection>scm:git:git://10.228.190.71:yuanzhencai/tih.git</connection>
+		<url>scm:git:git://10.228.190.71:yuanzhencai/tih.git</url>
+		<developerConnection>scm:git:git@10.228.190.71:yuanzhencai/tih.git</developerConnection>
+	</scm>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<inherited>true</inherited>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<filtering>true</filtering>
+							<directory>${project.basedir}/src/main/webapp/WEB-INF</directory>
+							<includes>
+								<include>*.xml</include>
+							</includes>
+							<targetPath>WEB-INF</targetPath>
+						</resource>
+						<resource>
+							<filtering>true</filtering>
+							<directory>${project.basedir}/src/main/webapp/template</directory>
+							<includes>
+								<include>*.xhtml</include>
+							</includes>
+							<targetPath>template</targetPath>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.1.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<prefix>git</prefix>
+
+					<dateFormat>dd.MM.yyyy '@' HH:mm:ss z</dateFormat>
+
+					<verbose>true</verbose>
+
+					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+
+					<generateGitPropertiesFile>false</generateGitPropertiesFile>
+
+					<gitDescribe>
+						<skip>false</skip>
+						<always>false</always>
+						<abbrev>7</abbrev>
+						<dirty>-DEVEL</dirty>
+						<forceLongFormat>false</forceLongFormat>
+					</gitDescribe>
+
+				</configuration>
+			</plugin>
+		</plugins>
+		<finalName>tih</finalName>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>${project.basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

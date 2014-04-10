@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<script type="text/javascript" src="#{request.contextPath}/template/js/uploadStyle.js"/>
+	<p:dialog header="上传文件" widgetVar="addAttachmentDlgVar"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"  width="620" height="130"
+		id="addAttachmentDlgId">
+		<h:form id="addAttachmentDlgFormId" prependId="false" enctype="multipart/form-data">
+		<p:messages id="attMsg" />
+		<p:growl id="attGrowl" life="8000" />
+		<p:fileUpload  mode="advanced"  id="attUp" fileUploadListener="#{applyQuestionBean.attachFileUpload}"   
+            update=":addAttachmentDlgFormId:attGrowl,:newApplyQuestionFormId:newAppTable1,:createDlgFirstId:sumbitAccId"     
+            multiple="true"  uploadLabel="上传"   cancelLabel="取消" label="选择" />  
+		</h:form>
+		<script>
+			$(document).ready(function(){
+				loadUploadX();
+					});
+			function loadUploadX(){
+				 $("#attUp_input").attr("style","margin-right:60px");
+					fileUploadStyle.addlistener("attUp_input");
+					var aa=document.getElementsByClassName("ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left fileinput-button","label"); 
+					for(var i=0;i &lt; aa.length;i++){
+						aa[i].attr("class","ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left");
+					}
+			}
+			document.getElementsByClassName=function(className,elementName) {
+			    var elements=new Array();
+			    $(elementName).each(function(){
+			    if($(this).attr("class")==className){
+			    elements.push($(this));
+			    }
+			    });
+			return elements;
+			   };
+		</script>
+	</p:dialog>
+</ui:composition>

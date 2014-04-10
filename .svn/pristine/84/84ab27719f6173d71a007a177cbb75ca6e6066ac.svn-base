@@ -1,0 +1,335 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib"
+	template="/template/template.xhtml">
+	<ui:define name="title"></ui:define>
+
+	<ui:define name="content">
+	
+		<shiro:hasPermission name="contact:taxgenius">
+	
+			<style>
+
+.carItem {
+	width: 630px;
+	height: 40px;
+	text-align: center;
+	border:none;
+}
+.tdc{
+    border-style: hidden;
+}
+
+.hidden >table >tbody>tr >td{
+border-style: hidden; margin: 0;     overflow: hidden;     padding: 0;background-color:#F2F5F7;
+}
+
+
+.mydatatable td{
+    border-style: none;
+}
+#myform:j_idt79:j_idt80{
+	width:9000px;
+}
+.ui-datatable th div.ui-dt-c, .ui-datatable .ui-datatable-data td div.ui-dt-c, .ui-datatable .ui-datatable-data-empty td div.ui-dt-c, .ui-datatable tfoot td div.ui-dt-c {
+    overflow: hidden;
+    padding: 4px 10px;
+  
+}
+.ui-datatable-data-empty {
+    border-style: hidden;
+}
+
+.mydataDiv{
+text-align:right;
+margin-bottom:5px;
+}
+.divcolor{
+background-color:#FFFFFF ;
+}
+
+.ellipsis text { 
+   white-space:nowrap; 
+   text-overflow:ellipsis; /* for internet explorer */ 
+   overflow:hidden; 
+   width:500px; 
+   display:block; 
+}  
+
+.ellipsi  text{ 
+   white-space:nowrap; 
+   text-overflow:ellipsis; /* for internet explorer */ 
+   overflow:hidden; 
+   width:10px; 
+   display:block; 
+}  
+.newTableData{
+text-align:right;
+}
+.test {
+    border: 1px solid #AED0EA;
+}
+.ellipicfornomarl >div {
+width:222px;
+overflow:hidden;
+white-space:nowrap;
+text-overflow:ellipsis;
+-o-text-overflow:ellipsis;
+-icab-text-overflow: ellipsis;
+-khtml-text-overflow: ellipsis;
+-moz-text-overflow: ellipsis;
+-webkit-text-overflow: ellipsis;
+}
+.main {
+	overflow-y: auto;
+}
+.ui-layout-unit .ui-layout-unit-content {
+    border: 0 none;
+    padding: 0.2em 0;
+}
+.ui-icon{
+}
+</style>
+
+					<p:breadCrumb id="dataTable_breadCrumb" preview="true"
+			expandEffectDuration="200" previewWidth="24" style="margin-bottom: 5px;">
+			<p:menuitem value="互动交流" url="#" />
+			<p:menuitem value="互动交流" url="#" />
+			<p:menuitem value="税务精灵 " url="#" />
+			<p:menuitem value="精灵解答" url="#" />
+		</p:breadCrumb>
+		<p:growl id="growl" showDetail="true" life="10000" />
+		<p:layout
+			style="min-height:330px;max-height:55%;min-width:500px;max-width:99%;margin-top:5px;margin-left:5px;margin-right:5px;"
+			id="layout" >
+				<p:layoutUnit position="east" header="常见问题"  style="min-width:15%" >
+				<h:form id="dataform2" >
+                   <p:dataTable value="#{wizardAnswerBean.top5}" var="question"  
+        paginator="true" rows="10" effectSpeed="fast"  paginatorPosition="top"
+        paginatorTemplate=" {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
+   style="width:100%;height:100%;background-color:#F8F8FF" currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} " id="top5Data"  rowIndexVar="index" emptyMessage="#{msgs.dataTable_empty}" > 
+							 <p:column  styleClass="ellipicfornomarl" style="border-style: hidden; margin: 0;  background-color:#F2F5F7;   overflow: hidden;     padding: 0;">  
+      									<h:outputText value="#{index+1}、" />
+       								  <p:commandLink title="#{question.question}" value="#{question.name}"  id="cmLink" update=":myform,:dataform2" oncomplete="PageStyle.removeClassAndFindId('th');"  >
+									
+										<f:setPropertyActionListener target="#{wizardAnswerBean.id}" value="#{question.id}"/>
+									</p:commandLink> 
+									<p:tooltip for="cmLink"   >
+										<h:outputText value="#{question.question}" />
+									</p:tooltip>
+        </p:column>  
+        </p:dataTable>
+        </h:form>
+			</p:layoutUnit>
+		<p:layoutUnit position="center"  id="layoutcenter" >
+					<h:form id="answerForm" >
+			<div class="style1" style="margin-top: 5px;border:none; ">
+			<div >
+				<h:panelGrid columns="6" columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+				地域：<h:selectOneMenu  value="#{wizardAnswerBean.st.region}" styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="请选择" itemValue="" />
+						<f:selectItems value="#{commonBean.getDictByCat('TIH.TAX.REGION')}" var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>  
+					</h:selectOneMenu>
+				
+				税种：<h:selectOneMenu   value="#{wizardAnswerBean.st.taxType}" styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="请选择" itemValue="" />
+						<f:selectItems value="#{commonBean.getDictByCat('TIH.TAX.TYPE')}" var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>  
+					</h:selectOneMenu>
+							<h:outputLabel value="标题：	" /> 
+				
+				
+						 <p:inputText size="100"   value="#{wizardAnswerBean.st.name}" />
+				发布时间：
+				 <p:calendar locale="cn" pattern="yyyy-MM-dd"  navigator="true"
+						 id="ptCal"  value="#{wizardAnswerBean.beginTime}" readOnlyInputText="true"/>  
+				<h:outputLabel value="到　" /> 
+				 <p:calendar locale="cn" pattern="yyyy-MM-dd"  navigator="true"
+						 id="ptCal2"   value="#{wizardAnswerBean.endTime}"  readOnlyInputText="true"/>
+				
+				</h:panelGrid>
+				<h:panelGrid columns="4" columnClasses="column1,column2,column1,column2">
+				问题：	<p:inputText size="100"  value="#{wizardAnswerBean.st.question}"  />
+				回答：   <p:inputText size="100"   value="#{wizardAnswerBean.st.answer}"  />
+				</h:panelGrid>
+				</div>
+				<div align="right" style="padding: 0;">
+					<p:commandButton value="查询" icon="ui-icon ui-icon-search"
+						actionListener="#{wizardAnswerBean.search()}"
+						style="margin-right: 5px;margin-top:3px;margin-left: 5px;" update=":dataform,:growl" oncomplete="PageStyle.removeClassAndFindId('th');document.getElementById('myform').innerHTML=''"/>
+					<p:commandButton value="重置"
+						style="margin-top:3px;margin-bottom:3px;" onclick="javascript:document.getElementById('answerForm').reset();" icon="ui-icon ui-icon-cancel" type="button" />
+						 </div>
+			</div>
+		</h:form>
+						<p:panel header="查询结果" style="border:none;background-color:#F2F5F9 ">
+						<h:form id="dataform" >
+                    	<p:dataTable value="#{wizardAnswerBean.question}" var="question"    
+        paginator="true" emptyMessage="#{msgs.dataTable_empty}" rows="5" effectSpeed="fast"  paginatorPosition="top"
+        paginatorTemplate="   {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
+   style="width:100%;height:100%;"   currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} " id="all" rowIndexVar="index" styleClass="hidden"   >  
+		
+        <p:column styleClass="ellipsi" style="border-style: hidden; margin: 0;     overflow: hidden;     padding: 0;">  
+        								<h:outputText value=" #{index+1}、"/>
+      									
+       								  <p:commandLink title="#{question.question}"  value="#{question.name}"  id="cmLink" update=":myform,:dataform2" oncomplete="PageStyle.removeClassAndFindId('th');"  >
+									
+										<f:setPropertyActionListener target="#{wizardAnswerBean.id}" value="#{question.id}"/>
+									</p:commandLink> 
+									<p:tooltip for="cmLink"   >
+										<h:outputText value="#{question.question}" />
+									</p:tooltip>
+        </p:column>  
+    </p:dataTable>
+    </h:form>
+    </p:panel>
+			</p:layoutUnit  >
+		</p:layout>
+				<p:layout style="min-height:360px;max-height:55%;min-width:500px;max-width:99%;margin-top:5px;margin-left:5px;margin-right:5px;">
+				<p:layoutUnit position="center" style="margin-top:5px;margin-left:5px;margin-right:5px; word-wrap:break-word;"  header="问题与回答">
+			<h:form id="myform" >
+			
+                
+                
+                <font size="2"> <STRONG> <h:outputText value="#{wizardAnswerBean.answer.name}" id="questionText" style="margin-right: 50px;" /></STRONG></font>
+                　<h:outputText value="#{commonBean.getValueByDictCatKey(wizardAnswerBean.answer.region)}" style="margin-right: 50px;" />
+                　           <h:outputText value="#{commonBean.getValueByDictCatKey(wizardAnswerBean.answer.taxType)}"  style="margin-right: 50px;"  />
+                                                　<h:outputText value="#{documentAuditBean.formatDateFime(wizardAnswerBean.answer.createdDatetime)}"  style="margin-right: 50px;" >
+			
+                                                </h:outputText>
+                    <br/>
+                    <br/>
+                     <font size="2"><STRONG>问题:</STRONG></font>
+                     <h:outputText value="#{wizardAnswerBean.answer.question}"  style="margin-right: 50px;" />
+                     <p:commandButton id="carBtn"  value="附件" type="button" update=":myform"  rendered="#{wizardAnswerBean.smartAttachmentmstrByQuestionList.size()!=0}" >
+                     </p:commandButton>
+                 
+                   
+                    <br/>
+                    <br/>
+                   <font size="2"> <STRONG>答案:</STRONG></font>
+                      <h:outputText value="#{wizardAnswerBean.answer.answer}"   style="margin-right: 50px;" />
+                         <p:commandButton id="fujian2"  value="附件" type="button" update=":myform" rendered="#{wizardAnswerBean.smartAttachmentmstrByAnswerList.size()!=0}"  >
+                     </p:commandButton>
+                    <p:overlayPanel id="carPanel" for="carBtn"  dynamic="false" style=" position: fixed;" >  
+    		<p:dataTable style="width:300px;"   id="table" var="car" value="#{wizardAnswerBean.smartAttachmentmstrByQuestion}" paginator="true" rows="5" paginatorPosition="bottom"
+			paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+			 rowIndexVar="index" 
+		  rowStyleClass="#{index mod 2 == 1 ? 'changeColor' : null}" styleClass="mydatatable" >  
+            <p:column headerText="名称" styleClass="mydatatable">  
+          #{car.name}
+            </p:column>  
+ 	 <p:column headerText="操作" style="text-align:center;">  
+            	<p:commandButton title="下载" icon="ui-icon ui-icon-arrowthick-1-s"
+						style="width: 18px; height: 18px;" ajax="false">
+						<p:fileDownload value="#{wizardAnswerBean.getFile(car.filemstrId)}"/>
+				</p:commandButton>
+				</p:column>
+        </p:dataTable>  
+   				 </p:overlayPanel>  
+   				 
+   				<p:overlayPanel id="carPanel2" for="fujian2"  dynamic="false" style=" position: fixed;">  
+    		 <p:dataTable  id="table2" var="car" value="#{wizardAnswerBean.smartAttachmentmstrByAnswer}" paginator="true" rows="5" paginatorPosition="bottom"
+			paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+			 rowIndexVar="index"
+		   rowStyleClass="#{index mod 2 == 1 ? 'changeColor' : null}" style="width:300px;" styleClass="mydatatable">  
+            <p:column headerText="名称" >  
+           #{car.name}
+            </p:column>
+             <p:column headerText="操作" style="text-align:center;">  
+            	<p:commandButton title="下载" icon="ui-icon ui-icon-arrowthick-1-s"
+						style="width: 18px; height: 18px;" ajax="false">
+						<p:fileDownload value="#{wizardAnswerBean.getFile(car.filemstrId)}"/>
+				</p:commandButton>
+				</p:column>
+        </p:dataTable>
+   				 </p:overlayPanel> 
+                </h:form>
+		</p:layoutUnit>
+		</p:layout>
+		
+    <script>
+$(document).ready(
+		function (){
+			PageStyle.removeClassAndFindId('th');
+			document.getElementById("myform").innerHTML="";
+		//	document.getElementById("result").childNodes.item(1).style.cssText+=" height:200px;";
+			document.getElementById("layoutcenter").childNodes.item(0).style.cssText += " overflow:hidden; ";
+		});
+var PageStyle={
+        addBackColor:function (){
+     	 //       var cc=document.getElementById("myform:j_idt77");
+		//		cc.childNodes.item(1).className+=" divcolor";
+        },
+        removeClassAndHtml:function (className,elementName,htmlText){
+        	var element=document.getElementsByClassName(className,elementName);
+        	for(var i=0;i&lt; element.length;i++){
+ 				//element[i].innerHTML="&lt;&lt;";
+ 				element[i].attr("class","ui-icon-seek-prev");
+ 				element[i].html(htmlText);
+ 			}
+        },
+        removeClass: function(id){
+     		var aa=document.getElementById(id);
+ 			aa.className =" ui-paginator  newTableData";
+ 			aa.style.cssText="text-align:right;background-color:#F2F5F7; ";
+ 			
+ 			//this.removeClassAndHtml(aa,1,"&lt;&lt;");
+ 		//	this.removeClassAndHtml(aa,3,"&gt;&gt;");
+ 			this.removeClassAndHtml("ui-icon ui-icon-seek-prev","span","&lt;&lt;");
+ 			this.removeClassAndHtml("ui-icon ui-icon-seek-next","span","&gt;&gt;");
+ 		
+ 			this.addBackColor();
+        },
+        getRealId:function(element,elementid){
+        	var id="";
+        	$(element).each(function(){
+				var aa=$(this).attr('id');
+				if(aa!=undefined){
+				if(aa.indexOf(elementid)!=-1){
+					id=aa;
+					return false;
+				}
+				}
+			});
+        	return id;
+        },
+        removeClassAndFindId:function(element){
+        
+        	document.getElementById("dataform:all").childNodes.item(0).rows[1].cells[0].className="";
+        	document.getElementById("dataform2:top5Data").childNodes.item(0).rows[1].cells[0].className="";
+        	this.removeClass(this.getRealId(element,'top5Data_paginator_top'));
+        	this.removeClass(this.getRealId(element,'all_paginator_top'));
+        }
+};
+
+document.getElementsByClassName=function(className,elementName) {
+	
+    var elements=new Array();
+    $(elementName).each(function(){
+    //alert($(this).attr("class"));
+    if($(this).attr("class")==className){
+    elements.push($(this));
+    }
+    });
+return elements;
+   };
+
+
+</script> 
+
+		</shiro:hasPermission>
+		<shiro:lacksPermission name="contact:taxgenius">
+			<ui:include src="/errorshiro.xhtml" />
+		</shiro:lacksPermission>
+
+		</ui:define>
+
+		</ui:composition>
+		

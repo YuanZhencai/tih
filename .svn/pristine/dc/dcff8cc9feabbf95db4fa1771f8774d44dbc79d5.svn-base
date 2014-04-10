@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog
+		header="#{branchBean.excuteMethod eq 'add' ? '添加分支机构信息' : '编辑分支机构信息'}"
+		widgetVar="branchAddEditDialogWidgetVar" id="branchAddEditDialogId"
+		resizable="false" modal="true">
+		<h:form id="branchAddEditDialogForm" prependId="false">
+			<p:messages id="branchMessages" showDetail="true" autoUpdate="true" />
+			<h:panelGrid columns="6"
+				columnClasses="column1,column2,column3,column1,column2,column3">
+				<h:outputText value="机构名称：" />
+				<p:inputText value="#{branchBean.branchVo.organizationName}"
+					maxlength="90" style="width:200px;" />
+				<h:outputText value="*" style="color:red;" />
+				<h:outputText value="成立时间：" />
+				<p:calendar value="#{branchBean.branchVo.setUpDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true" readOnlyInputText="true"/>
+				<h:outputText value="*" style="color:red;" />
+			</h:panelGrid>
+			<h:panelGrid columns="3" columnClasses="column1,column2,column3">
+				<h:outputText value="经营地点：" />
+				<p:inputTextarea value="#{branchBean.branchVo.location}"
+					style="width:430px;height:60px;" autoResize="false"
+					effectDuration="400" maxlength="900" />
+				<h:outputText value="*" style="color:red;" />
+				<h:outputText value="经营范围：" />
+				<p:inputTextarea value="#{branchBean.branchVo.businessScope}"
+					style="width:430px;height:60px;" autoResize="false"
+					effectDuration="400" maxlength="900" />
+				<h:outputText value="*" style="color:red;" />
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="备注：" />
+				<p:inputTextarea value="#{branchBean.branchVo.remakrs}"
+					style="width:430px;height:60px;" autoResize="false"
+					effectDuration="400" maxlength="900" />
+				<h:outputText value="有效：" />
+				<h:selectOneRadio value="#{branchBean.branchVo.effective}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			<div
+				style="text-align: center; position: relative; padding-top: 10px;">
+				<p:commandButton actionListener="#{branchBean.saveBranch()}"
+					update=":growl,:branchAddEditDialogForm:branchMessages,:branchDialogForm:branchDataTable"
+					oncomplete="handleRequest(xhr, status, args ,'branch');"
+					value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+					style="margin-right: 5px;" />
+				<p:commandButton type="button"
+					onclick="branchAddEditDialogWidgetVar.hide()"
+					value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

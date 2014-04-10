@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:confirmDialog id="confirmDialog" message="确认终止该流程？终止后将无法回复。"
+		header="确认对话框" severity="alert" widgetVar="confirmation">
+		<h:form prependId="false" id="confirmFormId">
+			<p:commandButton id="confirm" value="是"
+				oncomplete="confirmation.hide()" update=":treeForm,:taskFrom:treeDataTable,:growl"
+				actionListener="#{taskManagementBean.stopWorkFlow()}" />
+			<p:commandButton id="decline" value="否" onclick="confirmation.hide()"
+				type="button" />
+		</h:form>
+	</p:confirmDialog>
+	
+	<p:confirmDialog id="deleteWarrantConfirmDialog" message="确认删除该授权信息？"
+		header="确认对话框" severity="alert" widgetVar="deleteWarrantConfirmation">
+		<h:form prependId="false" id="deleteWarrantConfirmFormId">
+			<p:commandButton id="deleteWarrantConfirm" value="是"
+				oncomplete="deleteWarrantConfirmation.hide()" update=":growl,:taskFrom:warrantDataTable"
+				actionListener="#{taskManagementBean.deleteWarrant()}" />
+			<p:commandButton id="deleteWarrantDecline" value="否" onclick="deleteWarrantConfirmation.hide()"
+				type="button" />
+		</h:form>
+	</p:confirmDialog>
+	
+	<p:confirmDialog id="deleteEmailDialog" message="确认删除定时器？"
+		header="确认对话框" severity="alert" widgetVar="deleteEmail">
+		<h:form prependId="false" id="deleteEmailFormId">
+			<p:commandButton value="是"
+				oncomplete="deleteEmail.hide()" update=":taskFrom:emailDataTableNew"
+				actionListener="#{JobMBean.deleteJob()}" />
+			<p:commandButton value="否" onclick="deleteEmail.hide()"
+				type="button" update=":taskFrom:emailDataTableNew"/>
+		</h:form>
+	</p:confirmDialog>
+	
+	<p:confirmDialog id="deleteDialog" message="确认删除流程？"
+		header="确认对话框" severity="alert" widgetVar="deleteVar">
+		<h:form prependId="false" id="deleteFormId">
+			<p:commandButton value="是"
+				oncomplete="deleteVar.hide();" update=":taskFrom:emailDataTableNew"
+				action="#{JobMBean.deleteWfMailConfig()}" />
+			<p:commandButton value="否" onclick="deleteVar.hide();"
+				type="button" update=":taskFrom:emailDataTableNew"/>
+		</h:form>
+	</p:confirmDialog>
+	
+	<p:confirmDialog id="deleteOneEmailDialog" message="确认删除流程（同时定时器会被删除）？"
+		header="确认对话框" severity="alert" widgetVar="deleteOneEmail">
+		<h:form prependId="false" id="deleteOneEmailFormId">
+			<p:commandButton value="是"
+				oncomplete="deleteOneEmail.hide()" update=":taskFrom:emailDataTableNew"
+				actionListener="#{JobMBean.deleteJob()}" />
+			<p:commandButton value="否" onclick="deleteOneEmail.hide()"
+				type="button" update=":taskFrom:emailDataTableNew"/>
+		</h:form>
+	</p:confirmDialog>
+	
+	
+</ui:composition>

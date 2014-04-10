@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:panel id="mailInfoPanel" style="border: none; "
+		rendered="#{taskManagementBean.taskNodeMailInfo == taskManagementBean.nodeName}">
+		<div class="style1">
+			<h:panelGrid columns="6" id="searchMailInfoPanel"
+				columnClasses="column1,column2,column1,column2,column1,column2">
+				<h:outputText value="流程编号：" />
+				<p:inputText value="#{taskManagementBean.filter['typeId']}" />
+				<h:outputText value="发送状态：" />
+				<h:selectOneMenu value="#{taskManagementBean.filter['status']}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihTaxMsgStatus)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}">
+					</f:selectItems>
+				</h:selectOneMenu>
+				<h:outputText value="创建时间：" />
+				<h:column>
+					<p:calendar value="#{taskManagementBean.filter['createStartDate']}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true"
+						readOnlyInputText="true" />		
+						到		
+					<p:calendar value="#{taskManagementBean.filter['createEndDate']}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true"
+						readOnlyInputText="true" />
+				</h:column>
+				<h:outputText value="发送人：" />
+				<p:inputText value="#{taskManagementBean.filter['sentBy']}" />
+				<h:outputText value="接收人：" />
+				<p:inputText value="#{taskManagementBean.filter['receivedBy']}" />
+				<h:outputText value="发送时间：" />
+				<h:column>
+					<p:calendar value="#{taskManagementBean.filter['sendStartDate']}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true"
+						readOnlyInputText="true" />
+						到
+					<p:calendar value="#{taskManagementBean.filter['sendEndDate']}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true"
+						readOnlyInputText="true" />
+				</h:column>
+			</h:panelGrid>
+			<div>
+				<p:commandButton value="查询"
+					action="#{taskManagementBean.searchEmailHistory}"
+					update="mailInfoDataTable" icon="ui-icon ui-icon-search"
+					style="margin-right: 5px;" />
+				<p:commandButton value="重置"
+					action="#{taskManagementBean.resetEmailQuery()}"
+					update="searchMailInfoPanel" icon="ui-icon ui-icon-search"
+					style="margin-right: 5px;" />
+			</div>
+		</div>
+		<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+			value="#{taskManagementBean.emailHistory}" var="h"
+			id="mailInfoDataTable" rowIndexVar="index" style="margin-top:5px;"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+			paginator="true" rows="10" paginatorPosition="bottom"
+			paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}">
+			<f:facet name="header">
+				<div class="header">
+					<h:outputText value="发送情况列表" />
+				</div>
+			</f:facet>
+			<p:column headerText="流程编号">
+				<h:outputText value="#{h.typeId}" />
+			</p:column>
+			<p:column headerText="消息类型">
+				<h:outputText value="#{commonBean.getValueByDictCatKey(h.type)}" />
+			</p:column>
+			<p:column headerText="发送状态">
+				<h:outputText value="#{commonBean.getValueByDictCatKey(h.status)}" />
+			</p:column>
+			<p:column headerText="发送人">
+				<h:outputText value="#{taskManagementBean.getUserName(h.sentBy)}" />
+			</p:column>
+			<p:column headerText="创建时间">
+				<h:outputText value="#{h.createdDatetime}">
+					<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="发送时间">
+				<h:outputText value="#{h.sendDatetime}">
+					<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="内容">
+				<h:outputText value="#{h.content}" />
+			</p:column>
+			<p:column headerText="接收人">
+				<h:outputText
+					value="#{taskManagementBean.getUserName(h.receivedBy)}" />
+			</p:column>
+		</p:dataTable>
+	</p:panel>
+</ui:composition>

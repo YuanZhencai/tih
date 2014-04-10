@@ -1,0 +1,293 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<p:dialog id="addOrInspectationDialog" widgetVar="addOrInspectationVar" header="编辑稽查信息">
+		<p:ajax event="close"  listener="#{feedBackInspectationBean.clear()}" update="addOrInspectationDialog"/>
+		<p:growl id="messages" showDetail="true"/>
+		<p:layout style="width: 1100px;height: 600px; margin: 5px 0 0 0;"
+			id="layout">
+			<p:layoutUnit style="width: 100%;height:100%;" size="340"
+				minSize="20" position="west" >
+				<h:form id="historyForm" prependId="false">
+				操作类型:
+				<h:selectOneMenu value="#{feedBackInspectationBean.operationType}">
+					<p:ajax update="historiesDatatable,:add_edit_inspectation" event="change" listener="#{feedBackInspectationBean.findHistoryByID()}"/>
+					<f:selectItem itemLabel="请选择"/>
+					<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxOperatetypeType)}" 
+						var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}">
+					</f:selectItems> 
+				</h:selectOneMenu>
+				<p:dataTable id="historiesDatatable" value="#{feedBackInspectationBean.inspectationHistoryVo}" var="history"  paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+						rowIndexVar="index" style="margin-top:5px;"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+						selection="#{feedBackInspectationBean.selectedInspectation}" selectionMode="single" 
+						rowKey="#{history.id}" emptyMessage="#{msgs.dataTable_empty}">
+						<f:facet name="header">
+						历史信息列表
+						</f:facet>
+						
+						<p:ajax event="rowSelect" listener="#{feedBackInspectationBean.onRowSelect}" update=":add_edit_inspectation"/>
+						<p:ajax event="rowUnselect" />
+						
+						<p:column headerText="操作类型" style="width: 50px">
+							<h:outputText value="#{commonBean.getValueByDictCatKey(history.operationType)}" />
+						</p:column>
+						<p:column headerText="操作时间" style="width: 125px">
+							<h:outputText value="#{history.updateTime}" >
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="操作人">
+							<h:outputText value="#{history.updateBy}" style="width: 75px" />
+						</p:column>
+						<p:column headerText="操作" style="width: 50px" >
+							<div>
+								<p:commandButton title="修改" icon="ui-icon ui-icon-pencil" action="#{feedBackInspectationBean.specialEdit()}"
+									update=":add_edit_inspectation" 
+									rendered="#{history.operationType eq commonBean.tihTaxOperatetypeType4 ? true : false}"
+									disabled="#{feedBackInspectationBean.authority}"
+									style="width: 18px;height: 18px;"/>
+								<p:commandButton title="删除" icon="ui-icon ui-icon-close" update=":historyForm"
+									oncomplete="confirmation.show();"
+									disabled="#{feedBackInspectationBean.authority}"
+									rendered="#{history.operationType eq commonBean.tihTaxOperatetypeType4 ? true : false}"
+									style="width: 18px;height: 18px;">
+									<f:setPropertyActionListener target="#{feedBackInspectationBean.id}" value="#{history.id}"/>
+								</p:commandButton>
+							</div>
+						</p:column>
+				</p:dataTable>
+				</h:form>
+			</p:layoutUnit>
+			
+			<p:layoutUnit position="center" size="700" id="inspectationLayoutUnit">
+				<h:form id="add_edit_inspectation" prependId="false">  
+						<p:messages id="inspectationMsg" autoUpdate="true" showDetail="true" /> 
+						<h:panelGrid columns="2" columnClasses="column43,column2">
+							<h:outputText value="公司名称：" />
+							<p:inputText value="#{feedBackInspectationBean.invsInspectation.companyName}" style="width: 356px;" maxlength="50" disabled="true"/>
+							<h:outputText value="稽（检）查机关：" />
+							<h:column>
+								<p:inputText value="#{feedBackInspectationBean.invsInspectation.inspectOrg}" style="width: 356px;" maxlength="50" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+								<h:outputText value="*" style="color: red;"/>
+							</h:column>
+						</h:panelGrid>
+					
+						<h:panelGrid columns="4" columnClasses="column43,column2,column1,column2">
+							<h:outputLabel value="稽（检）查业务期间："/>
+							<h:column>
+								<p:calendar value="#{feedBackInspectationBean.invsInspectation.inspectStartDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+								
+							</h:column>
+							<h:column>
+								<h:outputLabel value="到"/><p:spacer width="10"/>
+							</h:column>
+							<h:column>
+								<p:calendar value="#{feedBackInspectationBean.invsInspectation.inspectEndDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+								
+							</h:column>
+								
+							<h:outputLabel value="稽（检）查时间："/>
+							<h:column>
+								<p:calendar value="#{feedBackInspectationBean.invsInspectation.missionStartDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+								
+							</h:column>
+							<h:column>
+								<h:outputLabel value="到"/><p:spacer width="10"/>
+							</h:column>
+							<h:column>
+								<p:calendar value="#{feedBackInspectationBean.invsInspectation.missionEndDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+								
+							</h:column>
+								
+							<h:outputText value="检查类型：" />
+							<h:column>
+								<h:selectOneMenu value="#{feedBackInspectationBean.invsInspectation.inspectType}" disabled="#{feedBackInspectationBean.lookOrEdit}">
+									<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+									<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxInspectionType)}" 
+										var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"
+										itemDisabled="#{feedBackInspectationBean.lookOrEdit}">
+									</f:selectItems>
+								</h:selectOneMenu>
+							</h:column>
+								
+							<h:outputLabel value="税种：" />
+							<h:column>
+								<p:selectCheckboxMenu value="#{feedBackInspectationBean.taxTypes}" label="请选择" style="width: 142px;" >
+										<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxType)}" 
+											var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"
+											itemDisabled="#{feedBackInspectationBean.lookOrEdit}">
+										</f:selectItems>  
+								</p:selectCheckboxMenu>
+							</h:column>
+								
+							<h:outputLabel value="联系人：" />
+							<p:inputText value="#{feedBackInspectationBean.invsInspectation.contact}" maxlength="20" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+								
+							<h:outputLabel value="联系电话：" />
+							<p:inputText value="#{feedBackInspectationBean.invsInspectation.contactNum}" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2" columnClasses="column43,column2">
+							<h:outputLabel value="主要问题描述：" />
+							<p:inputTextarea value="#{feedBackInspectationBean.invsInspectation.mainProblemDesc}" 
+									style="width: 356px;" rows="2" maxlength="600" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+							
+							<h:outputLabel value="整改计划：" />
+							<p:inputTextarea value="#{feedBackInspectationBean.invsInspectation.rectificationPlan}" 
+									style="width: 356px;" rows="2" maxlength="600" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+							
+							<h:outputLabel value="整改结果：" />
+							<p:inputTextarea value="#{feedBackInspectationBean.invsInspectation.rectificationResult}" 
+									style="width: 356px;" rows="2" maxlength="600" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+							
+						</h:panelGrid>
+					<p:dataTable var="inspectionResult" id="inspection_list" value="#{feedBackInspectationBean.inspectationResult}"
+					paginatorPosition="bottom" rowIndexVar="index" paginator="true" rows="5" editable="true"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+					currentPageReportTemplate="#{component.rowCount == 0 ? '1/1' : '{currentPage}/{totalPages}'} "
+					rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+					emptyMessage="#{msgs.dataTable_empty}" >
+					<f:facet name="header">
+						<h:outputText value="稽查结果" />
+						<div style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+							<p:commandButton value="添加" icon="ui-icon ui-icon-plus"
+								action="#{feedBackInspectationBean.addInspectationResult}"
+								disabled="#{feedBackInspectationBean.lookOrEdit}"
+								update="inspection_list" oncomplete="rowEdit();">
+								
+							</p:commandButton>
+						</div>
+					</f:facet>
+					
+					<p:ajax event="rowEdit" listener="#{feedBackInspectationBean.onEdit}"  />
+					
+					<p:column headerText="税种" style="width: 100px;">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{commonBean.getValueByDictCatKey(inspectionResult.taxType)}" />
+							</f:facet>
+							<f:facet name="input" >
+								<h:selectOneMenu value="#{inspectionResult.taxType}" label="请选择" style="width: 80px;">
+										<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxType)}" 
+											var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}">
+										</f:selectItems>  
+								</h:selectOneMenu>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="补税金额（元）" style="width: 100px;">
+						<p:cellEditor>
+							<f:facet name="output">
+								<div style="text-align: right;">
+									<h:outputText value="#{inspectionResult.overdueTax}" />
+								</div>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{inspectionResult.overdueTax}" style="width: 100px;">
+									<f:validator validatorId="customValidator" />
+									<w:validateRegex regex="INSPECTION" regexMessage="补税金额：填写格式只能为整数或保留2位小数"/>
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="滞纳金（元）" style="width: 100px;">
+						<p:cellEditor>
+							<f:facet name="output">
+								<div style="text-align: right;">
+									<h:outputText value="#{inspectionResult.penalty}" />
+								</div>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{inspectionResult.penalty}" style="width: 80px;">
+									<f:validator validatorId="customValidator" />
+									<w:validateRegex regex="INSPECTION" regexMessage="滞纳金（元）：填写格式只能为整数或保留2位小数"/>
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="进项税额转出（元）" style="width: 100px;">
+						<p:cellEditor>
+							<f:facet name="output">
+								<div style="text-align: right;">
+									<h:outputText value="#{inspectionResult.inputTaxTurnsOut}" />
+								</div>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{inspectionResult.inputTaxTurnsOut}" style="width: 80px;">
+									<f:validator validatorId="customValidator" />
+									<w:validateRegex regex="INSPECTION" regexMessage="进项税额转出（元）：填写格式只能为整数或保留2位小数"/>
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="调减以前年度亏损（元）" style="width: 140px;">
+						<p:cellEditor>
+							<f:facet name="output">
+								<div style="text-align: right;">
+									<h:outputText value="#{inspectionResult.reductionPrevLoss}" />
+								</div>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{inspectionResult.reductionPrevLoss}" style="width: 140px;">
+									<f:validator validatorId="customValidator" />
+									<w:validateRegex regex="INSPECTION" regexMessage="调减以前年度亏损（元）：填写格式只能为整数或保留2位小数"/>
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="罚款（元）" style="width: 80px;">
+						<p:cellEditor>
+							<f:facet name="output">
+								<div style="text-align: right;">
+									<h:outputText value="#{inspectionResult.fine}" />
+								</div>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{inspectionResult.fine}" style="width: 70px;">
+									<f:validator validatorId="customValidator" />
+									<w:validateRegex regex="INSPECTION" regexMessage="罚款（元）：填写格式只能为整数或保留2位小数"/>
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="情况说明" style="width: 100px;">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{inspectionResult.situationRemarks}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{inspectionResult.situationRemarks}" style="width: 100px;"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					
+					<p:column headerText="操作" rendered="#{!feedBackInspectationBean.lookOrEdit}" style="width: 130px;">  
+			            <p:rowEditor id="rowEditor"/>
+			            <p:commandButton title="删除"  style="width: 18px;height: 18px;"
+							oncomplete="resultConfirmation.show();"
+							update=":add_edit_inspectation,inspection_list"
+							icon="ui-icon ui-icon-close" rendered="#{item.startDate eq null ? true : false }">
+							<f:setPropertyActionListener target="#{feedBackInspectationBean.result}" value="#{inspectionResult}"/>
+						</p:commandButton>
+			        </p:column>
+				</p:dataTable>
+					
+					<div style="text-align: center; margin: 13px -3px 0px 0px; vertical-align: middle">
+						<p:commandButton value="确认" action="#{feedBackInspectationBean.specialUpdate}"
+							update=":historyForm,:add_edit_inspectation,:messages,:inspectionForm" icon="ui-icon ui-icon-check"
+						    style="margin-right: 5px;" disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+						<p:commandButton value="取消" icon="ui-icon ui-icon-cancel" 
+							actionListener="#{feedBackInspectationBean.onCancel}"
+							update="add_edit_inspectation"
+							disabled="#{feedBackInspectationBean.lookOrEdit}"/>
+					</div>
+				</h:form>
+			</p:layoutUnit>
+		</p:layout>
+	</p:dialog>
+</ui:composition>

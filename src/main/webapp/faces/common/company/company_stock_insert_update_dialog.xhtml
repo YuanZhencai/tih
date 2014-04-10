@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+>
+	<p:dialog modal="true" resizable="false"  header="#{companyStockBean.insert  == 'false' ?'编辑股权结构信息' :'添加股权结构信息' }"  widgetVar="stockInsertDialogvar" id="stockInsertDialog">
+		<p:messages id="stockinsertMessagesId"  autoUpdate="true" showDetail="true"  showSummary="true"/> 
+		
+		<h:form id="stockInsertForm" prependId="false">
+					<p:inputText type="hidden" value="#{companyStockBean.savemodel.id}"/>
+					<h:panelGrid columns="4" style="text-align:right;">
+						
+				<h:outputText value="股东名称：" />
+				<h:panelGroup>
+					<p:inputText value="#{companyStockBean.savemodel.shareholder}" maxlength="66"/>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				股东类型：
+				<h:panelGroup>
+				<h:selectOneMenu value="#{companyStockBean.savemodel.type}" 
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all" style="width:139px">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxCompanyStock)}"
+								var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+						   <h:outputText style="color:red;" value="*" />
+					</h:panelGroup>
+				<h:outputLabel value="注册资金(万元)：" /> 
+				<h:panelGroup>
+				<p:inputText value="#{companyStockBean.savemodel.registeredCapital}"  />
+				<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				
+				<h:outputLabel value="比例：" /> 
+				<h:panelGroup>
+				<p:inputText value="#{companyStockBean.savemodel.ratio}" />
+				<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				
+				<h:outputText value="币种 ：" />
+					<h:panelGroup>
+				<h:selectOneMenu value="#{companyStockBean.savemodel.currency}" 
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all" style="width:139px">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxCurrency)}"
+								var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					 <h:outputText style="color:red;" value="*" />
+					</h:panelGroup>
+				<h:outputText value="有效：" />
+				<h:selectOneRadio value="#{companyStockBean.savemodel.defunctInd}"  >
+					<f:selectItem itemLabel="是" itemValue="N"  />
+					<f:selectItem itemLabel="否" itemValue="Y" />
+				</h:selectOneRadio>
+				<p:inputText id="secondTime"   type="hidden" value="#{companyStockBean.savemodel.statisticsDatetime}">
+					<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8"/>
+					</p:inputText>
+			</h:panelGrid>
+			<div align="center" style="margin-top: 5px;">
+				<p:commandButton  value="确定"
+			style="margin-right: 5px;" update=":stockForm:stocktable,:growl,:stockSearchdialogvarForm:stockInserttable,:stockinsertMessagesId"    actionListener="#{companyStockBean.insertOrUpdate}" oncomplete="handleStockDialogvar(xhr, status, args)"   icon="ui-icon ui-icon-check"/>
+				<p:commandButton  value="取消"  onclick="stockInsertDialogvar.hide();" type="button"    icon="ui-icon ui-icon-cancel"  />
+			</div>
+		</h:form>
+	</p:dialog>
+	<script>
+	function handleStockDialogvar(xhr, status, args) {
+		if (args.dataInfoSumbit == "yes") {
+			stockInsertDialogvar.hide();
+		}
+	}
+	</script>
+
+	</ui:composition>

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<p:layout rendered="#{summaryChartBean.flag}" id="rightPieModelId">
+		<p:layoutUnit position="center" >
+			<h:form id="pieModel" prependId="false" style="margin-bottom:15px">
+				<h:panelGrid columns="3">
+					<p:pieChart id="pie_1" value="#{summaryChartBean.updateDocumentModel}" legendPosition="w"
+			             title="文档上传审核" style="width:300px;height:250px;" showDataLabels="true"
+			             rendered="#{summaryChartBean.searchWorkFlowName =='' or summaryChartBean.searchWorkFlowName == commonBean.tihTaxRequestform1}"/>
+			        <p:pieChart id="pie_2" value="#{summaryChartBean.checkinDocumentModel}" legendPosition="w"  
+			             title="检入文档审核" style="width:300px;height:250px;" showDataLabels="true"
+			             rendered="#{summaryChartBean.searchWorkFlowName =='' or summaryChartBean.searchWorkFlowName == commonBean.tihTaxRequestform2}"/>
+			    	<p:pieChart id="pie_3" value="#{summaryChartBean.askQuestionModel}" legendPosition="w"  
+			             title="提问流程回答" style="width:300px;height:250px;" showDataLabels="true"
+			             rendered="#{summaryChartBean.searchWorkFlowName =='' or summaryChartBean.searchWorkFlowName == commonBean.tihTaxRequestform3}"/>
+			        </h:panelGrid>
+				
+				<h:panelGrid columns="3">
+					<p:pieChart id="pie_4" value="#{summaryChartBean.taxPayableModel}" legendPosition="w"  
+			             title="应交税务综合表审核" style="width:300px;height:250px;" showDataLabels="true"
+			             rendered="#{summaryChartBean.searchWorkFlowName =='' or summaryChartBean.searchWorkFlowName == commonBean.tihTaxRequestform41}"/>
+			        <p:pieChart id="pie_5" value="#{summaryChartBean.addTaxModel}" legendPosition="w"  
+			             title="增值税进项税额抵扣情况表审核" style="width:300px;height:250px;" showDataLabels="true"
+			              rendered="#{summaryChartBean.searchWorkFlowName =='' or summaryChartBean.searchWorkFlowName == commonBean.tihTaxRequestform42}"/>
+			       <p:pieChart id="pie_6" value="#{summaryChartBean.groupFeedModel}" legendPosition="w"  
+			             title="集团发起的情况反馈流程处理" style="width:300px;height:250px;" showDataLabels="true"
+			             rendered="#{summaryChartBean.searchWorkFlowName =='' or summaryChartBean.searchWorkFlowName == commonBean.tihTaxRequestby1}"/>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="3">
+					<p:pieChart id="pie_7" value="#{summaryChartBean.factoryModel}" legendPosition="w"  
+			             title="工厂发起的情况反馈流程处理" style="width:300px;height:250px;" showDataLabels="true"
+			             rendered="#{summaryChartBean.searchWorkFlowName =='' or summaryChartBean.searchWorkFlowName == commonBean.tihTaxRequestby2}"/>
+				</h:panelGrid>
+			</h:form>
+		</p:layoutUnit>
+	</p:layout>
+	
+	<p:layout rendered="#{summaryChartBean.detail}" id="detailLayoutId">
+		<ui:include src="summary_detail.xhtml" />
+	</p:layout>
+	
+</ui:composition>

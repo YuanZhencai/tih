@@ -1,0 +1,15 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog resizable="false" modal="true" header="附件上传" width="620" height="120"
+		id="add_attachment_dialog_id" widgetVar="add_attachment_dialog_var">
+		
+		<h:form id="add_attachment_form_id" enctype="multipart/form-data" prependId="false">
+			<p:fileUpload id="upload_id" mode="advanced" fileUploadListener="#{projectBean.attachFileUpload}"
+				update=":project_attachment_form_id,:projectForm:pGrowl"
+				multiple="true" uploadLabel="上传" cancelLabel="取消" label="选择"/>
+		</h:form>
+	</p:dialog>
+</ui:composition>

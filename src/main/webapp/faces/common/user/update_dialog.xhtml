@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog
+		header="#{userBean.excuteMethod eq 'insert'?'添加用户信息':'编辑用户信息'}"
+		widgetVar="updateUserDialog" id="updateUserDlg" width="480" resizable="false" 
+		modal="true">
+		<p:messages id="userErrorMsg" showDetail="true" />
+		<h:form id="updateUserDialogForm" prependId="false">
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="用户帐号：" />
+				<p:inputText id="adAccount" value="#{userBean.userVo.userName}"
+					maxlength="49" disabled="true" styleClass="input_disabled" />
+				<h:outputText value="用户姓名：" />
+				<p:inputText value="#{userBean.userVo.realName}" disabled="true"
+					styleClass="input_disabled" />
+				<h:outputText value="所属公司：" />
+				<p:inputText value="#{userBean.userVo.organizationName}"
+					disabled="true" styleClass="input_disabled" />
+				<h:outputText value="工号：" />
+				<p:inputText value="#{userBean.userVo.jobNumber}"
+					styleClass="input_disabled" disabled="true" />
+				<h:outputText value="邮件地址：" />
+				<p:inputText value="#{userBean.userVo.email}" disabled="true"
+					styleClass="input_disabled" />
+				<h:outputText value="电话号码：" />
+				<p:inputText value="#{userBean.userVo.telephone}" disabled="true"
+					styleClass="input_disabled" />
+				<h:outputText value="手机号码：" />
+				<p:inputText value="#{userBean.userVo.phone}" disabled="true"
+					styleClass="input_disabled" />
+				<h:outputText value="性别：" />
+				<h:selectOneMenu value="#{userBean.userVo.sex}" disabled="true"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="男" itemValue="1" />
+					<f:selectItem itemLabel="女" itemValue="2" />
+				</h:selectOneMenu>
+				<h:outputText value="证件类型：" />
+				<h:selectOneMenu value="#{userBean.userVo.certificatesType}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="身份证" itemValue="identityCard" />
+					<f:selectItem itemLabel="护照" itemValue="passport" />
+					<f:selectItem itemLabel="驾驶证" itemValue="drivingLicense" />
+					<f:selectItem itemLabel="社保卡" itemValue="socialSecurityCard" />
+				</h:selectOneMenu>
+				<h:outputText value="证件号：" />
+				<p:inputText id="idtentityId"
+					value="#{userBean.userVo.certificatesNumber}" />
+				<h:outputText value="入职时间：" />
+				<p:calendar value="#{userBean.userVo.workDateTime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true" />
+				<h:outputText value="出生日期：" />
+				<p:calendar value="#{userBean.userVo.birthday}" pattern="yyyy-MM-dd"
+					locale="cn" navigator="true" readOnlyInputText="true" />
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="背景说明：" />
+				<p:inputTextarea value="#{userBean.userVo.remark}"
+					style="width:356px;height:60px;" autoResize="false"
+					effectDuration="400" />
+				<h:outputText value="有效：" />
+				<h:selectOneRadio value="#{userBean.userVo.effective}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			<div
+				style="text-align: center; position: relative; padding-top: 10px;">
+				<p:commandButton actionListener="#{userBean.saveUpdateUser}"
+					oncomplete="handleRequest(xhr, status, args,'addUpdateUser');"
+					update=":userErrorMsg,:userGrowl,:userDataTableForm:userDataTable"
+					value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+					style="margin-right: 5px;" />
+				<p:commandButton type="button" onclick="updateUserDialog.hide()"
+					value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

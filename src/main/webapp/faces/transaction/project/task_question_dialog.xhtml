@@ -1,0 +1,79 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="700" id="task_question_dialog_id" header="问题一览"
+		widgetVar="task_question_dialog_var" resizable="false" modal="true">
+		<h:form id="task_question_form_id" prependId="false">
+			<p:dataTable var="qu" value="#{projectBean.problems}" paginatorPosition="bottom" paginator="true" rows="5"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				selection="#{projectBean.selectedProblem}" emptyMessage="#{msgs.dataTable_empty}" style="margin-top: 5px;">
+				<f:facet name="header">
+					问题清单
+					<div style="text-align: right; position: relative; margin: -13px -5px 0px 0px; vertical-align: middle">
+						<p:commandButton icon="ui-icon ui-icon-plus" value="#{msgs.btn_add}" style="margin-right: 5px;"
+							update=":edit_question_dialog_id" oncomplete="edit_question_dialog_var.show();"
+							action="#{projectBean.initProblem}"
+							disabled="#{!(projectBean.proadmin or projectBean.project.p.createdBy eq currentUser.currentUsermstr.adAccount or projectBean.task.chargedBy eq currentUser.currentUsermstr.adAccount)}">
+							<f:setPropertyActionListener target="#{projectBean.problemModel}" value="add"/>
+							<f:setPropertyActionListener target="#{projectBean.chargedBy}" value=""/>
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon ui-icon-close" value="#{msgs.btn_delete}" update=":confirm_form_id"
+							oncomplete="confirm_dialog_var.show()"
+							disabled="#{!(projectBean.proadmin or projectBean.project.p.createdBy eq currentUser.currentUsermstr.adAccount or projectBean.task.chargedBy eq currentUser.currentUsermstr.adAccount)}">
+							<f:setPropertyActionListener target="#{projectBean.deleteModel}" value="question"/>
+						</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column selectionMode="multiple" style="width: 6%; text-align: center;"/>
+				<p:column headerText="问题描述">
+					<h:outputText value="#{qu.problem.desc}" title="#{qu.problem.desc}"
+					style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:170px;"/>
+				</p:column>
+				<p:column headerText="解决人员">
+					<h:outputText value="#{projectBean.getUsernameByAccount(qu.problem.solvedBy)}" title="#{projectBean.getUsernameByAccount(qu.problem.solvedBy)}"
+					style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:60px;"/>
+				</p:column>
+				<p:column headerText="解决状态">
+					<h:outputText value="#{commonBean.getValueByDictCatKey(qu.problem.status)}"
+					title="#{commonBean.getValueByDictCatKey(qu.problem.status)}"
+					style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:70px;"/>
+				</p:column>
+				<p:column headerText="解决方案">
+					<h:outputText value="#{qu.problem.proposal}" title="#{qu.problem.proposal}"
+					style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:150px;"/>
+				</p:column>
+				<p:column headerText="操作">
+					<h:inputHidden value="#{qu.problem.id}"/>
+					<p:commandButton title="#{msgs.btn_query}" icon="ui-icon ui-icon-search" update=":edit_question_dialog_id"
+						oncomplete="edit_question_dialog_var.show();" style="width: 18px; height: 18px;">
+						<f:setPropertyActionListener target="#{projectBean.problem}" value="#{qu}"/>
+						<f:setPropertyActionListener target="#{projectBean.problemModel}" value="query"/>
+						<f:setPropertyActionListener target="#{projectBean.currentOpAccount}" value="#{qu.problem.solvedBy}"/>
+						<f:setPropertyActionListener target="#{projectBean.chargedBy}" 
+							value="#{projectBean.getUsernameByAccount(qu.problem.solvedBy)}"/>
+					</p:commandButton>
+					
+					<p:commandButton title="#{msgs.btn_edit}" icon="ui-icon ui-icon-pencil" update=":edit_question_dialog_id"
+						oncomplete="edit_question_dialog_var.show();" style="width: 18px; height: 18px;"
+						disabled="#{!(projectBean.proadmin or projectBean.project.p.createdBy eq currentUser.currentUsermstr.adAccount or projectBean.task.chargedBy eq currentUser.currentUsermstr.adAccount or qu.problem.solvedBy eq currentUser.currentUsermstr.adAccount)}">
+						<f:setPropertyActionListener target="#{projectBean.problem}" value="#{qu}"/>
+						<f:setPropertyActionListener target="#{projectBean.problemModel}" value="edit"/>
+						<f:setPropertyActionListener target="#{projectBean.currentOpAccount}" value="#{qu.problem.solvedBy}"/>
+						<f:setPropertyActionListener target="#{projectBean.chargedBy}" 
+							value="#{projectBean.getUsernameByAccount(qu.problem.solvedBy)}"/>
+					</p:commandButton>
+					<p:commandButton title="附件" icon="ui-icon ui-icon-mail-closed" style="width: 18px; height: 18px;"
+						update=":project_attachment_form_id" oncomplete="project_attachment_dialog_var.show()"
+						action="#{projectBean.searchProjectAttachments}">
+							<f:setPropertyActionListener target="#{projectBean.problem}" value="#{qu}"/>
+							<f:setPropertyActionListener target="#{projectBean.operation}" value="question"/>
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

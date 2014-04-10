@@ -1,0 +1,45 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="confirm_dialog_id" resizable="false" modal="true"
+		header="#{documentBean.deleteModel eq 'folderDelete' ? '删除文件夹' : ''}#{documentBean.deleteModel eq 'docDelete' ? '删除文档' : ''}#{documentBean.deleteModel eq 'versionDelete' ? '删除版本' : ''}#{documentBean.deleteModel eq 'permissionesDelete' ? '删除权限' : ''}" 
+		widgetVar="confirm_dialog_var">
+
+		<h:form prependId="false" id="confirm_form_id" style="text-align: center;">
+		<h:outputText styleClass="ui-icon ui-icon-alert ui-confirm-dialog-severity" />
+		<h:outputText value="确定要删除所选的文件夹吗？" rendered="#{documentBean.deleteModel eq 'folderDelete'}"/>
+		<h:outputText value="确定要删除所选的文档吗？" rendered="#{documentBean.docModel eq 'docDelete'}"/>
+		<h:outputText value="确定要删除所选的文档版本吗？" rendered="#{documentBean.deleteModel eq 'versionDelete'}"/>
+		<h:outputText value="确定要删除所选的文档权限吗？" rendered="#{documentBean.deleteModel eq 'permissionesDelete'}"/>
+		<br />
+		<br />
+			<p:commandButton value="#{msgs.btn_ok}"
+				update=":left_folder_tree_form_id,:growl"
+				action="#{documentBean.deleteFolder}" id="folderDeleteId"
+				rendered="#{documentBean.deleteModel eq 'folderDelete' ? true : false}"
+				oncomplete="confirm_dialog_var.hide();removeTextShadow();" />
+
+			<p:commandButton value="#{msgs.btn_ok}"
+				update=":growl,:main_form_id:right_document_list_id"
+				action="#{documentBean.deleteDoc}"
+				rendered="#{documentBean.docModel eq 'docDelete' ? true : false}"
+				oncomplete="confirm_dialog_var.hide()" />
+
+			<p:commandButton value="#{msgs.btn_ok}" update=":growl,:main_form_id:right_document_list_id"
+				action="#{documentBean.deleteDocVersion}"
+				rendered="#{documentBean.deleteModel eq 'versionDelete' ? true : false}"
+				oncomplete="confirm_dialog_var.hide();document_versions_dialog_var.hide();" />
+
+			<p:commandButton value="#{msgs.btn_ok}"
+				update=":document_permission_form"
+				rendered="#{documentBean.deleteModel eq 'permissionesDelete' ? true : false}"
+				action="#{documentBean.deletePermissiones}"
+				oncomplete="confirm_dialog_var.hide();" />
+
+			<p:commandButton type="button" value="#{msgs.btn_cancel}"
+				onclick="confirm_dialog_var.hide()" style="margin: 5px 5px 5px 5px;" />
+		</h:form>
+	</p:dialog>
+</ui:composition>

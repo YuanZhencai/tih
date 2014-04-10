@@ -1,0 +1,167 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<p:dialog id="antiAvoidanceDetailDialog" widgetVar="antiAvoidanceDetailDialogVar" header="反避税信息" resizable="false" modal="true">
+		<p:layout style="width: 1000px;height: 600px; margin: 5px 0 0 0;"
+			id="layout">
+			<p:layoutUnit style="width: 100%;height:100%;" size="300"
+				minSize="20" position="west" >
+				<h:form id="antiHistoryForm">
+				<h:selectOneMenu value="#{antiSummaryBean.operateInd}">
+					<p:ajax update=":antiHistoryForm,:antiDetailForm" event="change" listener="#{antiSummaryBean.handleHistoryChange()}"/>
+					<f:selectItem itemLabel="请选择"/>
+						<f:selectItems
+							value="#{commonBean.getDictByCat(commonBean.tihTaxOperatetypeType)}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+				<p:dataTable id="historiesDatatable" value="#{antiSummaryBean.antiHistories}" var="history"  paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+						rowIndexVar="index" style="margin-top:5px;" selection="#{antiSummaryBean.selectedHistory}" selectionMode="single" rowKey="#{history.id}"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}" emptyMessage="#{msgs.dataTable_empty}"
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+						<p:ajax event="rowSelect" listener="#{antiSummaryBean.getAntiHistoryDetails()}" update=":antiDetailForm" />
+						<f:facet name="header">
+						历史信息列表
+						</f:facet>
+						<p:column headerText="操作类型" style="width: 50px">
+							<h:outputText value="#{commonBean.getValueByDictCatKey(history.operateInd)}" />
+						</p:column>
+						<p:column headerText="操作时间" style="width: 125px">
+							<h:outputText value="#{history.updatedDatetime}" >
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="操作人">
+							<h:outputText value="#{antiSummaryBean.getUserName(history.updatedBy)}" style="width: 75px" />
+						</p:column>
+				</p:dataTable>
+				</h:form>
+			</p:layoutUnit>
+			<p:layoutUnit position="center" size="600">
+				<h:form id="antiDetailForm" style="width:667px">  
+						<h:panelGrid id="companyPanel" columns="2" columnClasses="column41,column2">
+							<h:outputText value="公司名称：" />
+							<h:column>
+								<p:inputText value="#{antiSummaryBean.antiAvoidance.companyName}" style="width: 356px" disabled="true"/>
+							</h:column>
+							<h:outputText value="发起机关：" />
+							<h:column>
+								<p:inputText value="#{antiSummaryBean.antiAvoidance.sponsorOrg}" style="width: 356px" disabled="true"/>
+							</h:column>
+							<h:outputText value="实施机构：" />
+							<h:column>
+								<p:inputText value="#{antiSummaryBean.antiAvoidance.implementOrg}" style="width: 356px;" disabled="true"/>
+							</h:column>
+							<h:outputText value="发避税调查的起因：" />
+							<h:column>
+								<h:inputTextarea value="#{antiSummaryBean.antiAvoidance.cause}" style="width: 359px;" disabled="true"/>
+							</h:column>
+						</h:panelGrid>
+						<h:panelGrid columns="4" columnClasses="column41,column2,column1,column2">
+							<h:outputText value="调查类型：" />
+							<h:selectOneMenu value="#{antiSummaryBean.antiAvoidance.investType}" disabled="true">
+							<f:selectItems
+								value="#{commonBean.getDictByCat(commonBean.tihTaxAntiavoidanceType)}"
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+							</h:selectOneMenu><h:outputText value="税种" />
+							<p:selectCheckboxMenu value="#{antiSummaryBean.taxTypeList}" label="请选择" style="width: 141px;">
+								<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxType)}" itemDisabled="true"
+									var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}">
+								</f:selectItems>
+							</p:selectCheckboxMenu>
+							<h:outputText value="调查/评估期间：" />
+							<p:inputText value="#{antiSummaryBean.antiAvoidance.investStartDatetime}" disabled="true">
+								<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+							</p:inputText>
+							<h:outputText value="到：" />
+							<p:inputText value="#{antiSummaryBean.antiAvoidance.investEndDatetime}" disabled="true">
+								<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+							</p:inputText>
+							<h:outputText value="任务处理时间：" />
+							<p:inputText value="#{antiSummaryBean.antiAvoidance.missionStartDatetime}" disabled="true">
+								<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+							</p:inputText>
+							<h:outputText value="到：" />
+							<p:inputText value="#{antiSummaryBean.antiAvoidance.missionEndDatetime}" disabled="true">
+								<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+							</p:inputText>
+					</h:panelGrid>
+					<h:panelGrid columns="2" columnClasses="column41,column2">
+						<h:outputText value="税务调查或发现可能存在疑点的方式 ：" />
+						<h:inputTextarea value="#{antiSummaryBean.antiAvoidance.method}" disabled="true" style="width: 359px;"/>
+						<h:outputText value="税务认为存在的避税疑点 ：" />
+						<h:inputTextarea value="#{antiSummaryBean.antiAvoidance.doubt}" disabled="true" style="width: 359px;"/>
+						<h:outputText value="可能设计调整的企业所得税风险的全额（万元） ：" />
+						<p:inputText value="#{antiSummaryBean.antiAvoidance.riskAccount}" disabled="true" />
+						<h:outputText value="应对方式 ：" />
+						<h:inputTextarea value="#{antiSummaryBean.antiAvoidance.dealWith}" disabled="true" style="width: 359px;"/>
+						<h:outputText value="阶段性说明 ：" />
+						<h:inputTextarea value="#{antiSummaryBean.antiAvoidance.phaseRemarks}" disabled="true" style="width: 359px;"/>
+						<h:outputText value="调查/结案结论 ：" />
+						<h:inputTextarea value="#{antiSummaryBean.antiAvoidance.conclusion}" disabled="true" style="width: 359px;"/>
+					</h:panelGrid>
+					<h:panelGrid columns="4" columnClasses="column41,column2,column1,column2">
+							<h:outputText value="税务跟踪期间：" />
+							<p:inputText value="#{antiSummaryBean.antiAvoidance.traceStartDatetime}" disabled="true">
+								<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+							</p:inputText>
+							<h:outputText value="到：" />
+							<p:inputText value="#{antiSummaryBean.antiAvoidance.traceEndDatetime}" disabled="true">
+								<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+							</p:inputText>
+							<h:outputText value="联系人：" />
+							<p:inputText value="#{antiSummaryBean.antiAvoidance.contact}" disabled="true">
+							</p:inputText>
+					</h:panelGrid>
+					<p:dataTable id="resultDataTable" value="#{antiSummaryBean.antiAvoidance.invsAntiResults}" var="result" paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+						rowIndexVar="index" style="margin-top:5px;" editable="true" emptyMessage="#{msgs.dataTable_empty}"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+						<f:facet name="header">
+						调查调整（纳税评估）结果
+						</f:facet>
+						<p:columnGroup type="header">
+							<p:row>
+								<p:column headerText="补税税款（元）" colspan="3" />
+								<p:column headerText="加收利息（元）" rowspan="2" />
+								<p:column headerText="罚款（元）" rowspan="2" />
+								<p:column headerText="调减亏损（元）" rowspan="2" />
+							</p:row>
+							<p:row>
+								<p:column headerText="增值税"/>
+								<p:column headerText="企业所得税"/>
+								<p:column headerText="小计"/>
+							</p:row>
+						</p:columnGroup>
+						<p:column style="text-align: right">
+							<h:outputText value="#{result.vat}" />
+						</p:column>
+						<p:column style="text-align: right">
+							<h:outputText value="#{result.cit}" />
+						</p:column>
+						<p:column style="text-align: right">
+							<h:outputText value="#{result.vat + result.cit}" />
+						</p:column>
+						<p:column style="text-align: right">
+							<h:outputText value="#{result.addInterest}" />
+						</p:column>
+						<p:column style="text-align: right">
+							<h:outputText value="#{result.addFine}" />
+						</p:column>
+						<p:column style="text-align: right">
+							<h:outputText value="#{result.reducedLoss}" />
+						</p:column>
+					</p:dataTable>
+					<div style="text-align: center; margin: 13px -3px 0px 0px; vertical-align: middle">
+						<p:commandButton value="取消" oncomplete="antiAvoidanceDetailDialogVar.hide();" icon="ui-icon ui-icon-cancel" />
+					</div>
+				</h:form>
+			</p:layoutUnit>
+		</p:layout>
+	</p:dialog>
+</ui:composition>

@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog id="configDialog" widgetVar="configDialogVar"
+		resizable="false" header="添加超时配置信息" modal="true">
+		<h:form id="configForm" prependId="fasle">
+			<p:messages id="configMessage" autoUpdate="false" showDetail="true" />
+			<h:panelGrid columns="4"
+				columnClasses="column41,column2,column41,column2">
+				<h:outputText value="超时类型：" />
+				<h:selectOneMenu id="timeoutType"
+					value="#{timeoutEmailBean.configVo.timeoutType}">
+					<f:selectItem itemLabel="请选择" itemValue="" />
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihTaxTimeoutemailType)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}">
+					</f:selectItems>
+					<p:ajax update=":configForm" process="timeoutType" />
+				</h:selectOneMenu>
+				<h:outputText value="任务类型：" />
+				<h:selectOneMenu value="#{timeoutEmailBean.configVo.wfType}">
+					<f:selectItem itemLabel="请选择" itemValue="" />
+					<f:selectItems value="#{timeoutEmailBean.wfTypes}" />
+					<p:ajax update="requestforms" />
+				</h:selectOneMenu>
+				<h:outputText value="申请单类型：" />
+				<p:selectCheckboxMenu id="requestforms"
+					value="#{timeoutEmailBean.configVo.requestforms}"
+					style="width: 142px;">
+					<f:selectItems
+						value="#{timeoutEmailBean.requestFormsMap[timeoutEmailBean.configVo.wfType]}" />
+				</p:selectCheckboxMenu>
+				
+				<p:selectBooleanCheckbox itemLabel="发送邮件"
+					value="#{timeoutEmailBean.configVo.mail}" />
+				<p:selectBooleanCheckbox itemLabel="发送系统消息"
+					value="#{timeoutEmailBean.configVo.notice}" />
+				<h:outputText value="状态：" />
+				<h:selectOneMenu value="#{timeoutEmailBean.configVo.enableInd}">
+					<f:selectItem itemLabel="开启" itemValue="Y" />
+					<f:selectItem itemLabel="关闭" itemValue="N" />
+				</h:selectOneMenu>
+				<h:outputText value="有效天数：" />
+				<p:inputText value="#{timeoutEmailBean.configVo.effectiveDays}">
+				</p:inputText>
+			</h:panelGrid>
+			<h:panelGrid columns="4" id="positionRemindPanel"
+				columnClasses="column41,column2,column41,column2"
+				rendered="#{commonBean.tihTaxTimeoutemailType2 == timeoutEmailBean.configVo.timeoutType}">
+				<h:outputText value="超时天数：" />
+				<p:inputText value="#{timeoutEmailBean.configVo.wpTimeoutDays}">
+				</p:inputText>
+				<h:outputText value="提醒频率（天）：" />
+				<p:inputText value="#{timeoutEmailBean.configVo.wpIntervalDays}">
+				</p:inputText>
+				<h:outputText value="催促天数：" />
+				<p:inputText value="#{timeoutEmailBean.configVo.wpUrgeDays}">
+				</p:inputText>
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column41,column2">
+				<h:outputText value="描述：" />
+				<p:inputTextarea value="#{timeoutEmailBean.configVo.remarks}"
+					maxlength="150" style="width: 406px;">
+				</p:inputTextarea>
+			</h:panelGrid>
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					rendered="#{'add' == timeoutEmailBean.configOprateType}"
+					action="#{timeoutEmailBean.addTimeoutConfig()}"
+					update=":timeoutEmailDialogForm:configTable,:configForm:configMessage"
+					oncomplete="disableItems();handleDialog(xhr, status, args);"
+					style="margin-right: 5px;" />
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					rendered="#{'edit' == timeoutEmailBean.configOprateType}"
+					action="#{timeoutEmailBean.editTimeoutConfig()}"
+					update=":timeoutEmailDialogForm:configTable,:configForm:configMessage"
+					oncomplete="disableItems();handleDialog(xhr, status, args);"
+					style="margin-right: 5px;" />
+				<p:commandButton icon="ui-icon ui-icon-cancel"
+					value="#{msgs.btn_cancel}" type="button"
+					onclick="configDialogVar.hide()" />
+			</div>
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

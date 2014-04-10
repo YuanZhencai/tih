@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<script type="text/javascript" src="#{request.contextPath}/template/js/uploadStyle.js"/>
+	
+	<p:dialog showEffect="fade" hideEffect="fade" modal="true" resizable="false"  width="620" height="300"
+		widgetVar="uploadOrDownloadAttachment" id="uploadOrDownloadAttachmentID" header="附件">
+		<p:tabView id="attachmentTabView" dynamic="true" cache="true" >
+		
+			<p:tab id="uploadAttachment" title="上传" rendered="#{attachmentBean.attachmentVo.operationType eq '001' ? false : true}">
+				<h:form id="upload_attachment_form_id" enctype="multipart/form-data" prependId="false">
+				<p:growl id="attachmentGrowl" life="10000"/>
+				<p:fileUpload id="upload_id" mode="advanced" fileUploadListener="#{attachmentBean.attachFileUpload}" style="margin:0px -10px -10px -10px;"
+					multiple="true" uploadLabel="上传" cancelLabel="取消" label="选择" update=":attachmentTabView:common_attachment_form_id,:attachmentTabView:upload_attachment_form_id:attachmentGrowl"/>
+				</h:form>
+			</p:tab>
+			
+			<p:tab id="downloadAttachment" title="下载" rendered="#{attachmentBean.attachmentVo.operationType eq '010' ? false : true}">
+				<h:form id="common_attachment_form_id" prependId="false">
+					<p:dataTable var="att" value="#{attachmentBean.attachments}"
+						paginatorPosition="bottom" paginator="true" rows="5" style="margin:0px -10px -10px -10px;"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						emptyMessage="#{msgs.dataTable_empty}" selection="#{attachmentBean.selectedAttachments}">
+						<f:facet name="header">
+							<div style="text-align: right; position: relative; margin: 0px -5px 0px 0px; vertical-align: middle">
+							<p:commandButton icon="ui-icon ui-icon-close" value="#{msgs.btn_delete}" rendered="#{attachmentBean.attachmentVo.operationType eq '001' ? false : true}"
+								oncomplete="attachment_confirm_dialog_var.show()" update=":attachment_confirm_form_id" >
+								<f:setPropertyActionListener target="#{attachmentBean.confirmType}" value="multiple" />
+							</p:commandButton>
+							</div>
+						</f:facet>
+						<p:column selectionMode="multiple" style="width: 10%; text-align: center;" rendered="#{attachmentBean.attachmentVo.operationType eq '001' ? false : true}"/>
+						<p:column headerText="附件名称">
+							<h:outputText value="#{att.name}" title="#{att.name}"
+							style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:200px;"/>
+						</p:column>
+						<p:column headerText="上传人">
+							<h:outputText value="#{att.createdBy}" />
+						</p:column>
+						<p:column headerText="时间">
+							<h:outputText value="#{att.createdDatetime}" >
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8"/>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="操作">
+							<p:commandButton title="下载" icon="ui-icon ui-icon-arrowthick-1-s"
+								style="width: 18px; height: 18px;" ajax="false">
+								<p:fileDownload value="#{attachmentBean.getFileById(att.fnId)}"/>
+							</p:commandButton>
+							<p:commandButton icon="ui-icon ui-icon-close" title="#{msgs.btn_delete}"
+								style="width: 18px; height: 18px;" oncomplete="attachment_confirm_dialog_var.show()" update=":attachment_confirm_form_id" 
+								rendered="#{attachmentBean.attachmentVo.operationType eq '001' ? false : true}">
+								<f:setPropertyActionListener target="#{attachmentBean.confirmType}" value="single" />
+								<f:setPropertyActionListener target="#{attachmentBean.fileId}" value="#{att.fnId}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</h:form>
+			</p:tab>
+			<ui:include src="common_confirm_dialog.xhtml" />
+		</p:tabView>
+	</p:dialog>
+	
+</ui:composition>

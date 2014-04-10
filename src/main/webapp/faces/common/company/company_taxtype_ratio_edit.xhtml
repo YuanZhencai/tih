@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="#{companyTaxTypeRatioBean.currentTaxTypeRatio.id == null ? '添加' : '编辑'}税种税率信息" 
+		widgetVar="company_taxtype_ratio_edit_var"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"
+		width="550" id="company_taxtype_ratio_edit_id">
+		<p:messages showDetail="true" showSummary="true" id="taxtype_ratio_msg"/>
+		<h:form prependId="false" id="company_taxtype_ratio_edit_form">
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column41,column2">
+				<h:outputText value="税种：" />
+				<h:column>
+					<h:selectOneMenu value="#{companyTaxTypeRatioBean.currentTaxTypeRatio.typeRatio.taxType}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxType)}"
+							var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+				<h:outputText value="计税基础："/>
+				<h:column>
+					<p:inputText value="#{companyTaxTypeRatioBean.currentTaxTypeRatio.typeRatio.taxBasis}" />
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+				
+				<h:outputText value="申报频率："/>
+				<h:column>
+					<h:selectOneMenu value="#{companyTaxTypeRatioBean.currentTaxTypeRatio.typeRatio.reportFrequency}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxCompanyTaxrateRate)}"
+							var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" columnClasses="column1">
+				<h:outputText value="备注："/>
+				<p:inputTextarea value="#{companyTaxTypeRatioBean.currentTaxTypeRatio.typeRatio.remarks}"
+					style="width: 412px; height: 30px;" autoResize="true"/>
+			</h:panelGrid>
+			
+			<p:dataTable var="pay" value="#{companyTaxTypeRatioBean.lazyTaxPays}"
+				paginator="true" rows="5" paginatorPosition="bottom" rowIndexVar="index"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '1/1' : '{currentPage}/{totalPages}'} "
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				emptyMessage="#{msgs.dataTable_empty}">
+				<f:facet name="header">
+					<div class="header">
+						年度纳税金额列表
+						<p:commandButton styleClass="header_button" value="添加" icon="ui-icon ui-icon-plus"
+							oncomplete="company_annualtaxpay_edit_var.show();"
+							update=":company_annualtaxpay_edit_id"
+							action="#{companyTaxTypeRatioBean.initTaxPay}">
+							<f:setPropertyActionListener target="#{companyTaxTypeRatioBean.model}" value="add"/>
+						</p:commandButton>
+					</div>
+				</f:facet>
+
+				<p:column style="text-align: center; width:20%;" headerText="年度">
+					<h:outputText value="#{pay.taxPayYear}" title="#{pay.taxPayYear}">
+						<f:convertDateTime pattern="yyyy" timeZone="GMT+8"/>
+					</h:outputText>
+				</p:column>
+				<p:column headerText="金额(万元)">
+					<div style="text-align: right;">
+						<h:outputText value="#{pay.taxPayAccount}" title="#{pay.taxPayAccount}">
+							<f:convertNumber pattern="#,##0.00"/>
+						</h:outputText>
+					</div>
+				</p:column>
+				<p:column headerText="税率">
+					<div style="text-align: right;">
+						<h:outputText value="#{pay.taxRate}" title="#{pay.taxRate}">
+						</h:outputText>
+					</div>
+				</p:column>
+				<p:column style="text-align: center;" headerText="有效">
+					<h:outputText
+						value="#{pay.defunctInd eq 'Y' ? msgs.txt_effectiveLost : msgs.txt_effective}"
+						title="#{pay.defunctInd eq 'Y' ? msgs.txt_effectiveLost : msgs.txt_effective}" />
+				</p:column>
+				<p:column style="text-align: center;" headerText="操作">
+					<p:commandButton title="#{msgs.btn_edit}"
+						icon="ui-icon ui-icon-pencil" 
+						style="width: 18px; height: 18px;"
+						action="#{companyTaxTypeRatioBean.getTaxPayDetails()}"
+						oncomplete="company_annualtaxpay_edit_var.show();"
+						update=":company_annualtaxpay_edit_id">
+						<f:setPropertyActionListener target="#{companyTaxTypeRatioBean.selectedTaxPay}" value="#{pay}"/>
+						<f:setPropertyActionListener target="#{companyTaxTypeRatioBean.model}" value="edit"/>
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="#{msgs.txt_defunct}" />
+				<h:selectOneRadio value="#{companyTaxTypeRatioBean.currentTaxTypeRatio.typeRatio.defunctInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			
+			<div style="margin: 5px 0 0 0; text-align: center">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" 
+					update=":taxtype_ratio_msg,:company_taxtype_ratio_form,:taxtypeRatioGrowl"
+					oncomplete="handleTaxTypeRatio(xhr, status, args);"
+					action="#{companyTaxTypeRatioBean.editTaxTypeRatio}" 
+					style="margin-right: 5px;"/>
+					
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+					oncomplete="company_taxtype_ratio_edit_var.hide();"/>
+			</div>
+		</h:form>
+		
+		<script type="text/javascript">
+			function handleTaxTypeRatio(xhr, status, args) {
+				if(args.option == "success") {
+					company_taxtype_ratio_edit_var.hide();
+				}
+			}
+		</script>
+	</p:dialog>
+</ui:composition>

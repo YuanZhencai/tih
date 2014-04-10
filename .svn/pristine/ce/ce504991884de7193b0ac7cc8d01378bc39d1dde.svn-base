@@ -1,0 +1,862 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<script type="text/javascript">
+			function handleFeedBack(xhr, status, args) {
+				if (args.option == "success") {
+					insert_feedback_dialog_var.hide();
+				}
+			}
+			
+			function handleAttachment(xhr, status, args) {
+				if (args.type == "1") {
+					add_attachment_dialog_var.show();
+					loadUpload();
+				}
+			}
+
+			function initDialogPosition() {
+				$('insert_feedback_dialog_id').dialog({ position: 'center' });
+			}
+			
+			function rowInspectEditCreate(){
+				var rowEditor = document.getElementById("feedbackTabView:inspection_list:0:rowEditor");
+				var childNodes =  rowEditor.childNodes;
+				childNodes.item(0).click();
+			}
+			
+			function rowAntiEditCreate(){
+				var rowEditor = document.getElementById("feedbackTabView:antiAvoidance_list:0:rowEditor");
+				var childNodes =  rowEditor.childNodes;
+				childNodes.item(0).click();
+			}
+	</script>
+
+	<p:dialog header="新建情况反馈流程" widgetVar="insert_feedback_dialog_var"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false" 
+		height="530" id="insert_feedback_dialog_id">
+		<p:ajax event="close" listener="#{feedBackBean.cancelFeedBack()}"
+			update="insert_feedback_form_id,insert_feedback_mes,insert_feedback_form_id:feedbackTabView:feedbackId,insert_feedback_form_id:feedbackTabView:inspectionId,insert_feedback_form_id:feedbackTabView:antiAvoidance" />
+
+		<p:growl id="insert_feedback_message" showDetail="true"
+			showSummary="true" life="10000" />
+		<p:messages id="insert_feedback_mes" showDetail="true"
+			showSummary="true" />
+		<h:form id="insert_feedback_form_id" prependId="false">
+			<p:tabView id="feedbackTabView" activeIndex="#{feedBackBean.tabVew}">
+				<p:tab id="feedbackId" title="流程">
+					<h:panelGrid columns="4"
+						columnClasses="column1,column2,column1,column2">
+						<h:outputText value="填制日期：" />
+						<p:calendar locale="cn" pattern="yyyy-MM-dd" disabled="true"
+							value="#{feedBackBean.instanceProperty['currentDate']}" />
+						<h:outputText value="填制人：" />
+						<p:inputText
+							value="#{feedBackBean.instanceProperty['currentUser']}"
+							disabled="true" />
+
+						<h:outputText value="重要程度：" />
+						<h:column>
+							<p:selectOneMenu value="#{feedBackBean.selectedhoto}" var="p"
+								converter="playerConverter" id="importance"
+								styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+								style="width:130px;height:18px;">
+								<!-- 
+					<f:selectItem itemLabel="一般" itemValue="TIH.TAX.WORKFLOWIMPORTANCE.1"/>
+					 -->
+								<f:selectItems value="#{feedBackBean.photos}"
+									var="DictPictureVO" itemLabel="#{DictPictureVO.name}"
+									itemValue="#{DictPictureVO}" />
+
+								<p:column>
+									<p:graphicImage value="/images/#{p.photo}"
+										style="width:50px;height:15px;" />
+								</p:column>
+
+								<p:column>
+									<span style="text-shadow: none;">#{p.name}</span>
+								</p:column>
+								<p:ajax update="importance" />
+							</p:selectOneMenu>
+							<span style="color: red">*</span>
+						</h:column>
+
+						<h:outputText value="紧急程度：" />
+						<h:column>
+							<p:selectOneMenu value="#{feedBackBean.selectedUrgent}" var="p"
+								converter="playerConverter" id="urgency"
+								styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+								style="width:130px;height:18px;">
+								<!-- 
+					<f:selectItem itemLabel="一般" itemValue="TIH.TAX.WORKFLOWURGENCY.1"/>
+					 -->
+								<f:selectItems value="#{feedBackBean.photosUrgent}"
+									var="DictPictureVO" itemLabel="#{DictPictureVO.name}"
+									itemValue="#{DictPictureVO}" />
+
+								<p:column>
+									<p:graphicImage value="/images/#{p.photo}"
+										style="width:50px;height:15px;" />
+								</p:column>
+
+								<p:column>
+									<span style="text-shadow: none;">#{p.name}</span>
+								</p:column>
+								<p:ajax update="urgency" />
+							</p:selectOneMenu>
+							<span style="color: red">*</span>
+						</h:column>
+
+
+
+						<h:outputText value="项目类型：" />
+						<h:column>
+							<h:selectOneMenu value="#{feedBackBean.type}" id="programType"
+								styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+								<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+								<f:selectItems
+									value="#{commonBean.getDictByCat(commonBean.tihTaxRequestform5)}"
+									var="dict" itemLabel="#{dict.codeVal}"
+									itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+								<p:ajax update=":insert_feedback_form_id"
+									listener="#{feedBackBean.getTab}" />
+							</h:selectOneMenu>
+							<span style="color: red">*</span>
+						</h:column>
+
+						<h:outputText value="工作阶段：" />
+						<h:column>
+							<h:selectOneMenu id="stages" value="#{feedBackBean.stage}"
+								styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+								<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+								<f:selectItems
+									value="#{commonBean.getDictByCat(feedBackBean.type)}"
+									var="dict" itemLabel="#{dict.codeVal}"
+									itemValue="#{dict.codeCat}.#{dict.codeKey}">
+								</f:selectItems>
+								<p:ajax update="stages" />
+							</h:selectOneMenu>
+							<span style="color: red">*</span>
+						</h:column>
+
+						<h:outputText value="流程发起：" />
+						<h:column>
+							<h:selectOneMenu value="#{feedBackBean.requestBy}" id="requestBy"
+								styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+								<f:selectItems
+									value="#{commonBean.getDictByCat(commonBean.tihTaxRequestby)}"
+									var="dict" itemLabel="#{dict.codeVal}"
+									itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+								<p:ajax update=":insert_feedback_form_id"
+									listener="#{feedBackBean.getTab}" />
+							</h:selectOneMenu>
+							<span style="color: red">*</span>
+						</h:column>
+
+						<h:outputText value="所属公司：" />
+						<h:column
+							rendered="#{feedBackBean.requestBy eq 'TIH.TAX.REQUESTBY.2' ? true : false}"
+							id="company">
+							<p:inputText
+								value="#{feedBackBean.instanceProperty['TIH_WORKFLOW_FEEDBACK_COMPANY']}"
+								readonly="true"
+								title="#{feedBackBean.instanceProperty['TIH_WORKFLOW_FEEDBACK_COMPANY']}"
+								id="company_name" style="width: 105px; margin-right: 3px;">
+							</p:inputText>
+							<p:commandButton icon="ui-icon ui-icon-search"
+								title="#{msgs.btn_query}" update=":commonCompany,:datatableform"
+								style="width: 26px; height: 26px; vertical-align: top;"
+								actionListener="#{companyCommonBean.init(':insert_feedback_form_id','feedBackBean','single','selectCompany')}"
+								oncomplete="commoncompanyvar.show();" />
+							<span style="color: red">*</span>
+						</h:column>
+						<h:column
+							rendered="#{feedBackBean.requestBy eq 'TIH.TAX.REQUESTBY.1' ? true : false or feedBackBean.requestBy eq null ? true : false}"
+							id="check">
+							<p:selectCheckboxMenu label="#{msgs.txt_pleaseSelect}"
+								id="selectedMovies" value="#{feedBackBean.selectedMovies}"
+								style="width: 115px; height: 26px;"
+								disabled="#{feedBackBean.movies.size()==0?true:false}">
+								<f:selectItems value="#{feedBackBean.movies}" />
+							</p:selectCheckboxMenu>
+							<p:commandButton icon="ui-icon ui-icon-search"
+								style="width: 26px; height: 26px; vertical-align: top;"
+								title="请选择" update=":commonCompany,:datatableform"
+								actionListener="#{companyCommonBean.init(':insert_feedback_form_id','feedBackBean','multiple','setCompanys')}"
+								oncomplete="commoncompanyvar.show();" />
+							<span style="color: red">*</span>
+						</h:column>
+					</h:panelGrid>
+					<h:panelGrid columns="4"
+						rendered="#{'Y' == feedBackBean.wfRemindVo.wfTimeoutInd}"
+						columnClasses="column1,column2,column1,column2">
+						<h:outputText value="完成日期：" />
+						<h:column>
+							<p:calendar locale="cn" pattern="yyyy-MM-dd"
+								showButtonPanel="true" navigator="true"
+								value="#{feedBackBean.wfRemindVo.wfCompleteDate}" />
+							<span style="color: red">*</span>
+						</h:column>
+						<h:outputText value="提醒频率（天）：" />
+						<h:column>
+							<p:inputText value="#{feedBackBean.wfRemindVo.wfIntervalDays}" />
+							<span style="color: red">*</span>
+						</h:column>
+						<h:outputText value="催促日期：" />
+						<h:column>
+							<p:calendar locale="cn" pattern="yyyy-MM-dd"
+								showButtonPanel="true" navigator="true"
+								value="#{feedBackBean.wfRemindVo.wfUrgeDate}" />
+							<span style="color: red">*</span>
+						</h:column>
+					</h:panelGrid>
+					<h:panelGrid columns="2" columnClasses="column1">
+						<h:outputText value="情况描述：" />
+						<p:inputTextarea autoResize="true"
+							style="width: 365px; height: 40px;"
+							value="#{feedBackBean.instanceProperty['TIH_WORKFLOW_FEEDBACK_DESC']}"
+							maxlength="600">
+						</p:inputTextarea>
+
+						<h:outputText value="附加附件：" />
+						<p:dataTable var="att" value="#{feedBackBean.lazyAtts}"
+							id="attachment_list" paginatorPosition="bottom"
+							rowIndexVar="index" paginator="true" rows="5" rowKey="#{att.id}"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+							currentPageReportTemplate="#{component.rowCount == 0 ? '1/1' : '{currentPage}/{totalPages}'} "
+							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+							emptyMessage="#{msgs.dataTable_empty}"
+							selection="#{feedBackBean.selectAttachment}">
+							<f:facet name="header">附件清单
+						<div
+									style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+									<p:commandButton value="添加附件" icon="ui-icon ui-icon-plus"
+										oncomplete="handleAttachment(xhr, status, args);"
+										update=":add_attachment_form_id,:insert_feedback_message,:insert_feedback_mes"
+										action="#{feedBackBean.initUpdateId}">
+										<f:setPropertyActionListener
+											target="#{feedBackBean.updateAttachmentId}"
+											value=":insert_feedback_form_id:feedbackTabView:attachment_list,:insert_feedback_message" />
+									</p:commandButton>
+								</div>
+							</f:facet>
+							<p:ajax event="rowSelect" listener="#{feedBackBean.onRowSelect}"
+								update=":insert_feedback_message" />
+							<p:ajax event="rowUnselect"
+								listener="#{feedBackBean.onRowUnselect}"
+								update=":insert_feedback_message" />
+							<p:column selectionMode="multiple" style="width:10%" />
+							<p:column style="width:70%;" headerText="附件名称">
+								<div style="word-break: break-all; width: 100%">
+									#{att.fileName}</div>
+							</p:column>
+							<p:column style="text-align: center;" headerText="操作">
+								<p:commandButton title="下载"
+									icon="ui-icon ui-icon-arrowthick-1-s"
+									style="width: 18px; height: 18px;" ajax="false"
+									update=":insert_feedback_message">
+									<p:fileDownload
+										value="#{feedBackBean.getFileByFileid(att.fileId)}" />
+								</p:commandButton>
+								<p:commandButton title="删除"
+									actionListener="#{feedBackBean.deleteAttachment(att.fileId)}"
+									update=":insert_feedback_message,:insert_feedback_form_id"
+									style="width: 18px; height: 18px;" icon="ui-icon ui-icon-close" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+
+
+				</p:tab>
+
+
+
+
+
+				<p:tab id="inspectionId" title="稽查"
+					rendered="#{feedBackBean.inspection}">
+					<h:panelGrid columns="2" columnClasses="column43,column2">
+						<h:outputText value="稽（检）查机关：" />
+						<h:column>
+							<p:inputText
+								value="#{feedBackBean.feedbackInspectionVO.inspectation.inspectOrg}"
+								style="width: 389px;" maxlength="50" />
+							<h:outputText value="*" style="color: red;" />
+						</h:column>
+					</h:panelGrid>
+
+					<h:panelGrid columns="4"
+						columnClasses="column43,column2,column40,column2">
+						<h:outputLabel value="稽（检）查业务期间：" />
+						<h:column>
+							<p:calendar
+								value="#{feedBackBean.feedbackInspectionVO.inspectation.inspectStartDatetime}"
+								locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+
+						</h:column>
+						<h:column>
+							<h:outputLabel value="到" />
+							<p:spacer width="10" />
+						</h:column>
+						<h:column>
+							<p:calendar
+								value="#{feedBackBean.feedbackInspectionVO.inspectation.inspectEndDatetime}"
+								locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+						</h:column>
+
+						<h:outputLabel value="稽（检）查时间：" />
+						<h:column>
+							<p:calendar
+								value="#{feedBackBean.feedbackInspectionVO.inspectation.missionStartDatetime}"
+								locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+
+						</h:column>
+						<h:column>
+							<h:outputLabel value="到" />
+							<p:spacer width="10" />
+						</h:column>
+						<h:column>
+							<p:calendar
+								value="#{feedBackBean.feedbackInspectionVO.inspectation.missionEndDatetime}"
+								locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+
+						</h:column>
+
+						<h:outputText value="检查类型：" />
+						<h:column>
+							<h:selectOneMenu
+								value="#{feedBackBean.feedbackInspectionVO.inspectation.inspectType}">
+								<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+								<f:selectItems
+									value="#{commonBean.getDictByCat(commonBean.tihTaxInspectionType)}"
+									var="dict" itemLabel="#{dict.codeVal}"
+									itemValue="#{dict.codeCat}.#{dict.codeKey}">
+								</f:selectItems>
+							</h:selectOneMenu>
+						</h:column>
+
+						<h:outputLabel value="税种：" />
+						<h:column>
+							<p:selectCheckboxMenu value="#{feedBackBean.taxTypes}"
+								label="请选择" style="width: 142px;">
+								<f:selectItems
+									value="#{commonBean.getDictByCat(commonBean.tihTaxType)}"
+									var="dict" itemLabel="#{dict.codeVal}"
+									itemValue="#{dict.codeCat}.#{dict.codeKey}">
+								</f:selectItems>
+							</p:selectCheckboxMenu>
+
+						</h:column>
+
+						<h:outputLabel value="联系人：" />
+						<p:inputText
+							value="#{feedBackBean.feedbackInspectionVO.inspectation.contact}"
+							maxlength="20" />
+
+						<h:outputLabel value="联系电话：" />
+						<p:inputText
+							value="#{feedBackBean.feedbackInspectionVO.inspectation.contactNum}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" columnClasses="column43,column2">
+						<h:outputLabel value="主要问题描述：" />
+						<p:inputTextarea
+							value="#{feedBackBean.feedbackInspectionVO.inspectation.mainProblemDesc}"
+							style="width: 389px;" rows="2" maxlength="600" />
+
+						<h:outputLabel value="整改计划：" />
+						<p:inputTextarea
+							value="#{feedBackBean.feedbackInspectionVO.inspectation.rectificationPlan}"
+							style="width: 389px;" rows="2" maxlength="600" />
+
+						<h:outputLabel value="整改结果：" />
+						<p:inputTextarea
+							value="#{feedBackBean.feedbackInspectionVO.inspectation.rectificationResult}"
+							style="width: 389px;" rows="2" maxlength="600" />
+
+					</h:panelGrid>
+
+					<p:dataTable var="inspectionResult" id="inspection_list"
+						value="#{feedBackBean.feedbackInspectionVO.result}"
+						paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+						rows="5" editable="true"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '1/1' : '{currentPage}/{totalPages}'} "
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+						emptyMessage="#{msgs.dataTable_empty}">
+						<f:facet name="header">
+							<h:outputText value="稽查结果" />
+							<div
+								style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+								<p:commandButton value="添加" icon="ui-icon ui-icon-plus"
+									action="#{feedBackBean.addInspectationResult}"
+									update="inspection_list,:insert_feedback_mes"
+									oncomplete="rowInspectEditCreate();">
+								</p:commandButton>
+							</div>
+						</f:facet>
+
+						<p:ajax event="rowEdit"
+							update=":insert_feedback_mes,:insert_feedback_message" />
+
+						<p:column headerText="税种" style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="width: 40px;">
+										<h:outputText
+											value="#{commonBean.getValueByDictCatKey(inspectionResult.taxType)}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<h:selectOneMenu value="#{inspectionResult.taxType}"
+										label="请选择" style="width: 80px;">
+										<f:selectItems
+											value="#{commonBean.getDictByCat(commonBean.tihTaxType)}"
+											var="dict" itemLabel="#{dict.codeVal}"
+											itemValue="#{dict.codeCat}.#{dict.codeKey}">
+										</f:selectItems>
+									</h:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="补税金额（元）" style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right;">
+										<h:outputText value="#{inspectionResult.overdueTax}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{inspectionResult.overdueTax}"
+										style="width: 80px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="补税金额：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="滞纳金（元）" style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right;">
+										<h:outputText value="#{inspectionResult.penalty}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{inspectionResult.penalty}"
+										style="width: 80px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="滞纳金（元）：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="进项税额转出（元）" style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right;">
+										<h:outputText value="#{inspectionResult.inputTaxTurnsOut}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{inspectionResult.inputTaxTurnsOut}"
+										style="width: 80px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="进项税额转出（元）：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="调减以前年度亏损（元）"
+							style="width: 100px;word-wrap:break-word;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right;">
+										<h:outputText value="#{inspectionResult.reductionPrevLoss}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{inspectionResult.reductionPrevLoss}"
+										style="width: 100px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="调减以前年度亏损（元）：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="罚款（元）" style="width: 70px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="width: 60px; text-align: right;">
+										<h:outputText value="#{inspectionResult.fine}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{inspectionResult.fine}"
+										style="width: 70px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="罚款（元）：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="情况说明" style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="width: 100px; word-wrap: break-word;">
+										<h:outputText value="#{inspectionResult.situationRemarks}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{inspectionResult.situationRemarks}"
+										maxlength="600" style="width: 80px;" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="操作" style="width:80px;">
+							<p:rowEditor id="rowEditor" />
+							<p:commandButton title="删除" style="width: 18px;height: 18px;"
+								action="#{feedBackBean.deleteInspectionResult}"
+								icon="ui-icon ui-icon-close"
+								update=":insert_feedback_form_id:feedbackTabView">
+								<f:setPropertyActionListener
+									target="#{feedBackBean.deleteInspectationResult}"
+									value="#{inspectionResult}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+
+
+				<p:tab id="antiAvoidance" title="反避税"
+					rendered="#{feedBackBean.antiAvoidance}">
+					<h:panelGrid columns="3" columnClasses="column40,column2">
+						<h:outputText value="发起机关：" />
+						<p:inputText
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.sponsorOrg}"
+							style="width: 389px;" maxlength="50" />
+						<span style="color: red">*</span>
+
+						<h:outputText value="实施机构：" />
+						<p:inputText
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.implementOrg}"
+							style="width: 389px;" maxlength="50" />
+						<span style="color: red"></span>
+
+						<h:outputLabel value="反避税调查的起因：" />
+						<p:inputTextarea
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.cause}"
+							style="width: 389px;" rows="2" maxlength="50" />
+						<span style="color: red"></span>
+					</h:panelGrid>
+
+					<h:panelGrid columns="4"
+						columnClasses="column40,column2,column40,column2">
+						<h:outputText value="调查类型：" />
+						<h:column>
+							<h:selectOneMenu
+								value="#{feedBackBean.feedbackAntiVo.antiAvoidance.investType}"
+								style="width: 142px;">
+								<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+								<f:selectItems
+									value="#{commonBean.getDictByCat(commonBean.tihTaxAntiavoidanceType)}"
+									var="dict" itemLabel="#{dict.codeVal}"
+									itemValue="#{dict.codeCat}.#{dict.codeKey}">
+								</f:selectItems>
+							</h:selectOneMenu>
+						</h:column>
+
+						<h:outputLabel value="税种：" />
+						<h:column>
+							<p:selectCheckboxMenu value="#{feedBackBean.taxTypes}"
+								label="请选择" style="width: 142px;">
+								<f:selectItems
+									value="#{commonBean.getDictByCat(commonBean.tihTaxType)}"
+									var="dict" itemLabel="#{dict.codeVal}"
+									itemValue="#{dict.codeCat}.#{dict.codeKey}">
+								</f:selectItems>
+							</p:selectCheckboxMenu>
+						</h:column>
+
+						<h:outputLabel value="调查/评估期间：" />
+						<h:column>
+							<p:calendar
+								value="#{feedBackBean.feedbackAntiVo.antiAvoidance.investStartDatetime}"
+								locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+						</h:column>
+						<h:column>
+							<h:outputLabel value="到" />
+							<p:spacer width="10" />
+						</h:column>
+						<h:column>
+							<p:calendar
+								value="#{feedBackBean.feedbackAntiVo.antiAvoidance.investEndDatetime}"
+								locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+						</h:column>
+
+						<h:outputLabel value="任务处理时间：" />
+						<h:column>
+							<p:calendar
+								value="#{feedBackBean.feedbackAntiVo.antiAvoidance.missionStartDatetime}"
+								locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+						</h:column>
+						<h:column>
+							<h:outputLabel value="到" />
+							<p:spacer width="10" />
+						</h:column>
+						<h:column>
+							<p:calendar
+								value="#{feedBackBean.feedbackAntiVo.antiAvoidance.missionEndDatetime}"
+								locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+						</h:column>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" columnClasses="column40,column2">
+						<h:outputLabel value="税务调查或发现可能存在避税疑点的方式：" />
+						<p:inputTextarea
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.method}"
+							style="width: 389px;" rows="2" maxlength="50" />
+
+						<h:outputLabel value="税务任务可能存在的避税疑点：" />
+						<p:inputTextarea
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.doubt}"
+							style="width: 389px;" rows="2" maxlength="50" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" columnClasses="column40,column2">
+						<h:outputText value="可能涉及调整的企业所得税风险金额（万元）：" />
+						<p:inputText
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.riskAccount}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="3" columnClasses="column40,column2">
+						<h:outputLabel value="应对方式：" />
+						<p:inputTextarea
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.dealWith}"
+							style="width: 389px;" rows="2" maxlength="50" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" columnClasses="column40,column2">
+						<h:outputLabel value="阶段性说明：" />
+						<p:inputTextarea
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.phaseRemarks}"
+							style="width: 389px;" rows="2" maxlength="200" />
+
+						<h:outputLabel value="调查/结案结论：" />
+						<p:inputTextarea
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.conclusion}"
+							style="width: 389px;" rows="2" maxlength="200" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="4"
+						columnClasses="column40,column2,column40,column2">
+						<h:outputLabel value="税务跟踪期：" />
+						<p:calendar
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.traceStartDatetime}"
+							locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+						<h:column>
+							<h:outputLabel value="到" />
+						</h:column>
+						<h:column>
+							<p:calendar
+								value="#{feedBackBean.feedbackAntiVo.antiAvoidance.traceEndDatetime}"
+								locale="cn" navigator="true" pattern="yyyy-MM-dd" />
+						</h:column>
+
+						<h:outputLabel value="联系人：" />
+						<h:column>
+							<p:inputText
+								value="#{feedBackBean.feedbackAntiVo.antiAvoidance.contact}" />
+						</h:column>
+
+						<h:outputLabel value="联系电话：" />
+						<p:inputText
+							value="#{feedBackBean.feedbackAntiVo.antiAvoidance.contactNum}" />
+					</h:panelGrid>
+
+					<div>&#160;</div>
+
+					<p:dataTable var="anti" id="antiAvoidance_list"
+						value="#{feedBackBean.feedbackAntiVo.antiResults}"
+						paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+						rows="5" editable="true"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '1/1' : '{currentPage}/{totalPages}'} "
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+						emptyMessage="#{msgs.dataTable_empty}">
+						<f:facet name="header">
+							<h:outputText value="调查调整结果" />
+							<div
+								style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+								<p:commandButton value="添加" icon="ui-icon ui-icon-plus"
+									action="#{feedBackBean.addAntiResult}"
+									update="antiAvoidance_list,:insert_feedback_mes"
+									oncomplete="rowAntiEditCreate();">
+
+								</p:commandButton>
+							</div>
+						</f:facet>
+
+						<p:ajax event="rowEdit"
+							update="antiAvoidance_list,:insert_feedback_mes" />
+
+						<p:columnGroup type="header">
+							<p:row>
+								<p:column colspan="3" headerText="补税税款（元）" />
+								<p:column rowspan="2" headerText="加收利息（元）" />
+								<p:column rowspan="2" headerText="加收罚款（元）" />
+								<p:column rowspan="2" headerText="调减亏损（元）" />
+								<p:column rowspan="2" headerText="操作" />
+							</p:row>
+
+							<p:row>
+								<p:column headerText="增值税" />
+								<p:column headerText="企业所得税" />
+								<p:column headerText="小计" />
+							</p:row>
+						</p:columnGroup>
+						<p:column style="width: 60px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="width: 60px; text-align: right;">
+										<h:outputText value="#{anti.vat}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{anti.vat}" style="width: 60px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="增值税：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right;">
+										<h:outputText value="#{anti.cit}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{anti.cit}" style="width: 100px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="企业所得税：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column>
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right;">
+										<h:outputText value="#{anti.cit.add(anti.vat)}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<h:outputLabel value="#{anti.cit.add(anti.vat)}" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right;">
+										<h:outputText value="#{anti.addInterest}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{anti.addInterest}" style="width: 80px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="加收利息（元）：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right;">
+										<h:outputText value="#{anti.addFine}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{anti.addFine}" style="width: 80px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="加收罚款（元）：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right;">
+										<h:outputText value="#{anti.reducedLoss}" />
+									</div>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{anti.reducedLoss}" style="width: 80px;">
+										<f:validator validatorId="customValidator" />
+										<w:validateRegex regex="INSPECTION"
+											regexMessage="调减亏损（元）：填写格式只能为整数或保留2位小数" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column style="width:80px">
+							<p:rowEditor id="rowEditor" />
+							<p:commandButton title="删除" style="width: 18px;height: 18px;"
+								action="#{feedBackBean.deleteAntiResult}"
+								icon="ui-icon ui-icon-close"
+								update=":insert_feedback_form_id:feedbackTabView"
+								rendered="#{item.startDate eq null ? true : false }">
+								<f:setPropertyActionListener
+									target="#{feedBackBean.deleteAntiResult}" value="#{anti}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:tabView>
+			<div>&#160;</div>
+			<div align="center">
+				<p:commandButton value="删除" icon="ui-icon ui-icon-close"
+					rendered="#{feedBackBean.draft}"
+					actionListener="#{feedBackBean.deleteDraft()}"
+					oncomplete="handleFeedBack(xhr, status, args);"
+					update=":insert_feedback_form_id,:insert_feedback_message,:treeForm,:taskFrom:treeDataTable" />
+				<p:commandButton value="保存" icon="ui-icon ui-icon-disk"
+					style="margin-right:5px"
+					actionListener="#{feedBackBean.saveFeedBack}"
+					oncomplete="handleFeedBack(xhr, status, args);"
+					update=":insert_feedback_form_id,:insert_feedback_message,:insert_feedback_mes,:treeForm,:taskFrom:treeDataTable" />
+				<p:commandButton value="提交" icon="ui-icon ui-icon-check"
+					style="margin-right:5px"
+					actionListener="#{feedBackBean.submitFeedBack}"
+					oncomplete="handleFeedBack(xhr, status, args);"
+					update=":insert_feedback_form_id,:insert_feedback_message,:insert_feedback_mes,:taskFrom:treeDataTable" />
+				<p:commandButton value="#{msgs.btn_cancel}"
+					icon="ui-icon ui-icon-cancel"
+					action="#{feedBackBean.cancelFeedBack()}"
+					oncomplete="insert_feedback_dialog_var.hide();" />
+			</div>
+
+		</h:form>
+
+	</p:dialog>
+</ui:composition>

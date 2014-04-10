@@ -1,0 +1,35 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="confirm_dialog_id" resizable="false" modal="true"
+		header="确认对话框" widgetVar="confirm_dialog_var">
+		<h:form prependId="false" id="confirm_form_id">
+			<h:outputText styleClass="ui-icon ui-icon-alert ui-confirm-dialog-severity"/>
+			<h:outputText value="确定要删除所选的记录吗？"/>
+			<br/>
+			
+			<p:commandButton value="#{msgs.btn_ok}" update=":project_member_form_id,:projectForm:pGrowl" action="#{projectBean.deleteMembers}"
+				rendered="#{projectBean.deleteModel == 'member' ? true : false}" 
+				oncomplete="confirm_dialog_var.hide()"/>
+			
+			<p:commandButton value="#{msgs.btn_ok}" update=":projectForm,:projectForm:pGrowl" action="#{projectBean.deleteTask}"
+				rendered="#{projectBean.deleteModel == 'task' ? true : false}" 
+				oncomplete="confirm_dialog_var.hide()"/>
+			
+			<p:commandButton value="#{msgs.btn_ok}" update=":task_question_form_id,:projectForm:pGrowl" action="#{projectBean.deleteProblems}"
+				rendered="#{projectBean.deleteModel == 'question' ? true : false}" 
+				oncomplete="confirm_dialog_var.hide();"/>
+				
+			<p:commandButton value="#{msgs.btn_ok}" update=":project_attachment_form_id,:projectForm:pGrowl" action="#{projectBean.deleteAttachments}"
+				rendered="#{projectBean.deleteModel == 'batchDeleteAttachment' ? true : false}" 
+				oncomplete="confirm_dialog_var.hide();"/>
+			<p:commandButton value="#{msgs.btn_ok}" update=":project_attachment_form_id,:projectForm:pGrowl" action="#{projectBean.deleteAttachment}"
+				rendered="#{projectBean.deleteModel == 'deleteAttachment' ? true : false}"
+				oncomplete="confirm_dialog_var.hide();"/>
+				
+			<p:commandButton value="#{msgs.btn_cancel}" onclick="confirm_dialog_var.hide()" style="margin: 10px 5px 5px 5px;"/>
+		</h:form>
+	</p:dialog>
+</ui:composition>

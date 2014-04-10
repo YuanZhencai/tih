@@ -1,0 +1,194 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<style>
+.menuStyle {
+	width: 343px;
+}
+</style>
+
+	<p:dialog header="新建报送报表申请流程" widgetVar="createReportDlgVar"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"
+		id="createReportDlgId">
+		<p:ajax event="close"
+			listener="#{sendReportBean.createDialogClearPage()}"
+			update=":createReportFormId" />
+
+		<h:form id="createReportFormId" rependId="false">
+			<p:growl id="createReportGrowlId" life="10000" showDetail="true" />
+			<p:messages id="createReportMsgId" showDetail="true" />
+
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="填制日期：" />
+				<h:column>
+					<p:calendar locale="cn" pattern="yyyy-MM-dd" showButtonPanel="true"
+						navigator="true" disabled="true"
+						value="#{sendReportBean.createDate}" />
+					<p:spacer width="6px" />
+				</h:column>
+
+				<h:outputText value="填制人：" />
+				<h:column>
+					<p:inputText value="#{sendReportBean.createUser}" disabled="true" />
+					<p:spacer width="6px" />
+				</h:column>
+			</h:panelGrid>
+
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="重要程度：" />
+				<h:column>
+					<p:selectOneMenu value="#{sendReportBean.selectedhoto}" var="p"
+						converter="playerConverter"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+						style="width:130px;height:18px;">
+						<!-- 
+					<f:selectItem itemLabel="一般" itemValue="TIH.TAX.WORKFLOWIMPORTANCE.1"/>
+					 -->
+						<f:selectItems value="#{sendReportBean.photos}"
+							var="DictPictureVO" itemLabel="#{DictPictureVO.name}"
+							itemValue="#{DictPictureVO}" />
+
+						<p:column>
+							<p:graphicImage value="/images/#{p.photo}"
+								style="width:50px;height:15px;" />
+						</p:column>
+
+						<p:column>
+							<span style="text-shadow: none;">#{p.name}</span>
+						</p:column>
+					</p:selectOneMenu>
+					<h:outputText style="color:red;" value="*" />
+				</h:column>
+
+				<h:outputText value="紧急程度：" />
+				<h:column>
+					<p:selectOneMenu value="#{sendReportBean.selectedUrgent}" var="p"
+						converter="playerConverter"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+						style="width:130px;height:18px;">
+						<!-- 
+					<f:selectItem itemLabel="一般" itemValue="TIH.TAX.WORKFLOWURGENCY.1"/>
+					 -->
+						<f:selectItems value="#{sendReportBean.photosUrgent}"
+							var="DictPictureVO" itemLabel="#{DictPictureVO.name}"
+							itemValue="#{DictPictureVO}" />
+
+						<p:column>
+							<p:graphicImage value="/images/#{p.photo}"
+								style="width:50px;height:15px;" />
+						</p:column>
+
+						<p:column>
+							<span style="text-shadow: none;">#{p.name}</span>
+						</p:column>
+
+					</p:selectOneMenu>
+					<h:outputText style="color:red;" value=" *" />
+				</h:column>
+			</h:panelGrid>
+
+			<h:panelGrid columns="4" columnClasses="column1,column3">
+				<h:outputText value="所选公司：" />
+				<p:selectCheckboxMenu value="#{sendReportBean.companyList}"
+					label="#{sendReportBean.companyTitle}" id="recipientsId"
+					styleClass="menuStyle"
+					disabled="#{sendReportBean.companyMap.size()==0?true:false}">
+					<f:selectItems value="#{sendReportBean.companyMap}">
+					</f:selectItems>
+				</p:selectCheckboxMenu>
+				<h:column>
+					<p:commandButton icon="ui-icon ui-icon-search"
+						style="width: 22px; height: 22px;" title="请选择"
+						update=":commonCompany,:datatableform"
+						actionListener="#{companyCommonBean.init(':createReportFormId','sendReportBean','multiple','setCompanys')}"
+						oncomplete="commoncompanyvar.show();" />
+					<h:outputText style="color:red;" value=" *" />
+				</h:column>
+			</h:panelGrid>
+
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="报表类型：" />
+				<h:column>
+					<h:selectOneMenu
+						value="#{sendReportBean.createDialogMap['reportType']}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="请选择" itemValue="" />
+						<f:selectItems
+							value="#{commonBean.getDictByCat('TIH.TAX.REQUESTFORM.4')}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputText style="color:red;" value="*" />
+				</h:column>
+			</h:panelGrid>
+			<h:panelGrid columns="4"
+				rendered="#{'Y' == sendReportBean.wfRemindVo.wfTimeoutInd}"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="完成日期：" />
+				<h:column>
+					<p:calendar locale="cn" pattern="yyyy-MM-dd" showButtonPanel="true"
+						navigator="true"
+						value="#{sendReportBean.wfRemindVo.wfCompleteDate}" />
+					<h:outputText style="color:red;" value=" *" />
+				</h:column>
+				<h:outputText value="提醒频率（天）：" />
+				<h:column>
+					<p:inputText value="#{sendReportBean.wfRemindVo.wfIntervalDays}" />
+					<h:outputText style="color:red;" value=" *" />
+				</h:column>
+				<h:outputText value="催促日期：" />
+				<h:column>
+					<p:calendar locale="cn" pattern="yyyy-MM-dd" showButtonPanel="true"
+						navigator="true" value="#{sendReportBean.wfRemindVo.wfUrgeDate}" />
+					<h:outputText style="color:red;" value=" *" />
+				</h:column>
+			</h:panelGrid>
+			<h:panelGrid columns="4" columnClasses="column1,column2,column3">
+				<h:outputText value="报送说明：" />
+				<p:inputTextarea style="width: 361px; height: 200px;"
+					autoResize="false" maxlength="500"
+					value="#{sendReportBean.createDialogMap['opinion']}">
+				</p:inputTextarea>
+				<h:outputText style="color:red;" value="*" />
+			</h:panelGrid>
+			<p:spacer width="10px" height="10px"></p:spacer>
+			<div align="center" style="width: 445px">
+				<p:commandButton value="删除" icon="ui-icon ui-icon-close"
+					style="margin-right:5px"
+					oncomplete="handleApplyRequest(xhr, status, args)"
+					rendered="#{sendReportBean.deleteDrafts}"
+					actionListener="#{sendReportBean.deleteDrafts()}"
+					update=":createReportFormId:createReportGrowlId,:createReportFormId:createReportMsgId,:treeForm,:taskFrom" />
+				<p:commandButton value="保存" icon="ui-icon ui-icon-disk"
+					style="margin-right:5px"
+					oncomplete="handleApplyRequest(xhr, status, args)"
+					actionListener="#{sendReportBean.saveDrafts()}"
+					update=":createReportFormId:createReportGrowlId,:createReportFormId:createReportMsgId,:treeForm,:taskFrom" />
+				<p:commandButton value="提交" icon="ui-icon ui-icon-check"
+					style="margin-right:5px"
+					actionListener="#{sendReportBean.createDialogSumbitData()}"
+					oncomplete="handleApplyRequest(xhr, status, args)"
+					update=":createReportFormId:createReportGrowlId,:createReportFormId:createReportMsgId,:treeForm,:taskFrom" />
+				<p:commandButton value="取消" icon="ui-icon ui-icon-cancel"
+					onclick="createReportDlgVar.hide();" type="button" />
+			</div>
+
+		</h:form>
+		<script type="text/javascript">
+			function handleApplyRequest(xhr, status, args) {
+				if (args.sendReportInfo == "yes") {
+					createReportDlgVar.hide();
+				}
+			}
+			
+		</script>
+	</p:dialog>
+</ui:composition>

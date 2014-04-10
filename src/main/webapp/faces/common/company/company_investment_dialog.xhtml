@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<p:dialog modal="true" resizable="false" header="投资情况信息"
+		widgetVar="investmentFormDiaLogvar" id="investmentFormDiaLog">
+		<h:form id="investmentForm">
+			<div class="style1" style="margin-top: 5px; margin-bottom: 5px;">
+				<h:panelGrid columns="4"
+					columnClasses="column1,column2,column1,column2">
+					<h:outputText value="投资对象：" />
+					<p:inputText value="#{companyInvestmentBean.searchMap['phase']}" />
+					<h:outputText value="币种 ：" />
+					<h:selectOneMenu
+						value="#{companyInvestmentBean.searchMap['currency']}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+						style="width:139px">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems
+							value="#{commonBean.getDictByCat(commonBean.tihTaxCurrency)}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputText value="有效：" />
+					<h:selectOneMenu
+						value="#{companyInvestmentBean.searchMap['defunctInd']}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="请选择" itemValue="" />
+						<f:selectItem itemLabel="是" itemValue="N" />
+						<f:selectItem itemLabel="否" itemValue="Y" />
+					</h:selectOneMenu>
+				</h:panelGrid>
+				<div align="right"
+					style="margin-top: 5px; margin-left: 5px; margin-right: 5px;">
+					<p:commandButton value="查询" icon="ui-icon ui-icon-search"
+						actionListener="#{companyInvestmentBean.search}"
+						update=":investmentForm:companyInvest" style="margin-right: 5px;" />
+					<p:commandButton value="重置"
+						actionListener="#{companyInvestmentBean.resetForm}"
+						update=":investmentForm" style="margin-right: 5px;"
+						icon="ui-icon ui-icon-cancel" />
+				</div>
+			</div>
+			<p:dataTable id="companyInvest" var="companyInvest"
+				value="#{companyInvestmentBean.investVos}" 
+				paginator="true" rows="6" paginatorPosition="bottom"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+				rowIndexVar="index"
+				rowStyleClass="#{index mod 2 == 1 ? 'changeColor' : null}"
+				emptyMessage="#{msgs.dataTable_empty}" style="margin-top: 5px;" >
+				<f:facet name="header">
+					<div class="header">
+						<h:outputText value="投资情况列表" />
+						<p:commandButton value="添加" styleClass="header_button"
+							oncomplete="investmentInsertDialogvar.show()"
+							action="#{companyInvestmentBean.initAddInvest()}"
+							update=":investmentInsertDialog" icon="ui-icon ui-icon-plus" />
+					</div>
+				</f:facet>
+				<p:column headerText="投资对象">
+					<h:outputText value="#{companyInvest.phase}" />
+				</p:column>
+				<p:column headerText="投资金额(万元)">
+					<div style="text-align: right">
+						<h:outputText value="#{companyInvest.investAccount}" />
+					</div>
+				</p:column>
+				<p:column headerText="投资对象地址">
+					<h:outputText value="#{companyInvest.investAddress}" />
+				</p:column>
+				<p:column headerText="投资所占比例">
+					<h:outputText value="#{companyInvest.investmentRatio}" />
+				</p:column>
+				<p:column headerText="投资日期">
+					<h:outputText value="#{companyInvest.startDatetime}">
+						<f:convertDateTime timeZone="GMT+8" pattern="yyyy-MM-dd" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="币种" style="text-align:center;">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(companyInvest.currency)}" />
+				</p:column>
+				<p:column headerText="有效" style="text-align:center;">
+					<h:outputText value="#{companyInvest.defunctInd=='Y' ?'否':'是'}" />
+				</p:column>
+				<p:column headerText="操作" style="text-align:center;">
+					<p:commandButton oncomplete="investmentInsertDialogvar.show()"
+						update=":investmentInsertDialog"
+						title="编辑" icon="ui-icon ui-icon-pencil"
+						style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener target="#{companyInvestmentBean.investVo}" value="#{companyInvest}" />
+						</p:commandButton>
+					<p:commandButton icon="ui-icon-attachment" title="附件"
+						id="companyInvestmentAttachment" style="width: 18px;height: 18px;"
+						oncomplete="uploadOrDownloadAttachment.show();"
+						action="#{attachmentBean.searchFilemstr()}"
+						update=":uploadOrDownloadAttachmentID">
+						<f:setPropertyActionListener
+							target="#{attachmentBean.attachmentVo.tableName}"
+							value="COMPANY_INVESTMENT" />
+						<f:setPropertyActionListener
+							target="#{attachmentBean.attachmentVo.entityId}"
+							value="#{companyInvest.invest.id}" />
+						<f:setPropertyActionListener
+							target="#{attachmentBean.attachmentVo.operationType}" value="100" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

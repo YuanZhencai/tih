@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="分配组织层级" widgetVar="organizationLevelDialogWidgetVar" id="organizationLevelDialog" resizable="false" modal="true">
+		<h:form id="organizationLevelDialogForm" prependId="false">
+			<p:messages id="organizationLevelErrorMsg" showDetail="true" />
+			<div class="style1">
+				<h:panelGrid id="organizationLevelFormItems" columns="7" columnClasses="column80,column2,column3,column4,column80,column2,column3">
+					<h:outputText value="上级主管：" />
+					<p:inputText id="supervisor" value="#{organizationLevelBean.showSupervisor}" maxlength="18" disabled="true" />
+					<p:commandButton actionListener="#{userCommonBean.init(':organizationLevelDialogForm:supervisor','single','organizationLevelBean','getNeedSupervisor')}" update=":commonUserDialog" oncomplete="commonUserDialogWidgetVar.show()" icon="ui-icon ui-icon-search" title="请选择" style="width:21px;height:21px;"/>
+					<h:outputText value="*" style="color:red;"/>
+					
+					<h:outputText value="业务流程：" />
+					<h:selectOneMenu value="#{organizationLevelBean.requestFormType}" styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all" style="width:180px;">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxRequestform)}" var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputText value="*" style="color:red;"/>
+					
+					<h:outputText value="所属公司："/>
+					<p:inputText value="#{organizationLevelBean.companyName}"
+						disabled="true" title="#{organizationLevelBean.companyName}"
+						id="company_name" >
+					</p:inputText>
+					<p:commandButton icon="ui-icon ui-icon-search"
+						title="#{msgs.btn_query}" update=":commonCompany,:datatableform"
+						style="width:21px;height:21px;" oncomplete="commoncompanyvar.show();"
+						actionListener="#{companyCommonBean.init(':organizationLevelDialogForm','organizationLevelBean','single','selectCompany')}" />
+					<h:outputText value="*" style="color:red;"/>
+				</h:panelGrid>
+				<div>
+					<p:commandButton actionListener="#{organizationLevelBean.addOrganizationLevel()}" value="#{msgs.btn_add}"	update=":organizationLevelDialogForm:organizationLevelErrorMsg,organizationLevelDataTable" icon="ui-icon ui-icon-plus" style="margin-right: 5px;" />
+				</div>
+			</div>
+			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+				id="organizationLevelDataTable" var="wsv"
+				value="#{organizationLevelBean.lazyWfSupervisorVoModel}"
+				paginator="true" rows="5" paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+				rowIndexVar="index" style="margin-top:5px;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+				<f:facet name="header">
+					<h:outputText value="组织层级列表" />
+				</f:facet>
+				<p:column headerText="上级主管" style="#{wsv.defunctInd eq 'Y' ? 'text-decoration: line-through;color: #FF0000;' : ''}">
+					<h:outputText value="#{wsv.supervisorName}" />
+				</p:column>
+				<p:column headerText="业务流程">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(wsv.requestFormType)}" />
+				</p:column>
+				<p:column headerText="所属公司">
+					<h:outputText
+						value="#{wsv.companyName}" />
+				</p:column>
+				<p:column headerText="操作" style="text-align: center;">
+					<p:commandButton action="#{organizationLevelBean.deleteOrganizationLevel}" update=":organizationLevelDialogForm" title="删除" icon="ui-icon ui-icon-close" style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener target="#{organizationLevelBean.wfSupervisorVo}" value="#{wsv}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<div style="text-align: center; position: relative; margin-top: 5px;">
+				<p:commandButton actionListener="#{organizationLevelBean.saveOrganizationLevel}" oncomplete="organizationLevelDialogWidgetVar.hide()" update=":organizationLevelDialogForm:organizationLevelErrorMsg,:userGrowl" value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check" style="margin-right: 5px;" />
+				<p:commandButton type="button" onclick="organizationLevelDialogWidgetVar.hide()" value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

@@ -1,0 +1,233 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<p:dialog id="addTransferPriceDialog" widgetVar="addTransferPriceVar" header="#{transferPriceBean.operate eq 'add' ? '添加转让定价信息' :(transferPriceBean.operate eq 'edit' ? '编辑转让定价信息':'转让定价历史信息') }" resizable="false" modal="true">
+		<p:ajax event="close"  listener="#{transferPriceBean.clear()}"/>
+		<p:growl id="messages"/>
+		<p:layout style="width: 1100px;height: 600px; margin: 5px 0 0 0;"
+			id="layout">
+			<p:layoutUnit style="width: 100%;height:100%;" size="340"
+				minSize="20" position="west" >
+				<h:form id="priceHistoryForm">
+				操作类型:
+				<h:selectOneMenu value="#{transferPriceBean.operateInd}">
+					<p:ajax update=":priceHistoryForm,:addTransPriceForm"  event="change" listener="#{transferPriceBean.handleHistoryChange()}"/>
+						<f:selectItem itemLabel="请选择"/>
+						<f:selectItems
+							value="#{commonBean.getDictByCat(commonBean.tihTaxOperatetypeType)}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+				<p:dataTable id="historiesDatatable" value="#{transferPriceBean.priceHistories}" var="history"  paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} " emptyMessage="#{msgs.dataTable_empty}"
+						rowIndexVar="index" style="margin-top:5px;" selectionMode="single" selection="#{transferPriceBean.selectedHistory}"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}" rowKey="#{history.id}"
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"> 
+						<p:ajax event="rowSelect" listener="#{transferPriceBean.getHistoryDetail()}" update=":priceHistoryForm,:addTransPriceForm" />
+						<f:facet name="header">
+						历史信息列表
+						</f:facet>
+						<p:column headerText="操作类型" style="width: 50px">
+							<h:outputText value="#{commonBean.getValueByDictCatKey(history.operateInd)}" />
+						</p:column>
+						<p:column headerText="操作时间" style="width: 125px">
+							<h:outputText value="#{history.updatedDatetime}" >
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="操作人">
+							<h:outputText value="#{transferPriceBean.getUserName(history.updatedBy)}" style="width: 75px" />
+						</p:column>
+						<p:column headerText="操作" style="width: 50px">
+								<p:commandButton icon="ui-icon ui-icon-pencil" disabled="#{not (transferPriceBean.transAdmin and commonBean.tihTaxOperatetypeType4 == transferPriceBean.selectedHistory.operateInd)}" rendered="#{history.operateInd == commonBean.tihTaxOperatetypeType4}" action="#{transferPriceBean.editTransPrice()}" update=":addTransPriceForm" style="width: 18px;height: 18px;">
+										<f:setPropertyActionListener value="update" target="#{transferPriceBean.operate}" />
+								</p:commandButton>
+								<p:commandButton icon="ui-icon ui-icon-close" disabled="#{not (transferPriceBean.transAdmin)}" rendered="#{history.operateInd == commonBean.tihTaxOperatetypeType4}" oncomplete="deleteTransTypeConfirmDialogVar.show();" style="width: 18px;height: 18px;">
+									<f:setPropertyActionListener value="#{history.id}" target="#{transferPriceBean.transPriceId}" />
+								</p:commandButton>
+						</p:column>
+				</p:dataTable>
+				</h:form>
+			</p:layoutUnit>
+			<p:layoutUnit position="center" size="700">
+				<h:form id="addTransPriceForm">  
+						<p:messages id="transMsg" autoUpdate="true" showDetail="false" /> 
+						<h:panelGrid id="companyPanel" columns="2" columnClasses="column41,column2">
+							<h:outputText value="公司名称：" />
+							<h:column>
+								<p:inputText value="#{transferPriceBean.company.stext}" id="belongtoCompanyId" style="width: 333px; margin-right: 3px;" readonly="true"/>
+								<p:commandButton icon="ui-icon ui-icon-search" disabled="#{transferPriceBean.disabled}"
+									title="#{msgs.btn_query}" update=":commonCompany,:datatableform"
+									style="width: 26px; height: 26px; vertical-align: top;" process="@this"
+									actionListener="#{companyCommonBean.init(':addTransPriceForm:companyPanel','transferPriceBean','single','setCompany','true')}"
+									oncomplete="commoncompanyvar.show();" />
+									<h:outputText value="*" style="color: red;" />
+							</h:column>
+						</h:panelGrid>
+						<h:panelGrid columns="4"
+							columnClasses="column41,column2,column1,column2">
+							<h:outputText value="年度：" />
+							<h:column>
+								<p:calendar value="#{transferPriceBean.transferPriceVo.decade}" disabled="#{transferPriceBean.disabled}"
+									pattern="yyyy" locale="cn" navigator="true"
+									readOnlyInputText="true">
+								</p:calendar>
+								<h:outputText value="*" style="color: red;" />
+							</h:column>
+							<h:outputText value="关联债资比" />
+							<h:column>
+								<p:inputText value="#{transferPriceBean.transferPriceVo.assoDebtEquityRatio}" disabled="#{transferPriceBean.disabled}" />
+								<h:outputText value="*" style="color: red;" />
+							</h:column>
+							<h:outputText value="是否准备同期资料：" />
+							<h:column>
+								<h:selectOneMenu id="prepareDocItem" value="#{transferPriceBean.transferPriceVo.prepareDocInd}" disabled="#{transferPriceBean.disabled}" >
+									<p:ajax event="change" process="prepareDocItem" update="submitDocItem,docSubmitDatetime" />
+									<f:selectItem itemLabel="请选择" />
+									<f:selectItem itemLabel="是" itemValue="Y" />
+									<f:selectItem itemLabel="否" itemValue="N" />
+								</h:selectOneMenu>
+								<h:outputText value="*" style="color: red;" />
+							</h:column>
+						<h:outputText value="资料是否提交税务局：" />
+						<h:selectOneMenu id="submitDocItem" value="#{transferPriceBean.transferPriceVo.submitDocInd}" disabled="#{transferPriceBean.disabled or not(transferPriceBean.transferPriceVo.prepareDocInd =='Y')}" >
+							<f:selectItem itemLabel="请选择" />
+							<f:selectItem itemLabel="是" itemValue="Y" />
+							<f:selectItem itemLabel="否" itemValue="N" />
+						</h:selectOneMenu>
+						<h:outputText  value="同期资料提交税务局日期：" />
+						<p:calendar id="docSubmitDatetime" value="#{transferPriceBean.transferPriceVo.docSubmitDatetime}" disabled="#{transferPriceBean.disabled or not(transferPriceBean.transferPriceVo.prepareDocInd =='Y')}"
+							pattern="yyyy-MM-dd" locale="cn" navigator="true" 
+							readOnlyInputText="true">
+						</p:calendar>
+					</h:panelGrid>
+						<h:panelGrid columns="3" columnClasses="column41,column2,column3">
+							<h:outputText value="备注 ："/>
+							<h:inputTextarea value="#{transferPriceBean.transferPriceVo.remarks}" disabled="#{transferPriceBean.disabled}"  style="width: 365px;" />
+							<h:outputText value="*" style="color: red;" />
+						</h:panelGrid>
+					<p:dataTable id="transTypeDataTable" value="#{transferPriceBean.transTypeVos}" var="transType" paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+						rowIndexVar="index" style="margin-top:5px;" editable="true" emptyMessage="#{msgs.dataTable_empty}"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+						<f:facet name="header">
+						<div class="header">
+							验证的交易类型
+							<p:commandButton styleClass="header_button" id="addTransType" oncomplete="rowEdit();" value="添加" action="#{transferPriceBean.addTransType()}" update=":addTransPriceForm:transTypeDataTable,:messages" disabled="#{transferPriceBean.disabled}" icon="ui-icon ui-icon-plus" />
+						</div>
+						</f:facet>
+						
+						<p:ajax event="rowEdit" listener="#{transferPriceBean.saveTransType}" update=":addTransPriceForm:transMsg" />
+						
+						<p:column headerText="交易类型" style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{commonBean.getValueByDictCatKey(transType.transType)}" />
+								</f:facet>
+								<f:facet name="input">
+									<h:selectOneMenu value="#{transType.transType}" style="width: 80px;">
+										<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxTradetypeType)}"
+											var="dict" itemLabel="#{dict.codeVal}"
+											itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+									</h:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="验证方法" style="width: 100px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{commonBean.getValueByDictCatKey(transType.validationMethod)}"/>
+								</f:facet>
+								<f:facet name="input">
+									<h:selectOneMenu value="#{transType.validationMethod}" style="width: 80px;">
+											<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxValidationmethodType)}"
+											var="dict" itemLabel="#{dict.codeVal}"
+											itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+									</h:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="可比公司中位值(%)" style="width: 100px;text-align: right">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{transType.compareCompanyMedian}" />
+								</f:facet>
+								<f:facet name="input">
+									<h:inputText value="#{transType.compareCompanyMedian}" style="width: 80px;">
+										<f:validator validatorId="customValidator"/>
+										<w:validateRequired required="true" requiredMark="可比公司中位值："/>
+										<w:validateRegex regex="TWODECIMAL" regexMessage="可比公司中位值：小数点后两位"/>
+									</h:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="调整前比例(%)" style="width: 100px;text-align: right">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{transType.beforeAdjustRatio}" />
+								</f:facet>
+								<f:facet name="input">
+									<h:inputText value="#{transType.beforeAdjustRatio}" style="width: 80px;">
+										<f:validator validatorId="customValidator"/>
+										<w:validateRequired required="true" requiredMark="调整前比率："/>
+										<w:validateRegex regex="TWODECIMAL" regexMessage="调整前比率：小数点后两位"/>
+									</h:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="调整的特殊因素" >
+							<div style="width:100px;word-wrap:break-word;">
+								<p:cellEditor>
+									<f:facet name="output">
+										<div style="width:100px;word-wrap:break-word;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;">
+											<h:outputText value="#{transType.adjustSpecialReason}" title="#{transType.adjustSpecialReason}" />
+										</div>
+									</f:facet>
+									<f:facet name="input">
+											<p:inputTextarea rows="3" cols="10" autoResize="false"
+												value="#{transType.adjustSpecialReason}">
+												<f:validator validatorId="customValidator" />
+												<w:validateMaxLength maxLength="600"
+													maxLengthMark="调整的特殊因素：,200" />
+											</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</div>
+						</p:column>
+						<p:column headerText="调整后比例(%)" style="width: 100px;text-align: right">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{transType.afterAdjustRatio}" />
+								</f:facet>
+								<f:facet name="input">
+									<h:inputText value="#{transType.afterAdjustRatio}" style="width: 80px;">
+										<f:validator validatorId="customValidator"/>
+										<w:validateRequired required="true" requiredMark="调整后比率："/>
+										<w:validateRegex regex="TWODECIMAL" regexMessage="调整后比率：小数点后两位"/>
+									</h:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="操作" style="width: 100px;">
+							<p:rowEditor id="rowEditor" rendered="#{not transferPriceBean.disabled}"/> 
+							<p:commandButton title="删除" rendered="#{transferPriceBean.operate == 'add'}" icon="ui-icon ui-icon-close" process="@this"  action="#{transferPriceBean.deleteTransType()}" update=":addTransPriceForm" style="width: 18px;height: 18px;" disabled="#{transferPriceBean.disabled}" >
+								<f:setPropertyActionListener target="#{transferPriceBean.selectedTransTypeVo}" value="#{transType}" />
+							</p:commandButton>
+							<p:commandButton oncomplete="deleteTransConfirmDialogVar.show();" title="删除" rendered="#{not (transferPriceBean.operate == 'add')}" icon="ui-icon ui-icon-close" process="@this" update=":addTransPriceForm" style="width: 18px;height: 18px;" disabled="#{transferPriceBean.disabled}" >
+								<f:setPropertyActionListener target="#{transferPriceBean.selectedTransTypeVo}" value="#{transType}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+					<div style="text-align: center; margin: 13px -3px 0px 0px; vertical-align: middle">
+						<p:commandButton value="确认" action="#{transferPriceBean.addTransferPrice()}" disabled="#{transferPriceBean.disabled}" update=":priceHistoryForm,:addTransPriceForm,:messages,:transPriceForm:transPriceDataTable" icon="ui-icon ui-icon-check"
+						    oncomplete="handleDialog(xhr, status, args)" style="margin-right: 5px;" />
+						<p:commandButton value="取消" oncomplete="addTransferPriceVar.hide();" icon="ui-icon ui-icon-cancel" />
+					</div>
+				</h:form>
+			</p:layoutUnit>
+		</p:layout>
+	</p:dialog>
+</ui:composition>

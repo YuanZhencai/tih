@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog
+		header="#{materialBean.excuteMethod eq 'add' ? '添加原料及工艺信息' : '编辑原料及工艺信息'}"
+		widgetVar="materialAddEditDialogWidgetVar"
+		id="materialAddEditDialogId" resizable="false" modal="true">
+		<h:form id="materialAddEditDialogForm" prependId="false">
+			<p:messages id="materialMessages" showDetail="true" />
+			<h:panelGrid columns="10"
+				columnClasses="column1,column2,column3,column4,column5,column1,column2,column3,column4,column5">
+				<h:outputText value="主要原料：" />
+				<p:inputText id="mainMaterial"
+					value="#{materialBean.materialVo.mainMaterial}" maxlength="49" />
+				<p:commandButton id="mainMaterialBtn" icon="ui-icon ui-icon-search"
+					title="请选择" style="width:21px;height:21px;"/>
+				<p:overlayPanel id="mainMaterialOverlayPanel" for="mainMaterialBtn"
+					widgetVar="mainMaterialWv">
+					<p:dataTable id="mainMaterialDatatable" var="mainMaterial"
+						paginatorPosition="bottom"
+						value="#{materialBean.lazyMainMaterialModel}" rows="5"
+						paginator="true">
+						<p:ajax event="rowSelect" listener="#{materialBean.selectMM}" />
+						<p:column selectionMode="single"
+							style="text-align: center;width: 20px;" />
+						<p:column headerText="原料名称">
+							<h:outputText value="#{mainMaterial.name}" />
+						</p:column>
+					</p:dataTable>
+					<div
+						style="text-align: center; position: relative; margin-top: 5px; margin-bottom: 5px;">
+						<p:commandButton value="#{msgs.btn_ok}"
+							oncomplete="handleRequest(xhr, status, args ,'mainMaterial');"
+							actionListener="#{materialBean.selectMainMaterial()}"
+							update=":growl,:materialAddEditDialogForm:mainMaterial"
+							icon="ui-icon ui-icon-check" />
+						<p:commandButton type="button" onclick="mainMaterialWv.hide()"
+							value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+					</div>
+				</p:overlayPanel>
+				<h:outputText value="*" style="color:red;" />
+
+				<h:outputText value="主要产品：" />
+				<p:inputText id="mainProduct"
+					value="#{materialBean.materialVo.mainProduct}" maxlength="49" />
+				<p:commandButton id="mainProductBtn" icon="ui-icon ui-icon-search"
+					title="请选择" style="width:21px;height:21px;"/>
+				<p:overlayPanel id="mainProductOverlayPanel" for="mainProductBtn"
+					widgetVar="mainProductWv">
+					<p:dataTable id="mainProductDatatable" var="mainProduct"
+						paginatorPosition="bottom"
+						value="#{materialBean.lazyMainProductModel}" rows="5"
+						paginator="true">
+						<p:ajax event="rowSelect" listener="#{materialBean.selectMP}" />
+						<p:column selectionMode="single"
+							style="text-align: center;width: 20px;" />
+						<p:column headerText="产品名称">
+							<h:outputText value="#{mainProduct.name}" />
+						</p:column>
+					</p:dataTable>
+					<div
+						style="text-align: center; position: relative; margin-top: 5px; margin-bottom: 5px;">
+						<p:commandButton value="#{msgs.btn_ok}"
+							oncomplete="handleRequest(xhr, status, args ,'mainProduct');"
+							actionListener="#{materialBean.selectMainProduct()}"
+							update=":growl,:materialAddEditDialogForm:mainProduct"
+							icon="ui-icon ui-icon-check" />
+						<p:commandButton type="button" onclick="mainProductWv.hide()"
+							value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+					</div>
+				</p:overlayPanel>
+				<h:outputText value="*" style="color:red;" />
+
+				<h:outputText value="加工项目：" />
+				<p:inputText id="processing"
+					value="#{materialBean.materialVo.processing}" maxlength="49" />
+				<p:commandButton id="processingBtn" icon="ui-icon ui-icon-search"
+					title="请选择" style="width:21px;height:21px;"/>
+				<p:overlayPanel id="processingOverlayPanel" for="processingBtn"
+					widgetVar="processingWv">
+					<p:dataTable id="processingDatatable" var="processing"
+						paginatorPosition="bottom"
+						value="#{materialBean.lazyProcessingModel}" rows="5"
+						paginator="true">
+						<p:ajax event="rowSelect" listener="#{materialBean.selectPR}" />
+						<p:column selectionMode="single"
+							style="text-align: center;width: 20px;" />
+						<p:column headerText="加工项目名称">
+							<h:outputText value="#{processing.name}" />
+						</p:column>
+					</p:dataTable>
+					<div
+						style="text-align: center; position: relative; margin-top: 5px; margin-bottom: 5px;">
+						<p:commandButton value="#{msgs.btn_ok}"
+							oncomplete="handleRequest(xhr, status, args ,'processing');"
+							actionListener="#{materialBean.selectProcessing()}"
+							update=":growl,:materialAddEditDialogForm:processing"
+							icon="ui-icon ui-icon-check" />
+						<p:commandButton type="button" onclick="processingWv.hide()"
+							value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+					</div>
+				</p:overlayPanel>
+				<h:outputText value="*" style="color:red;" />
+
+				<h:outputText value="处理能力：" />
+				<p:inputText value="#{materialBean.materialVo.ability}"
+					onkeyup="if(this.value == null || this.value == '')return;if(this.value.search(/^[1-9]\d*$/)==-1)this.value=(this.value2)?this.value2:'';else this.value2=this.value;"
+					maxlength="4" />
+				<h:outputText value="*" style="color:red;" />
+				<h:outputText value="" />
+				<h:outputText value="" />
+
+				<h:outputText value="处理单位：" />
+				<p:inputText value="#{materialBean.materialVo.unit}" maxlength="49"
+					disabled="true" />
+				<h:outputText value="" />
+				<h:outputText value="" />
+				<h:outputText value="" />
+
+				<h:outputText value="有效：" />
+				<h:selectOneRadio value="#{materialBean.materialVo.effective}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+				<h:outputText value="" />
+				<h:outputText value="" />
+				<h:outputText value="" />
+			</h:panelGrid>
+			<div
+				style="text-align: center; position: relative; padding-top: 10px;">
+				<p:commandButton actionListener="#{materialBean.saveMaterial()}"
+					oncomplete="handleRequest(xhr, status, args ,'material');"
+					update=":growl,:materialAddEditDialogForm:materialMessages,:materialDialogForm:materialDataTable"
+					value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+					style="margin-right: 5px;" />
+				<p:commandButton type="button"
+					onclick="materialAddEditDialogWidgetVar.hide()"
+					value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

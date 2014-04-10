@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+		<p:dialog modal="true" resizable="false"  header="选择税务机关" widgetVar="taxFormDialogvar" id="taxDialog">
+	<h:form id="taxForm">
+			<h:panelGrid id="zzz" columns="2">
+				<h:outputText value="税务机关名称：" />
+				<p:inputText  value="#{companyTaxauthorityBean.taxName}"/>
+			</h:panelGrid>
+			<div align="right" style="margin-bottom: 5px;">
+				<p:commandButton  value="查询"
+					icon="ui-icon ui-icon-search" actionListener="#{companyTaxauthorityBean.searchTax}" update=":taxForm" style="margin-right: 5px;" />
+				<p:commandButton  value="重置" actionListener="#{companyTaxauthorityBean.resetTax}" update=":taxForm" icon="ui-icon ui-icon-cancel" />
+			</div>
+			
+					<p:dataTable id="companyInsertDataTablezz" var="companyInsert"
+			value="#{companyTaxauthorityBean.t}" 
+			paginator="true" rows="6" paginatorPosition="bottom"
+			paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+			 rowIndexVar="index" emptyMessage="#{msgs.dataTable_empty}"
+		 selection="#{companyTaxauthorityBean.tax}"  rowStyleClass="#{index mod 2 == 1 ? 'changeColor' : null}">
+			
+				<f:facet name="header">
+				<h:outputText value="税务机关列表" />
+			
+			</f:facet>
+			
+			 <p:column selectionMode="single" style="text-align:center;width:20px;"/>  
+			  <p:column headerText="机关名称">  
+			  	<h:outputText value="#{companyInsert.name}" />
+       		 </p:column>  
+			<p:column headerText="类型">  
+			  	<h:outputText value="#{commonBean.getValueByDictCatKey(companyInsert.type)}" />
+       		 </p:column>  
+			 
+       		 
+       		   <p:column headerText="税务机关地址">  
+			  	<h:outputText value="#{companyInsert.address}" />
+       		 </p:column>  
+       		 
+		
+			</p:dataTable>
+			
+		<div align="center" style="margin-top: 5px;">
+				<p:commandButton  value="确定"
+					icon="ui-icon ui-icon-check" style="margin-right: 5px;"    update=":taxdialogForm:taxname" oncomplete="taxFormDialogvar.hide();"  />
+				<p:commandButton  value="取消"  oncomplete="taxFormDialogvar.hide();" icon="ui-icon ui-icon-cancel" />
+			</div>
+</h:form>
+	
+	</p:dialog>
+	</ui:composition>

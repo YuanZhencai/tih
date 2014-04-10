@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+	<ui:define name="title">用户管理</ui:define>
+	<ui:define name="styleAndScript">
+		<style type="text/css">
+			input[type='checkbox'] {
+				width: 10px;
+			}
+			input[type='radio'] {
+				width: 10px;
+			}
+			.checkboxCenter {
+				text-align: center;
+			}
+			.column90 {
+				text-align: left;
+				width: 180px;
+			}
+			.calender>input[type='text'] {
+				width: 180px;
+			}
+			.column80 {
+				text-align: right;
+				width: 220px;
+			}
+			.chart {
+				width: 500px;
+			}
+			.table_tr1{
+				background: #DEEDF7;
+				border-bottom-width: 0px;
+				border-top-width: 0px;
+			}
+			.table_tr2{
+				border-bottom-width: 0px;
+				border-top-width: 0px;
+			}
+			.table_td{
+				border-bottom-width: 0px !important;
+				border-top-width: 0px !important;
+			}
+			.table_td_1{
+				border-bottom-width: 0px !important;
+			}
+		</style>
+		
+		<script>
+
+		function handlePermission(xhr, status, args) {
+			if(args.permiss == "success") {
+				addOrInspectationVar.show();
+			}
+		};
+		function selectPie(xhr, status, args) {
+			if(args.pieId != null) {
+				var canvasId = "#pie_"+args.pieId+" canvas.jqplot-series-shadowCanvas";
+				$(canvasId).css("background-color","#ffef8f");
+			}
+		}
+</script>
+		
+	</ui:define>
+	<ui:define name="content">
+		
+		<p:growl id="growl" showDetail="true" life="10000" />
+		<p:growl id="messages" showDetail="true"/>
+		<p:breadCrumb id="taskBreadCrumb" preview="true"
+			expandEffectDuration="200" previewWidth="24">
+			<p:menuitem value="税务平台" url="#" />
+			<p:menuitem value="报表查询" url="#" />
+			<p:menuitem value="数据分析" url="#" />
+		</p:breadCrumb>
+		<p:layout style="min-width:100%;max-width:100%;min-height:95%;max-height:95%;">
+			<p:layoutUnit position="north" size="80" resizable="false" style="width: 100%;height:100%;">
+				<ui:include src="search_form.xhtml" />
+			</p:layoutUnit>
+			
+			<p:layoutUnit position="west" size="355" resizable="false"  style="width: 100%;height:100%;">
+				<ui:include src="search_left.xhtml" />
+			</p:layoutUnit>
+			
+			<p:layoutUnit position="center" style="width: 100%;height:100%;">
+				<ui:include src="search_right.xhtml" />
+			</p:layoutUnit>
+			
+		</p:layout>
+		
+		
+		
+	</ui:define>
+</ui:composition>

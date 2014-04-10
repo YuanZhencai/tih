@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets" >
+	<p:dialog header="添加常用链接" widgetVar="insertDlgVar" showEffect="fade"
+		hideEffect="fade" modal="true" resizable="false" id="insertDlgId" >
+		<h:form id="insertDialogFormId" prependId="false">
+
+			<p:messages id="addMsg" showDetail="true" />
+
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="链接名称：" />
+				<h:panelGroup>
+					<p:inputText value="#{commonLinkBean.addLinkName}" 
+						 style="width:260px">
+					</p:inputText>
+					<h:outputText style="color:red;" value="*" />
+					<h:outputText value="　　" />
+				</h:panelGroup>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="链接地址：" />
+				<h:panelGroup>
+					<p:inputText value="#{commonLinkBean.addLinkUrl }"  
+						 style="width:260px" >
+					</p:inputText>
+					<h:outputText style="color:red;" value="*" />
+					<h:outputText value="　　" />
+				</h:panelGroup>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="优先级数：" />
+				<h:panelGroup>
+					<h:selectOneMenu value="#{commonLinkBean.addLinkPriority }"
+						 id="boxId"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"  style="width:270px">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect }" itemValue="" />
+						<f:selectItem itemLabel="1" itemValue="1" />
+						<f:selectItem itemLabel="2" itemValue="2" />
+						<f:selectItem itemLabel="3" itemValue="3" />
+						<f:selectItem itemLabel="4" itemValue="4" />
+						<f:selectItem itemLabel="5" itemValue="5" />
+						<f:selectItem itemLabel="6" itemValue="6" />
+						<f:selectItem itemLabel="7" itemValue="7" />
+						<f:selectItem itemLabel="8" itemValue="8" />
+						<f:selectItem itemLabel="9" itemValue="9" />
+						<f:selectItem itemLabel="10" itemValue="10" />
+					</h:selectOneMenu>
+					<h:outputText style="color:red;" value="*" />
+					<h:outputText value="　　" />
+				</h:panelGroup>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="3"
+				columnClasses="column1,column2,column1">
+				<h:outputText value="#{msgs.txt_defunct }" />
+				<h:selectOneRadio styleClass="checkbox" 
+					value="#{commonLinkBean.addLinkdefunct}">
+					<f:selectItem itemLabel="#{msgs.txt_effective }" itemValue="N"></f:selectItem>
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost }" itemValue="Y"></f:selectItem>
+				</h:selectOneRadio>
+				
+			</h:panelGrid>
+			
+			<div align="center">
+				<p:commandButton value="#{msgs.btn_ok}"  icon="ui-icon ui-icon-check" 
+					actionListener="#{commonLinkBean.insertData }"
+					update=":indexFormId,:insertDialogFormId:addMsg,:indexFormId:growl"  style="margin-right:5px"  
+					oncomplete="handleSaveRequest(xhr, status, args);" />
+				<p:commandButton type="button" value="#{msgs.btn_cancel }" onclick="insertDlgVar.hide()" 
+					icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

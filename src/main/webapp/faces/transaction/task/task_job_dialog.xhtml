@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	
+	
+    <p:dialog id="jobNewId" widgetVar="jobNew_dialog" resizable="false" height="580" width="522" 
+    	header="#{JobMBean.excuteMethod eq 'add' ? '创建定时器' : '编辑定时器'}" modal="true">
+    <p:messages id="jobNewIdmessage" showDetail="true" autoUpdate="true"/>
+        <h:form style="margin: 0 0 0 16px">
+        	<h:panelGrid columns="2" columnClasses="column1,column5" >
+                <h:outputText value="名称:"/>
+                <h:column>
+	                <p:inputText id="jobName" value="#{JobMBean.newJob.jobName}" style="width: 365px;" readonly="#{JobMBean.excuteMethod eq 'add' ? false:true}"/>
+	                <span style="color: red">*</span>
+                </h:column>        		
+        	</h:panelGrid>
+        	<h:panelGrid columns="4" columnClasses="column1,column2,column1,column2">
+                <h:outputText value="开始时间:"/>
+                <h:column>
+	                <p:calendar id="startDate" value="#{JobMBean.newJob.startDate}"
+	                	pattern="yyyy-MM-dd" locale="cn" valueChangeListener="#{JobMBean.getStartDateVal}"
+						navigator="true">
+						<p:ajax update="year" event="dateSelect" />
+					</p:calendar>
+					<span style="color: red">*</span>
+				</h:column>
+                <h:outputText value="结束时间:"/>
+                <p:calendar id="endDate" value="#{JobMBean.newJob.endDate}"
+                	pattern="yyyy-MM-dd" locale="cn"
+					navigator="true" valueChangeListener="#{JobMBean.getEndDateVal}">
+					<p:ajax update="year" event="dateSelect" />
+				</p:calendar>        	
+        	</h:panelGrid>
+            <p:fieldset legend="执行周期" style="width: 420px; margin: 0 0 0 5px;">
+			<h:panelGrid columns="4" columnClasses="column1,column2,column1,column2">
+
+				<h:outputText value="年:"/>
+                <h:selectOneMenu id="year" value="#{JobMBean.newJob.year}">
+                	<f:selectItem itemLabel="每年" itemValue="*" />
+                	<f:selectItems value="#{JobMBean.getYear()}" />
+                </h:selectOneMenu>
+                <h:outputText value="月:"/>
+                <h:selectOneMenu id="month" value="#{JobMBean.newJob.month}">
+                	<f:selectItem itemLabel="每月" itemValue="*" />
+                	<f:selectItem itemLabel="一月" itemValue="1" />
+                	<f:selectItem itemLabel="二月" itemValue="2" />
+                	<f:selectItem itemLabel="三月" itemValue="3" />
+                	<f:selectItem itemLabel="四月" itemValue="4" />
+                	<f:selectItem itemLabel="五月" itemValue="5" />
+                	<f:selectItem itemLabel="六月" itemValue="6" />
+                	<f:selectItem itemLabel="七月" itemValue="7" />
+                	<f:selectItem itemLabel="八月" itemValue="8" />
+                	<f:selectItem itemLabel="九月" itemValue="9" />
+                	<f:selectItem itemLabel="十月" itemValue="10" />
+                	<f:selectItem itemLabel="十一月" itemValue="11" />
+                	<f:selectItem itemLabel="十二月" itemValue="12" /> 
+                </h:selectOneMenu>
+                <h:outputText value="日:"/>
+                <h:selectOneMenu id="dayOfMonth" value="#{JobMBean.newJob.dayOfMonth}">
+                	<f:selectItem itemLabel="每日" itemValue="*" />
+                	<f:selectItems value="#{JobMBean.getDay()}" />
+                </h:selectOneMenu>
+				<h:outputText value="时:"/>
+				<h:selectOneMenu id="hour" value="#{JobMBean.newJob.hour}">
+                	<f:selectItem itemLabel="每时" itemValue="*" />
+                	<f:selectItems value="#{JobMBean.getHour()}" />
+                </h:selectOneMenu>
+                <h:outputText value="分:"/>
+                <h:selectOneMenu id="minute" value="#{JobMBean.newJob.minute}">
+                	<f:selectItem itemLabel="每分" itemValue="*" />
+                	<f:selectItems value="#{JobMBean.getMinsecond()}" />
+                </h:selectOneMenu>
+                <h:outputText value="秒:"/>
+                <h:selectOneMenu id="second" value="#{JobMBean.newJob.second}" disabled="true">
+                	<f:selectItems value="#{JobMBean.getMinsecond()}" />
+                </h:selectOneMenu>
+                <h:outputText value="周:"/>
+                <h:selectOneMenu id="dayOfWeek" value="#{JobMBean.newJob.dayOfWeek}">
+                	<f:selectItem itemLabel="每天" itemValue="*" />
+                	<f:selectItem itemLabel="星期一" itemValue="1" />
+                	<f:selectItem itemLabel="星期二" itemValue="2" />
+                	<f:selectItem itemLabel="星期三" itemValue="3" />
+                	<f:selectItem itemLabel="星期四" itemValue="4" />
+                	<f:selectItem itemLabel="星期五" itemValue="5" />
+                	<f:selectItem itemLabel="星期六" itemValue="6" />
+                	<f:selectItem itemLabel="星期日" itemValue="7" />
+                </h:selectOneMenu>
+            </h:panelGrid>
+            </p:fieldset>
+            <h:panelGrid columns="2" columnClasses="column1,column2">
+            	<h:outputText value="描述:"/>
+                <h:inputTextarea cols="59" rows="3" id="description" value="#{JobMBean.newJob.description}" style="width: 368px;"/>
+            </h:panelGrid>
+            
+            
+            <h:panelGrid style="text-align: center;">
+            
+            <script type="text/javascript">
+				$(document).ready(function(){
+					$("#mypicklistId .ui-picklist-item,.ui-corner-all").each(function(index){
+						$(this).css("text-shadow", "none");
+					});
+				});
+			</script>
+            
+					<p:pickList var="player" id="picklistId" style="text-align: left;margin: 0 0 0 5px;"
+						addLabel="#{msgs.pickList_addLabel}" addAllLabel="#{msgs.pickList_addAllLabel}" 
+						removeLabel="#{msgs.pickList_removeLabel}" removeAllLabel="#{msgs.pickList_removeAllLabel}" 
+						moveUpLabel="#{msgs.pickList_moveUpLabel}" moveTopLabel="#{msgs.pickList_moveTopLabel}" 
+						moveDownLabel="#{msgs.pickList_moveDownLabel}" moveBottomLabel="#{msgs.pickList_moveBottomLabel}" 
+						value="#{JobMBean.pickList}"
+						itemValue="#{player}" itemLabel="#{player}" iconOnly="true"  
+						effect="fade" >
+						<f:facet name="sourceCaption">可选流程</f:facet>
+						<f:facet name="targetCaption">已选流程(可鼠标拖拽排序)</f:facet>
+					</p:pickList>
+            </h:panelGrid>
+            
+            <div style="margin: 5px 25px 0 0; text-align: center;">
+	            <p:commandButton id="create" value="确定" action="#{JobMBean.createJob()}" oncomplete="handleEmailNew(xhr, status, args);" 
+	            	update=":taskFrom:emailDataTableNew,:jobNewIdmessage,:growl" icon="ui-icon ui-icon-check" rendered="#{JobMBean.excuteMethod eq 'add' ? true : false}"/>
+	            <p:commandButton id="update" value="确定" action="#{JobMBean.updateJob()}" oncomplete="handleEmailNew(xhr, status, args);" 
+	            	update=":taskFrom:emailDataTableNew,:jobNewIdmessage,:growl" icon="ui-icon ui-icon-check" rendered="#{JobMBean.excuteMethod eq 'add' ? false : true}"/>
+	            <p:commandButton value="#{msgs.btn_cancel}" oncomplete="jobNew_dialog.hide();" icon="ui-icon ui-icon-cancel" update=":taskFrom:emailDataTableNew"/>
+            </div>
+        </h:form>
+        <script type="text/javascript">
+			function handleEmailNew(xhr, status, args) {
+				if (args.option == "success") {
+					jobNew_dialog.hide();
+				}
+				if (args.wf == "infoupdate") {
+					updateWf.show();
+				}
+				if (args.option == "1") {
+					deleteVar.show();
+				}
+			}
+		</script>
+    </p:dialog>
+    
+ 
+</ui:composition>

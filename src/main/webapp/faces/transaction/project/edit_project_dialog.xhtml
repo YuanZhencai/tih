@@ -1,0 +1,90 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="500" resizable="false" modal="true"
+		id="edit_project_dialog_id" widgetVar="edit_project_dialog_var" 
+		header="#{projectBean.projectModel eq 'add' ? '添加项目' : (projectBean.projectModel eq 'edit' ? '编辑项目' : '查看项目')}">
+		<h:form id="edit_project_form_id" prependId="false">
+			<p:messages showDetail="true" showSummary="true" autoUpdate="true"/>
+			<h:panelGrid columns="4" columnClasses="column1,column2,column1,column2">
+				<h:outputText value="项目编号："/>
+				<h:column>
+					<p:inputText value="#{projectBean.project.p.code}" disabled="true" id="code"/>
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="项目经理："/>
+				<h:column>
+					<p:inputText value="#{projectBean.projectUserName}" disabled="true" id="pmId"/>
+					<span style="color: red">*</span>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="3" columnClasses="column1">
+				<h:outputText value="项目名称："/>
+				<p:inputText value="#{projectBean.project.p.name}" style="width: 370px;" id="name"
+					disabled="#{projectBean.projectModel == 'query' ? true : false}" maxlength="50"/>
+				<span style="color: red">*</span>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="4" columnClasses="column1,column2,column3,column2">
+				<h:outputText value="项目阶段："/>
+				<h:column>
+					<h:selectOneMenu value="#{projectBean.project.p.status}" id="status"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+						disabled="#{projectBean.projectModel == 'query' ? true : false}">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems value="#{commonBean.getDictByCat(projectBean.projectState)}" var="dict"
+							itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>
+					</h:selectOneMenu>
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="项目进度(%)："/>
+				<h:column>
+					<p:inputText value="#{projectBean.project.progress}"
+						disabled="#{projectBean.projectModel == 'query' ? true : false}" />
+					<span style="color: red">*</span>
+				</h:column>
+				
+				<h:outputText value="开始日期："/>
+				<h:column>
+					<p:calendar value="#{projectBean.project.p.startDate}" id="startDate" locale="cn"
+					disabled="#{projectBean.projectModel == 'query' ? true : false}"
+					navigator="true" pattern="yyyy-MM-dd" />
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="结束日期："/>
+				<h:column>
+					<p:calendar value="#{projectBean.project.p.closeDate}" id="closeDate" locale="cn"
+					disabled="#{projectBean.projectModel == 'query' ? true : false}"
+					navigator="true" pattern="yyyy-MM-dd" />
+					<span style="color: red">*</span>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" columnClasses="column1">
+				<h:outputText value="项目描述："/>
+				<p:inputTextarea value="#{projectBean.project.p.desc}" style="width: 370px; height: 50px;"
+					rows="4" autoResize="true" effectDuration="200" maxlength="200"
+					disabled="#{projectBean.projectModel == 'query' ? true : false}" />
+
+				<h:outputText value="#{msgs.txt_defunct}"/>
+				<h:selectOneRadio value="#{projectBean.project.p.defunctInd}" id="defunctInd"
+				disabled="#{projectBean.projectModel == 'query' ? true : false}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N"/>
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y"/>
+				</h:selectOneRadio>
+			</h:panelGrid>
+			
+			<div style="margin: 5px 0 0 0; text-align: center;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" update=":edit_project_form_id,:projectForm"
+					oncomplete="handleProject(xhr, status, args);" style="margin: 5px 5px 5px 5px;"
+					action="#{projectBean.modelProject}"
+					disabled="#{projectBean.projectModel == 'query' ? true : false}"/>
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}" style="margin: 5px 5px 5px 5px;"
+					onclick="edit_project_dialog_var.hide()" type="button"/>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

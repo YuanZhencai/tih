@@ -1,0 +1,48 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="insert_dialog_id" widgetVar="insert_dialog_dialog"
+		resizable="false" width="400" header="添加岗位信息"
+		modal="true">
+		<h:form prependId="false" id="new_form">
+		<p:messages showDetail="true" showSummary="true" autoUpdate="true"/>
+			<h:panelGrid columns="3" columnClasses="column1">
+				<h:outputText value="岗位名称： " />
+				<p:inputText id="newName" value="#{positionBean.position.name}" style="width: 280px;" />
+				<span style="color: red">*</span>
+				
+				<h:outputText value="岗位编码： " />
+				<p:inputText id="newCode" value="#{positionBean.position.code}" style="width: 280px;" />
+				<span style="color: red">*</span>
+
+				<h:outputText value="岗位描述： " />
+				<p:inputTextarea id="newDesc" value="#{positionBean.position.desc}" 
+					effectDuration="200" rows="4" autoResize="true" style="width: 280px; height: 40px;" />
+				<span></span>
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column1">
+				<h:outputText value="系统标识：" />
+				<h:selectOneRadio value="#{positionBean.position.sysInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="Y"/>
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="N"/>
+				</h:selectOneRadio>
+				
+				<h:outputText value="#{msgs.txt_defunct}" />
+				<h:selectOneRadio id="newDefunctInd" value="#{positionBean.position.defunctInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+						oncomplete="handleSaveRequest(xhr, status, args);"
+						actionListener="#{positionBean.addPosition}" style="margin-right: 5px;"
+						update=":positionQueryForm, :new_form" />
+				<p:commandButton value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel"
+						type="button" onclick="insert_dialog_dialog.hide();" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

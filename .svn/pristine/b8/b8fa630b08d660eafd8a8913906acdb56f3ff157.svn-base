@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog
+		header="#{financialReturnBean.annualExcuteMethod eq 'add' ? '添加年返回金额信息' : '编辑年返回金额信息'}"
+		widgetVar="annualReturnAddEditDialogWidgetVar"
+		id="annualReturnAddEditDialogId" resizable="false" modal="true">
+		<h:form id="annualReturnAddEditDialogForm" prependId="false">
+			<p:messages id="annualReturnMessages" showDetail="true" />
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="实际纳税金额(元)：" />
+				<h:column>
+					<p:inputText
+						value="#{financialReturnBean.annualReturnVo.actualReturnAccount}">
+					</p:inputText>
+					<h:outputText value="*" style="color:red;" />
+				</h:column>
+				<h:outputText value="返还计算基数金额(元)：" />
+				<h:column>
+					<p:inputText
+						value="#{financialReturnBean.annualReturnVo.baseReturnAccount}">
+					</p:inputText>
+					<h:outputText value="*" style="color:red;" />
+				</h:column>
+				<h:outputText value="应返还金额(元)：" />
+				<h:column>
+					<p:inputText
+						value="#{financialReturnBean.annualReturnVo.shouldReturnAccount}">
+					</p:inputText>
+					<h:outputText value="*" style="color:red;" />
+				</h:column>
+				<h:outputText value="返还金额(元)：" />
+				<h:column>
+					<p:inputText
+						value="#{financialReturnBean.annualReturnVo.returnAccount}">
+					</p:inputText>
+					<h:outputText value="*" style="color:red;" />
+				</h:column>
+				<h:outputText value="收款时间：" />
+				<h:column>
+					<p:calendar
+						value="#{financialReturnBean.annualReturnVo.paymentDatetime}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true"
+						readOnlyInputText="true" />
+					<h:outputText value="*" style="color:red;" />
+				</h:column>
+				<h:outputText value="所属年度：" />
+				<h:selectOneMenu id="annual"
+					value="#{financialReturnBean.annualReturnVo.returnYear}" converter="annualConverter">
+					<p:ajax event="change" update="annual" />
+					<f:selectItem itemLabel="请选择" />
+					<f:selectItems value="#{commonBean.getAnnuals(financialReturnBean.annualReturnVo.returnYear)}" var="annual"
+						itemLabel="#{annual.itemLabel}" itemValue="#{annual.itemValue}" />
+				</h:selectOneMenu>
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="返还用途：" />
+				<p:inputTextarea
+					value="#{financialReturnBean.annualReturnVo.returnPurpose}"
+					style="width:365px;height:40px;" autoResize="false"
+					effectDuration="400" maxlength="499" />
+				<h:outputText value="备注：" />
+				<p:inputTextarea
+					value="#{financialReturnBean.annualReturnVo.remark}"
+					style="width:365px;height:40px;" autoResize="false"
+					effectDuration="400" maxlength="499" />
+				<h:outputText value="有效：" />
+				<h:selectOneRadio
+					value="#{financialReturnBean.annualReturnVo.effective}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			<div
+				style="text-align: center; position: relative; padding-top: 10px;">
+				<p:commandButton
+					actionListener="#{financialReturnBean.saveAnnualReturn()}"
+					oncomplete="handleRequest(xhr, status, args ,'annualReturn');"
+					update=":growl,:annualReturnAddEditDialogForm:annualReturnMessages,:financialReturnAddEditDialogForm:annualReturnDataTable"
+					value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+					style="margin-right: 5px;" />
+				<p:commandButton type="button"
+					onclick="annualReturnAddEditDialogWidgetVar.hide()"
+					value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

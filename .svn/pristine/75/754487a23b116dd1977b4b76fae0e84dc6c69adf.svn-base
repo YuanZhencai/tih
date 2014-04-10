@@ -1,0 +1,394 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+
+	<p:dialog header="导入精灵" widgetVar="autoImportDlgVar" showEffect="fade"
+		hideEffect="fade" modal="true" resizable="false" id="autoImportDlgId"
+		 style="overflow:hidden;">
+		 <p:messages id="autoImportMsg" showDetail="true"/>
+		<p:growl id="autoImtDlgGrowl" life="10000" showDetail="true"/>
+		<h:form id="autoImportFormId" rependId="false">
+			<p:layout style="width:1050px;height:470px; over-flow: hidden;"
+				id="autoImportLayout" >
+				
+				<p:layoutUnit position="west" size="515">
+					<p:spacer width="5px" height="15px" />
+					<p:scrollPanel style="width:507px;height:444px;border:0px"  >  
+					<div align="center">
+						<h:outputText value="提问申请单"  style="font-weight:bolder;font-size:x-large;"/>
+					</div>
+					
+					<p:spacer width="5px" height="15px" />
+						<p:accordionPanel style="width:505px" id="leftAccA">
+
+							<p:tab title="问题" titleStyle="width:502px;">
+								<h:panelGrid columns="4"
+									columnClasses="column1,column2,column1,column2">
+									<div style="width:60px;text-align:right;">填制日期：</div>
+									<p:calendar locale="cn" pattern="yyyy-MM-dd"
+										showButtonPanel="true" navigator="true" disabled="true"
+										value="#{smartImportBean.wfInsAuto.submitDatetime}" />
+
+									<h:outputText value="填制人：" />
+									<p:inputText value="#{smartImportBean.wfInsAuto.requestBy}"
+										disabled="true" />
+
+									<div style="width:60px;text-align:right;">重要程度：</div>
+									<h:selectOneMenu
+										value="#{smartImportBean.wfInsProMapAuto['IMPORTANCE']}"
+										styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+										disabled="true">
+										<f:selectItem itemLabel="请选择" itemValue=" " />
+										<f:selectItems
+											value="#{commonBean.getDictByCat(applyQuestionBean.dropDownImportance)}"
+											var="dict" itemLabel="#{dict.codeVal}"
+											itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+									</h:selectOneMenu>
+
+									<h:outputText value="紧急程度：" />
+									<h:selectOneMenu
+										value="#{smartImportBean.wfInsProMapAuto['URGENCY']}"
+										styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+										disabled="true">
+										<f:selectItem itemLabel="请选择" itemValue="" />
+										<f:selectItems
+											value="#{commonBean.getDictByCat(applyQuestionBean.dropDownUrgency)}" 
+											var="dict" itemLabel="#{dict.codeVal}"
+											itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+									</h:selectOneMenu>
+
+									<div style="width:60px;text-align:right;">地域：</div>
+									<h:selectOneMenu
+										value="#{smartImportBean.wfInsProMapAuto['REGION']}"
+										styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+										disabled="true">
+										<f:selectItem itemLabel="请选择" itemValue="" />
+										<f:selectItems
+											value="#{commonBean.getDictByCat(applyQuestionBean.dropDownRegion)}" 
+											var="dict" itemLabel="#{dict.codeVal}"
+											itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+									</h:selectOneMenu>
+
+									<h:outputText value="税种：" />
+									<h:selectOneMenu
+										value="#{smartImportBean.wfInsProMapAuto['TAXTYPE']}"
+										styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+										disabled="true">
+										<f:selectItem itemLabel="请选择" itemValue="" />
+										<f:selectItems
+											 value="#{commonBean.getDictByCat(applyQuestionBean.dropDownTaxType)}"  var="dict"
+											itemLabel="#{dict.codeVal}"
+											itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+									</h:selectOneMenu>
+								</h:panelGrid>
+
+								<h:panelGrid columns="2" columnClasses="column1">
+									<div style="width:60px;text-align:right;">问题标题：</div>
+									<p:inputText style="width:356px" 
+										value="#{smartImportBean.wfInsProMapAuto['QUESTIONHEAD']}"
+										disabled="true" />
+									
+								</h:panelGrid>
+
+								<h:panelGrid columns="3" columnClasses="column1,,column1">
+									<div style="width:60px;text-align:right;">问题描述：</div>
+									<p:inputTextarea style="width: 285px; height: 120px;" autoResize="false" maxlength="500" 
+										value="#{smartImportBean.wfInsProMapAuto['QUESTIONMORE']}" 
+										 disabled="true" />
+									<p:commandButton value="复制" title="复制" 
+										actionListener="#{smartImportBean.copyMethod('txtQue',smartImportBean.wfInsProMapAuto['QUESTIONMORE'],'noData')}"
+										update=":autoImportFormId:rightAccA" />
+								</h:panelGrid>
+
+
+								<h:panelGrid columns="6" columnClasses="column1,column5">
+
+									<p:dataTable var="ss" 
+										value="#{smartImportBean.wfInsProFileList}"  
+										rowIndexVar="index"  
+										rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+										style="margin-top: 5px;width:428px" emptyMessage="#{msgs.dataTable_empty }" 
+										 rendered="#{smartImportBean.wfInsProFileList.size()==0?false:true}" >
+
+										<p:column style="text-align:left;width:70%;">
+											<f:facet name="header">
+												<h:outputText value="问题附件名称" />
+											</f:facet>
+											<h:outputText value="#{ss.fileNameRF}" />
+										</p:column>
+										<p:column style="text-align: center;width:30px;">
+											<f:facet name="header">
+												<h:outputText value="操作" />
+											</f:facet>
+											<p:commandButton title="下载"
+												icon="ui-icon ui-icon-arrowthick-1-s"
+												style="width: 18px; height: 18px;" ajax="false">
+												<p:fileDownload
+													value="#{smartImportBean.downAtt(ss.fileIdRF)}" />
+											</p:commandButton>
+											<p:spacer width="5px" />
+											<p:commandButton title="复制" icon="ui-icon ui-icon-copy"
+												style="width: 18px; height: 18px;"
+												actionListener="#{smartImportBean.copyMethod('tableQue',ss.fileIdRF,ss.fileNameRF)}"
+												update=":autoImportFormId:rightAccA,:autoImtDlgGrowl" />
+										</p:column>
+									</p:dataTable>
+								</h:panelGrid>
+							</p:tab>
+						</p:accordionPanel>
+
+						<p:accordionPanel value="#{smartImportBean.autoLoopImportAccQueList}" var="queryFlow" style="width:505px" id="leftAccB">
+						<p:tab  title="#{queryFlow.tetleName} #{documentAuditBean.getUserName(queryFlow.completeUser)} #{commonBean.getValueByDictCatKey(queryFlow.completeMethod)} #{commonBean.formatDate(queryFlow.completeDate)}"  
+						  titleStyle="width:502px;">
+
+							<h:panelGrid columns="3" columnClasses="column1,,column1">
+								<div style="width:60px;text-align:right;">回答描述：</div>
+								<p:inputTextarea style="width: 287px; height: 120px;"   disabled="true" autoResize="false" maxlength="500" 
+									value="#{queryFlow.txtInput}">
+								</p:inputTextarea>
+								<p:commandButton title="复制" value="复制"  
+											actionListener="#{smartImportBean.copyMethod('txtAns',queryFlow.txtInput,'noData')}"  update=":autoImportFormId:rightAccB"/>
+							</h:panelGrid>
+
+							<h:panelGrid columns="4" columnClasses="column1,column3">
+								
+								<p:dataTable var="ff"
+									value="#{queryFlow.fileList}" 
+									 rowIndexVar="index" 
+									rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+									style="margin-top: 5px;width:428px" emptyMessage="#{msgs.dataTable_empty }" 
+									rendered="#{queryFlow.fileList.size()==0?false:true  }" 
+									>
+									<p:column style="text-align:left;width:70%;">
+										<f:facet name="header">
+											<h:outputText value="回复附件名称" />
+										</f:facet>
+										<h:outputText value="#{ff.fileNameRF}" />
+									</p:column>
+									<p:column style="text-align: center;width:30px;">
+										<f:facet name="header">
+											<h:outputText value="操作" />
+										</f:facet>
+										<p:commandButton title="下载"
+											icon="ui-icon ui-icon-arrowthick-1-s"
+											style="width: 18px; height: 18px;" ajax="false">
+											<p:fileDownload
+												value="#{wizardAnswerBean.getFile(ff.fileIdRF)}" />
+										</p:commandButton>
+										<p:spacer width="5px" />
+										<p:commandButton title="复制" icon="ui-icon ui-icon-copy" style="width: 18px; height: 18px;"
+														actionListener="#{smartImportBean.copyMethod('tableAns',ff.fileIdRF,ff.fileNameRF)}" update=":autoImportFormId:rightAccB,:autoImtDlgGrowl"/>
+
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>
+						</p:tab>
+					</p:accordionPanel>
+
+
+					<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+
+					</p:scrollPanel>
+				</p:layoutUnit>
+
+				<p:layoutUnit position="center" size="525">
+					<p:spacer width="5px" height="15px" />
+					<p:scrollPanel style="width:517px;height:444px;border:0px"  > 
+					<div align="center">
+						<h:outputText value="待导入精灵"  style="font-weight:bolder;font-size:x-large;"/>
+					</div>
+					
+					<p:spacer width="5px" height="15px" />
+						<p:accordionPanel style="width:515px" id="rightAccA">
+							<p:tab title="问题" titleStyle="width:512px;">
+
+								<h:panelGrid columns="4"
+									columnClasses="column1,column2,column1,column2">
+									<div style="width:60px;text-align:right;">地域：</div>
+									<h:panelGroup>
+									<h:selectOneMenu
+										value="#{smartImportBean.autoImportQuestionMap['REGION']}"
+										styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+										<f:selectItem itemLabel="请选择" itemValue="" />
+										<f:selectItems
+											value="#{commonBean.getDictByCat(applyQuestionBean.dropDownRegion)}" 
+											var="dict" itemLabel="#{dict.codeVal}"
+											itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+									</h:selectOneMenu>
+									<h:outputText style="color:red;" value="*" />
+									</h:panelGroup>
+
+									<h:outputText value="税种：" />
+									<h:panelGroup>
+									<h:selectOneMenu
+										value="#{smartImportBean.autoImportQuestionMap['TAXTYPE']}"
+										styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+										<f:selectItem itemLabel="请选择" itemValue="" />
+										<f:selectItems
+											value="#{commonBean.getDictByCat(applyQuestionBean.dropDownTaxType)}" var="dict"
+											itemLabel="#{dict.codeVal}"
+											itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+									</h:selectOneMenu>
+									<h:outputText style="color:red;" value=" *" />
+									</h:panelGroup>
+								</h:panelGrid>
+
+								<h:panelGrid columns="2" columnClasses="column1">
+									<div style="width:60px;text-align:right;">问题标题：</div>
+									<h:panelGroup>
+										<p:inputText value="#{smartImportBean.autoImportQuestionMap['QUESTIONHEAD']}" style="width:361px" />
+										<h:outputText style="color:red;" value=" *" />
+									</h:panelGroup>
+								</h:panelGrid>
+
+								<h:panelGrid columns="4" columnClasses="column1,column2,column3">
+									<div style="width:60px;text-align:right;">问题描述：</div>
+									<p:inputTextarea style="width: 361px; height: 120px;" value="#{smartImportBean.autoImportQuestionMap['QUESTIONMORE']}" autoResize="false" maxlength="500" >
+									</p:inputTextarea>
+								<h:outputText style="color:red;" value="*" />
+								</h:panelGrid>
+
+								<h:panelGrid columns="4" columnClasses="column1,column3">
+
+									<p:dataTable var="autoRF"
+										value="#{smartImportBean.autoImportQuestionList}"
+										paginatorPosition="bottom" rowIndexVar="index"
+										paginator="true" rows="5"
+										paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+										currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+										rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+										style="margin-top: 5px;width:444px" emptyMessage="#{msgs.dataTable_empty }">
+										<f:facet name="header">
+											<h:outputText value="问题附件清单" />
+											<div
+												style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+												<p:commandButton value="添加附件" icon="ui-icon ui-icon-plus" 
+													oncomplete="addAttachmentDlgVar.show();loadUpload();"  update=":addAttachmentDlgFormId" 
+													actionListener="#{smartImportBean.enterPlace('first')}" />
+											</div>
+										</f:facet>
+
+										<p:column style="text-align:left;width:70%;">
+											<f:facet name="header">
+												<h:outputText value="附件名称" />
+											</f:facet>
+											<h:outputText value="#{autoRF.fileNameRF }" />
+										</p:column>
+										<p:column style="text-align: center;width:10%;">
+											<f:facet name="header">
+												<h:outputText value="操作" />
+											</f:facet>
+											<p:commandButton title="删除"
+												style="width: 18px; height: 18px;"
+												icon="ui-icon ui-icon-close"
+												actionListener="#{smartImportBean.deleteAutoImportFile(autoRF.fileIdRF,'QUE',autoRF.fileNameRF)}"
+												update=":autoImportFormId:rightAccA" />
+										</p:column>
+									</p:dataTable>
+								</h:panelGrid>
+							</p:tab>
+
+						</p:accordionPanel>
+
+						<p:accordionPanel id="rightAccB" style="width:515px">
+						<p:tab title="回答" titleStyle="width:512px;" >
+							<h:panelGrid columns="4" columnClasses="column1,column2,column3">
+							<div style="width:60px;text-align:right;">回答描述：</div>
+							<p:inputTextarea style="width: 361px; height: 120px;" autoResize="false" maxlength="500" 
+									value="#{smartImportBean.autoImportReplyMap['ANSWER']}" >
+							</p:inputTextarea>	
+							<h:outputText style="color:red;" value="*" />	
+							</h:panelGrid>
+							<h:panelGrid columns="4" columnClasses="column1,column3">
+								
+								<p:dataTable var="ss"
+									value="#{smartImportBean.autoImportReplyList}"
+									paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+									rows="5"
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+									currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+									rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+									style="margin-top: 5px;width:444px" emptyMessage="#{msgs.dataTable_empty }"
+									>
+									<f:facet name="header">
+										<h:outputText value="问题附件清单" />
+										<div style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+											<p:commandButton value="添加附件" icon="ui-icon ui-icon-plus" 
+													oncomplete="addAttachmentDlgVar.show();loadUpload();"  update=":addAttachmentDlgFormId" 
+													actionListener="#{smartImportBean.enterPlace('second')}" />
+										</div>
+									</f:facet>
+									<p:column style="text-align: left;width:70%;">
+										<f:facet name="header">
+											<h:outputText value="附件名称" />
+										</f:facet>
+										<h:outputText value="#{ss.fileNameRF }" />
+									</p:column>
+									<p:column style="text-align: center;width:10%;">
+										<f:facet name="header">
+											<h:outputText value="操作" />
+										</f:facet>
+										<p:commandButton title="删除" style="width: 18px; height: 18px;"
+											icon="ui-icon ui-icon-close" actionListener="#{smartImportBean.deleteAutoImportFile(ss.fileIdRF,'REP',ss.fileNameRF)}" 
+											 update=":autoImportFormId:rightAccB" />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>
+						
+						</p:tab>
+						
+					</p:accordionPanel>
+						
+						<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+					<div><p:spacer width="5px" height="15px" /></div>
+					</p:scrollPanel>
+				</p:layoutUnit>
+			</p:layout>
+			<div align="right" style="width: 1020px;">
+							<h:panelGrid columns="5"
+								columnClasses="column1,column2,column1,column1">
+								<h:outputText value="有效" />
+								<h:selectOneRadio styleClass="checkbox"
+									value="#{smartImportBean.autoUsedDefunct}">
+									<f:selectItem itemLabel="#{msgs.txt_effective }" itemValue="N"></f:selectItem>
+									<f:selectItem itemLabel="#{msgs.txt_effectiveLost }"
+										itemValue="Y"></f:selectItem>
+								</h:selectOneRadio>
+								<p:commandButton value="导入"
+									oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+									actionListener="#{smartImportBean.sumbitAutoImport()}"
+									update=":firstFormId,:autoImtDlgGrowl,:autoImportMsg,:showDataDlgFormId" 
+									icon="ui-icon ui-icon-check" />
+								<p:commandButton value="取消" icon="ui-icon ui-icon-cancel"
+									oncomplete="handleSumbitProcessRequest(xhr, status, args);"
+									actionListener="#{smartImportBean.autoCancelButtonEvent()}" />
+
+							</h:panelGrid>
+							<p:spacer width="5px" height="15px" />
+						</div>
+		</h:form>
+		<script type="text/javascript">
+			function handleSumbitProcessRequest(xhr, status, args) {
+				if (args.sumbitProcess == "yes") {
+					autoImportDlgVar.hide();
+				}
+			}
+			
+		</script>
+	</p:dialog>
+
+</ui:composition>

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="antiAvoidanceSeachForm" prependId="false">
+	
+		<div class="style1">
+			<h:panelGrid id="SeachForm1" columns="8" columnClasses="column40,column2">
+				<h:outputText value="公司名称：" />
+				<p:column colspan="3">
+					<p:inputText value="#{feedBackAntiBean.antiAvoidancVo.companyName}" maxlength="48" style="width:310px"/>
+				</p:column>
+				
+				<h:outputLabel value="任务处理时间："/>
+				<p:calendar value="#{feedBackAntiBean.antiAvoidancVo.missionStartDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+				<h:column>
+					<div style="text-align: right;width: 40px;">
+						<h:outputLabel value="到"/>
+						<p:spacer width="12"/>
+					</div>
+				</h:column>
+				<p:calendar value="#{feedBackAntiBean.antiAvoidancVo.missionEndDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+			</h:panelGrid>
+				
+				
+			<h:panelGrid id="SeachForm2" columns="8" columnClasses="column40,column2">
+				<h:outputLabel value="调查/评估期间："/>
+				<p:calendar value="#{feedBackAntiBean.antiAvoidancVo.investStartDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+				<h:column>
+					<div style="text-align: right;width: 25px;">
+						<h:outputLabel value="到"/>
+					</div>
+				</h:column>
+				<p:calendar value="#{feedBackAntiBean.antiAvoidancVo.investEndDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+				
+				<h:column>
+					<div style="text-align: right;width: 83px;">
+						<h:outputText value="调查类型：" />
+					</div>
+				</h:column>
+				<h:selectOneMenu value="#{feedBackAntiBean.antiAvoidancVo.investType}">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+					<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxAntiavoidanceType)}" 
+						var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}">
+					</f:selectItems>
+				</h:selectOneMenu>
+				
+				<h:column>
+					<div style="text-align: right;width: 40px;">
+						<h:outputText value="有效：" />
+					</div>
+				</h:column>
+				<h:selectOneMenu value="#{feedBackAntiBean.antiAvoidancVo.defunctInd}" style="width: 144px;">
+					<f:selectItem itemLabel="是" itemValue="N"/>
+					<f:selectItem itemLabel="否" itemValue="Y"/>
+				</h:selectOneMenu>
+			</h:panelGrid>
+			<div>
+				<p:commandButton action="#{feedBackAntiBean.searchAllAntiBy()}"
+					style="margin-right: 5px;" update=":antiForm" ajax="false"
+					value="#{msgs.btn_query}" icon="ui-icon ui-icon-search" />
+				<p:commandButton action="#{feedBackAntiBean.clearSearch()}"
+					update="SeachForm1,SeachForm2" value="#{msgs.btn_reset}"
+					style="margin-right: 5px;" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</div>
+	</h:form>
+	
+</ui:composition>

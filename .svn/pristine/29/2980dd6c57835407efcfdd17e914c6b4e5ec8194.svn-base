@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+			<p:layoutUnit size="67%" style="width: 100%;height:100%;" position="west" resizable="false">
+				<h:form id="detailFormId" prependId="false">
+					<p:dataTable emptyMessage="#{msgs.dataTable_empty}" style="width: 100%;height:100%;"
+						rowIndexVar="index" value="#{summaryChartBean.summaryDetail}" var="detail" 
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+						
+						<f:facet name="header">
+							<div class="header">
+							<h:outputText value="上传文档审核——#{summaryChartBean.selectedSummary.auditorName}" rendered="#{summaryChartBean.selectedSummary.id == 1}"/>
+				            <h:outputText value="检入文档审核——#{summaryChartBean.selectedSummary.auditorName}" rendered="#{summaryChartBean.selectedSummary.id == 2}"/>
+				            <h:outputText value="提问流程回答——#{summaryChartBean.selectedSummary.auditorName}" rendered="#{summaryChartBean.selectedSummary.id == 3}"/>
+				            <h:outputText value="应交税务综合表审核——#{summaryChartBean.selectedSummary.auditorName}" rendered="#{summaryChartBean.selectedSummary.id == 4}"/>
+				            <h:outputText value="增值税进项税额抵扣情况表审核——#{summaryChartBean.selectedSummary.auditorName}" rendered="#{summaryChartBean.selectedSummary.id == 5}"/>
+				            <h:outputText value="集团发起的情况反馈流程处理——#{summaryChartBean.selectedSummary.auditorName}" rendered="#{summaryChartBean.selectedSummary.id == 6}"/>
+				            <h:outputText value="工厂发起的情况反馈流程处理——#{summaryChartBean.selectedSummary.auditorName}" rendered="#{summaryChartBean.selectedSummary.id == 7}"/>
+								<p:commandButton styleClass="header_button" update=":detailLayoutId,:rightPieModelId"
+									action="#{summaryChartBean.selectPage()}" 
+									value="返回" ajax="false"/>
+							</div>
+						</f:facet>
+						
+						<p:column headerText="流程" style="width:240px;">  
+				            <h:outputText value="上传文档审核" rendered="#{summaryChartBean.selectedSummary.id == 1}"/>
+				            <h:outputText value="检入文档审核" rendered="#{summaryChartBean.selectedSummary.id == 2}"/>
+				            <h:outputText value="提问流程回答" rendered="#{summaryChartBean.selectedSummary.id == 3}"/>
+				            <h:outputText value="应交税务综合表审核" rendered="#{summaryChartBean.selectedSummary.id == 4}"/>
+				            <h:outputText value="增值税进项税额抵扣情况表审核" rendered="#{summaryChartBean.selectedSummary.id == 5}"/>
+				            <h:outputText value="集团发起的情况反馈流程处理" rendered="#{summaryChartBean.selectedSummary.id == 6}"/>
+				            <h:outputText value="工厂发起的情况反馈流程处理" rendered="#{summaryChartBean.selectedSummary.id == 7}"/>
+				        </p:column>
+				        
+				        <p:column headerText="处理人">  
+				            <h:outputText value="#{summaryChartBean.selectedSummary.auditorName}" />  
+				        </p:column>
+				        
+				        <p:column headerText="状态">  
+				            <h:outputText value="#{commonBean.getValueByDictCatKey(detail.status)}" />  
+				        </p:column>
+				        
+				        <p:column headerText="紧急">  
+				            <p:graphicImage url="/images/urgent1.png" title="紧急程度：非常紧急"
+								style="width:45px;height:15px;"
+								rendered="#{detail.urgency eq commonBean.tihTaxWorkflowimportance3 ? true : false}" />
+							<p:graphicImage url="/images/urgent2.png" title="紧急程度：紧急"
+								style="width:45px;height:15px;"
+								rendered="#{detail.urgency eq commonBean.tihTaxWorkflowimportance2 ? true : false}" />
+							<p:graphicImage url="/images/urgent3.png" title="紧急程度：一般"
+								style="width:45px;height:15px;"
+								rendered="#{detail.urgency eq commonBean.tihTaxWorkflowimportance1 ? true : false}" /> 
+				        </p:column>
+				        
+				        <p:column headerText="重要">
+				            <p:graphicImage url="/images/important1.png" title="重要程度：非常重要"
+								style="width:45px;height:15px;"
+								rendered="#{detail.importance eq commonBean.tihTaxWorkflowimportance3 ? true : false}" />
+							<p:graphicImage url="/images/important2.png" title="重要程度：重要"
+								style="width:45px;height:15px;"
+								rendered="#{detail.importance eq commonBean.tihTaxWorkflowimportance2 ? true : false}" />
+							<p:graphicImage url="/images/important3.png" title="重要程度：一般"
+								style="width:45px;height:15px;"
+								rendered="#{detail.importance eq commonBean.tihTaxWorkflowimportance1 ? true : false}" /> 
+				        </p:column>
+				        
+				        <p:column headerText="提交时间" style="width: 125px">
+				            <h:outputText value="#{detail.submitDatetime}" >
+				            	<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8"/>
+				            </h:outputText>
+				        </p:column>
+				        
+				        <p:column headerText="描述" style="width: 150px;word-wrap:break-word;">
+				        	<div style="width: 150px;word-wrap:break-word;">
+					            <h:outputText value="#{detail.remarks}"/>
+				        	</div>
+				        </p:column>
+				        <p:column headerText="操作">
+				        	<div style="text-align: center;">
+						            <p:commandButton title="详细" action="#{summaryChartBean.pageJump()}" ajax="false" 
+						            	icon="ui-icon ui-icon-search">
+						            	<f:setPropertyActionListener target="#{summaryChartBean.selectedWf}" value="#{detail}"/>
+						            </p:commandButton>
+					            </div>
+				        </p:column>
+					</p:dataTable>
+				</h:form>
+			</p:layoutUnit>
+			
+			<p:layoutUnit position="center">
+				<h:form id="detailPieModelId" prependId="false">
+					<p:pieChart value="#{summaryChartBean.typeModel}" legendPosition="w" seriesColors="FFFF37,00b050,FF2D2D" 
+		             	title="状态" style="width:300px;height:170px" showDataLabels="true"/>
+		            <p:pieChart value="#{summaryChartBean.importanceModel}" legendPosition="w"  seriesColors="d79692,973534,622524" 
+		             	title="重要程度" style="width:300px;height:170px" showDataLabels="true"/>
+		            <p:pieChart value="#{summaryChartBean.urgencyModel}" legendPosition="w" seriesColors="92cddb,34849b,215966" 
+		             	title="紧急程度" style="width:300px;height:160px" showDataLabels="true"/>
+	            </h:form>
+			</p:layoutUnit>
+	
+</ui:composition>

@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="styleAndScript">
+	<style>
+.aaa >table > tfoot > tr > td{
+position:absolute;
+bottom:10px;
+width:97%;
+}
+</style>
+	</ui:define>
+	<ui:define name="content">
+	
+		<shiro:hasPermission name="system:dict:dict">
+		
+		<p:panel styleClass="panel1">
+			<h:form prependId="false" id="dictFormId">
+				<p:growl id="growl" showDetail="true" life="3000" /> 
+				<div>
+					<p:breadCrumb>
+						<p:menuitem value="" url="#" />
+						<p:menuitem value="系统管理" url="#" />
+						<p:menuitem value="基础数据管理" url="#" />
+						<p:menuitem value="字典表管理" url="#" />
+					</p:breadCrumb>
+				</div>
+				<div class="style1"  style="margin-top: 5px;margin-bottom: 5px;">
+					<h:panelGrid columns="8" id="serachId" 
+						columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+
+						<h:outputText value="类别：" />
+						<p:inputText value="#{dictBean.query['codeCat']}" />
+
+						<h:outputText value="键：" />
+						<p:inputText value="#{dictBean.query['codeKey']}" />
+
+						<h:outputText value="值：" />
+						<p:inputText value="#{dictBean.query['codeVal']}" />
+
+						<h:outputText value="系统标识：" />
+						<h:selectOneMenu value="#{dictBean.query['sysInd']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""></f:selectItem>
+							<f:selectItem itemLabel="否" itemValue="N"></f:selectItem>
+							<f:selectItem itemLabel="是" itemValue="Y"></f:selectItem>
+						</h:selectOneMenu>
+
+						<h:outputText value="语言：" />
+						<p:inputText value="#{dictBean.query['lang']}" />
+						
+					</h:panelGrid>
+
+					<DIV>
+						<p:commandButton value="#{msgs.btn_query}" icon="ui-icon ui-icon-search"  
+							actionListener="#{dictBean.serachData}" update=":dictFormId"  
+							style="margin-right:5px" />
+						<p:commandButton  value="#{msgs.btn_reset }"  
+							update=":dictFormId:serachId" action="#{dictBean.reset()}" 
+							icon="ui-icon ui-icon-cancel" style="margin-right:5px" />
+					</DIV>
+				</div>
+				
+				<p:dataTable var="ss" value="#{dictBean.indexLazyModel}" id="dictTab" 
+					paginatorPosition="bottom" rowIndexVar="index" paginator="true" 
+					rows="10" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+					rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}" 
+					style="margin-top: 5px;" emptyMessage="没有记录" selectionMode="single"  >
+
+					<f:facet name="header">
+						<div class="header">
+							字典列表
+							<p:commandButton value="刷新" icon="ui-icon-refresh"  
+							actionListener="#{dictBean.refreshData() }" styleClass="header_button"
+							update=":dictFormId:growl"   style="margin-right:5px"  
+								 />
+							<p:commandButton value="#{msgs.btn_add}" icon="ui-icon ui-icon-plus" 
+							oncomplete="addDlgVar.show();document.forms['addDlgFormId'].reset();"   
+							actionListener="#{dictBean.initAddDict() }" styleClass="header_button"
+							update=":addDlgFormId:addMessagesId"  style="margin-right:5px" 
+								 />
+						</div>	
+					</f:facet>
+
+					<p:column style="width:15%;">
+						<f:facet name="header">
+							<h:outputText value="类别" />
+						</f:facet>
+						<h:outputText value="#{ss.codeCat}" />
+					</p:column>
+					<p:column style="text-align: center;width:5%;">
+						<f:facet name="header">
+							<h:outputText value="键" />
+						</f:facet>
+						<h:outputText value="#{ss.codeKey }" />
+					</p:column>
+					<p:column style="width:15%;">
+						<f:facet name="header">
+							<h:outputText value="值" />
+						</f:facet>
+						<h:outputText value="#{ss.codeVal}" />
+					</p:column>
+					<p:column style="text-align: center;width:5%;">
+						<f:facet name="header">
+							<h:outputText value="顺序号" />
+						</f:facet>
+						<h:outputText value="#{ss.seqNo}" />
+					</p:column>
+					<p:column style="text-align: center;width:5%;">
+						<f:facet name="header">
+							<h:outputText value="系统标识" />
+						</f:facet>
+						<h:outputText value="#{(ss.sysInd)=='N'?'否':'是'}" />
+					</p:column>
+					<p:column style="text-align: center;width:5%;">
+						<f:facet name="header">
+							<h:outputText value="语言" />
+						</f:facet>
+						<h:outputText value="#{ss.lang }" />
+					</p:column>
+					<p:column style="text-align: center;width:5%;">
+						<f:facet name="header">
+							<h:outputText value="有效" />
+						</f:facet>
+						<h:outputText value="#{(ss.defunctInd)=='N'?(msgs.txt_effective):(msgs.txt_effectiveLost)}" />
+					</p:column>
+					<p:column style="width:35%;">
+						<f:facet name="header">
+							<h:outputText value="备注" />
+						</f:facet>
+						<h:outputText value="#{ss.remarks}" />
+					</p:column>
+					<p:column style="text-align: center;width:10%;">
+						<f:facet name="header">
+							<h:outputText value="操作" />
+						</f:facet>
+						<p:commandButton 
+							icon="ui-icon ui-icon-pencil" title="#{msgs.btn_edit }"  
+							 disabled="#{ss.sysInd == 'Y'?true:false }" style="height:18px;width:18px;"
+							oncomplete="updateDlgVar.show();"  update=":updateDlgFormId"  
+							>
+							<f:setPropertyActionListener target="#{dictBean.selectData}" value="#{ss}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+			</h:form>
+		</p:panel>
+		
+		
+		<ui:include src="/faces/common/dict/insert_dialog.xhtml" />
+		<ui:include src="/faces/common/dict/update_dialog.xhtml" />
+		<script type="text/javascript">
+			function handleSaveRequest(xhr, status, args) {
+				if (args.addInfo == "yes") {
+					addDlgVar.hide();
+				} 
+			}
+
+			function handleUpdateRequest(xhr, status, args) {
+				if (args.updateInfo == "yes") {
+					updateDlgVar.hide();
+				}
+			}
+
+		</script>
+		
+		</shiro:hasPermission>
+		<shiro:lacksPermission name="system:dict:dict">
+			<ui:include src="/errorshiro.xhtml" />
+		</shiro:lacksPermission>
+		
+	</ui:define>
+</ui:composition>
+

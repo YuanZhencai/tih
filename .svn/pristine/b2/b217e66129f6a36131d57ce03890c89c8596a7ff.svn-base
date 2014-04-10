@@ -1,0 +1,11 @@
+##uns
+mdsurl=${mdsurl}
+JMS_sysParam=tih
+JMS_keyParam=QWEASD789
+JMS_auxParam=tih-mail
+WAS8_cfJNDI=java\:comp/env/jms/ConnectionFactory
+WAS8_queueJNDI=java\:comp/env/jms/UNSINBOX
+UNS_ServerGetURL=${uns_servergeturl}
+app_url=${app.url}
+JobClassName = java\:module/BatchJobEmail
+##JobClassName = java\:comp/env/BatchJobEmail

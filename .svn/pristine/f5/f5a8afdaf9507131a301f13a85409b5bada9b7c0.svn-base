@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<style type="text/css">
+		.ui-tree-icon.ui-icon.ui-icon-triangle-1-e {
+			background-position: -16px -128px;
+		}
+		.ui-tree-icon.ui-icon.ui-icon-triangle-1-s {
+			background-position: -48px -128px;
+		}
+	</style>
+		<h:form id="treeForm" prependId="false">
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$("#myTaskTree span.ui-tree-node-label").each(function(index){
+						$(this).css("text-shadow", "none");
+					});
+				});
+			</script>
+			<p:tree id="myTaskTree" value="#{taskManagementBean.taskTreeRoot}"
+				var="taskTreeNodeVo" selectionMode="single"
+				selection="#{taskManagementBean.selectedTaskTreeNode}"
+				style="width: 185px; margin-left: -5px;margin-top: -6px; height: 470px; border: none;">
+				<p:ajax event="select"
+					oncomplete="handleRequest(xhr, status, args);"
+					listener="#{taskManagementBean.getMyTask(taskTreeNodeVo.taskNodeName,taskTreeNodeVo.requestFormType)}"
+					update=":taskFrom,:insert_feedback_form_id:feedbackTabView,:timeoutEmailForm,:createReportFormId,:newApplyQuestionFormId,:newQuestionMsgId" />
+				<p:treeNode>
+					<h:outputText value="#{taskTreeNodeVo.taskNodeName}" />
+				</p:treeNode>
+				<p:treeNode type="document">
+					<h:outputText value="#{taskTreeNodeVo.taskNodeName}" />
+					<h:outputText value="(#{taskTreeNodeVo.taskCount})"
+						rendered="#{taskTreeNodeVo.taskCount == 0 ? false : true}" />
+				</p:treeNode>
+			</p:tree>
+		</h:form>
+		
+</ui:composition>

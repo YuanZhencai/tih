@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="title">精灵设置</ui:define>
+	<ui:define name="styleAndScript">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<p:panel styleClass="panel1">
+			<p:growl id="mainGrowl" life="6000" />
+			<h:form prependId="false" id="firstFormId">
+				<div>
+					<p:breadCrumb>
+						<p:menuitem value="" url="#" />
+						<p:menuitem value="互动交流" url="#" />
+						<p:menuitem value="税务精灵" url="#" />
+						<p:menuitem value="精灵设置" url="#" />
+					</p:breadCrumb>
+				</div>
+				<p:tabView id="smartTabView">
+					<p:tab id="smartImportTab" title="精灵导入">
+						<div align="left">
+							<h:panelGrid columns="6"
+								columnClasses="column1,column2,column1,column2,column1,column2">
+								<h:outputLabel value="地域：" />
+								<h:selectOneMenu value="#{smartImportBean.st.region}"
+									styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+									<f:selectItem itemLabel="请选择" itemValue="" />
+									<f:selectItems
+										value="#{commonBean.getDictByCat(applyQuestionBean.dropDownRegion)}"
+										var="dict" itemLabel="#{dict.codeVal}"
+										itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+								</h:selectOneMenu>
+
+								<h:outputLabel value="税种：" />
+								<h:selectOneMenu value="#{smartImportBean.st.taxType}"
+									styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+									<f:selectItem itemLabel="请选择" itemValue="" />
+									<f:selectItems
+										value="#{commonBean.getDictByCat(applyQuestionBean.dropDownTaxType)}"
+										var="dict" itemLabel="#{dict.codeVal}"
+										itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+								</h:selectOneMenu>
+
+								<h:outputLabel value="标题：" />
+								<p:inputText value="#{smartImportBean.st.name}" />
+							</h:panelGrid>
+
+
+							<h:panelGrid columns="4"
+								columnClasses="column1,column2,column1,column2">
+
+								<h:outputLabel value="发布时间：" />
+								<p:calendar locale="cn" pattern="yyyy-MM-dd"
+									readOnlyInputText="true" navigator="true"
+									value="#{smartImportBean.beginTime}" />
+								<h:outputLabel value="到　" />
+								<p:calendar locale="cn" pattern="yyyy-MM-dd"
+									readOnlyInputText="true" navigator="true"
+									value="#{smartImportBean.lastTime}" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="4"
+								columnClasses="column1,column2,column1,column2">
+
+								<h:outputLabel value="问题：" />
+								<p:inputText value="#{smartImportBean.st.question}" />
+
+								<h:outputLabel value="回答：" />
+								<p:inputText value="#{smartImportBean.st.answer}" />
+							</h:panelGrid>
+						</div>
+						<div align="right">
+							<p:column>
+								<p:commandButton value="#{msgs.btn_query }"
+									icon="ui-icon ui-icon-search" style="margin-right:5px"
+									actionListener="#{smartImportBean.forSecondTable()}"
+									update=":firstFormId,:mainGrowl" />
+								<p:commandButton value="#{msgs.btn_reset }"
+									actionListener="#{smartImportBean.forSecondTableReset()}"
+									update=":firstFormId" icon="ui-icon ui-icon-cancel" />
+							</p:column>
+						</div>
+						<p:dataTable var="second" value="#{smartImportBean.question}"
+							paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+							rows="10"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+							style="margin-top: 5px;" emptyMessage="#{msgs.dataTable_empty }">
+							<f:facet name="header">
+								<div class="header">
+									<h:outputText value="精灵导入" />
+									<p:commandButton styleClass="header_button" value="自动"
+										icon="ui-icon ui-icon-plus" oncomplete="showDataDlgVar.show()"
+										style="margin-right:5px" />
+									<p:commandButton styleClass="header_button" value="手动"
+										icon="ui-icon ui-icon-plus" oncomplete="addImDlgVar.show()"
+										actionListener="#{smartImportBean.clearAddPageData()}"
+										style="margin-right:5px" update=":addImDlgFormId" />
+								</div>
+							</f:facet>
+
+							<p:column style="text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="地域" />
+								</f:facet>
+								<h:outputText
+									value="#{commonBean.getValueByDictCatKey(second.s.region)}" />
+							</p:column>
+
+							<p:column style="text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="税种" />
+								</f:facet>
+								<h:outputText
+									value="#{commonBean.getValueByDictCatKey(second.s.taxType)}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="问题标题" />
+								</f:facet>
+								<h:outputText value="#{second.s.name}" />
+							</p:column>
+
+							<p:column style="text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="任务单号" />
+								</f:facet>
+								<h:outputText value="#{second.w == null ? '手动导入' : second.w.no}" />
+							</p:column>
+
+							<p:column style="text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="创建人" />
+								</f:facet>
+								<h:outputText
+									value="#{userCommonBean.getUserRealName(second.s.createdBy)}" />
+							</p:column>
+
+							<p:column style="text-align: center;width:135px;">
+								<f:facet name="header">
+									<h:outputText value="创建时间" />
+								</f:facet>
+								<h:outputText
+									value="#{commonBean.formatDate(second.s.createdDatetime)}">
+									<f:convertDateTime pattern="yyyy-MM-dd hh:mm" timeZone="GMT+8" />
+								</h:outputText>
+							</p:column>
+
+
+							<p:column style="text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="有效" />
+								</f:facet>
+								<h:outputText value="#{second.s.defunctInd=='N'?'是':'否'}" />
+							</p:column>
+
+							<p:column style="text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="操作" />
+								</f:facet>
+								<p:commandButton title="编辑" icon="ui-icon ui-icon-pencil"
+									style="width: 18px; height: 18px;"
+									actionListener="#{smartImportBean.querySmtById(second.s.id)}"
+									update=":importTwoDlgFormId"
+									oncomplete="importTwoDlgVar.show()">
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+					</p:tab>
+					<p:tab id="smartExportTab" title="精灵导出">
+
+						<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+							value="#{smartExportBean.compressFiles}" var="doc"
+							id="smartExportTable" paginator="true" rows="5"
+							paginatorPosition="bottom"
+							paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+							rowIndexVar="index" style="margin-top:5px;"
+							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+							<f:facet name="header">
+								<div class="header">
+									<h:outputText value="精灵导出历史列表" />
+									<p:commandButton styleClass="header_button" value="精灵导出"
+										type="button" onclick="exportConfirmDialogVar.show()"
+										style="margin-right:5px" />
+									<p:commandButton styleClass="header_button" value="刷新"
+										update="smartExportTable"
+										action="#{smartExportBean.searchCompressFiles()}"
+										style="margin-right:5px" />
+								</div>
+							</f:facet>
+							<p:column headerText="文档名称">
+								<h:outputText value="#{doc.name}" />
+							</p:column>
+							<p:column headerText="导出时间" style="text-align: center">
+								<h:outputText value="#{doc.dateCreated}">
+									<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="创建人">
+								<h:outputText
+									value="#{userCommonBean.getUserRealName(doc.creator)}" />
+							</p:column>
+							<p:column headerText="操作" style="text-align: center;width:18px;">
+								<p:commandButton ajax="false" title="下载"
+									icon="ui-icon ui-icon-arrowthick-1-s"
+									style="width: 18px;height: 18px;">
+									<p:fileDownload value="#{downloadBean.download(doc.id)}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+					</p:tab>
+				</p:tabView>
+
+
+
+			</h:form>
+			<p:confirmDialog id="exportConfirmDialog" width="290"
+				message="导出时间较长，请在网络空闲时间操作！！！确定现在执行导出操作？" header="确认对话框" severity="alert"
+				widgetVar="exportConfirmDialogVar">
+				<h:form prependId="false" id="exportConfirmForm">
+					<p:commandButton id="confirm" value="是"
+						update=":exportForm:exportMessage"
+						oncomplete="exportConfirmDialogVar.hide();interval();"
+						action="#{smartExportBean.export()}" />
+					<p:commandButton value="否" onclick="exportConfirmDialogVar.hide()"
+						type="button" />
+				</h:form>
+			</p:confirmDialog>
+		</p:panel>
+
+		<ui:include
+			src="/faces/interaction/smartimport/autoimport_dialog.xhtml" />
+		<ui:include
+			src="/faces/interaction/smartimport/attachment_dialog.xhtml" />
+		<ui:include src="/faces/interaction/smartimport/update_dialog.xhtml" />
+		<ui:include src="/faces/interaction/smartimport/add_dialog.xhtml" />
+		<ui:include
+			src="/faces/interaction/smartimport/show_importdata_dialog.xhtml" />
+	</ui:define>
+</ui:composition>
+

@@ -1,0 +1,91 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog id="document_permission_dialog_id" header="文档权限" width="850"
+		widgetVar="document_permission_dialog_var" resizable="false" modal="true">
+		<h:form id="document_permission_form" prependId="false">
+			<p:messages showDetail="true" showSummary="true" />
+
+			<p:dataTable var="p" value="#{documentBean.lazyPermisses}" paginator="true" rows="5"
+				paginatorPosition="bottom" emptyMessage="#{msgs.dataTable_empty}"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				selection="#{documentBean.permisses}" reset="false">
+				<f:facet name="header">权限列表
+					<div style="text-align: right; position: relative; margin: -13px -5px 0px 0px; vertical-align: middle">
+						<p:commandButton icon="ui-icon ui-icon-copy" value="复制"
+							update=":copy_permission_form_id" style="margin-right: 5px;"
+							oncomplete="copy_permission_dialog_var.show();"
+							action="#{documentBean.initCopyPermission}"
+							disabled="#{!documentBean.updatePermission}"/>
+						
+						<p:commandButton icon="ui-icon ui-icon-plus" value="#{msgs.btn_add}"
+							update=":add_permission_form" style="margin-right: 5px;"
+							oncomplete="add_permission_dialog_var.show();focusInput('name');"
+							action="#{documentBean.initAddUserGroup}"
+							disabled="#{!documentBean.updatePermission}"/>
+						
+						<p:commandButton icon="ui-icon ui-icon-close" value="#{msgs.btn_delete}"
+							update=":confirm_dialog_id" oncomplete="confirm_dialog_var.show();"
+							disabled="#{!documentBean.updatePermission}">
+							<f:setPropertyActionListener target="#{documentBean.deleteModel}" 
+								value="permissionesDelete"/>
+						</p:commandButton>
+					</div>
+				</f:facet>
+				
+				<p:column selectionMode="multiple" style="width: 2%; text-align: center;"/>
+				<p:column headerText="类型" style="width: 2%; text-align: center;">
+					<h:outputText value="#{p.type eq 'GROUP' ? '组' : '用户'}"/>
+				</p:column>
+				<p:column headerText="名称">
+					<h:outputText value="#{p.value}" title="#{p.name}"/>
+				</p:column>
+				<p:column headerText="所有者" style="width: 5%; text-align: center;">
+					<p:selectBooleanCheckbox value="#{p.fullControl}" disabled="#{!documentBean.updatePermission}">
+						<p:ajax update=":document_permission_form" listener="#{documentBean.permissChange(p, 'fullControl')}"/>
+					</p:selectBooleanCheckbox>
+				</p:column>
+				<p:column headerText="删除版本" style="width: 5%; text-align: center;">
+					<p:selectBooleanCheckbox value="#{p.promote}" disabled="#{!documentBean.updatePermission}">
+						<p:ajax update=":document_permission_form" listener="#{documentBean.permissChange(p, 'promote')}"/>
+					</p:selectBooleanCheckbox>
+				</p:column>
+				<p:column headerText="修改内容" style="width: 5%; text-align: center;">
+					<p:selectBooleanCheckbox value="#{p.modifyContent}" disabled="#{!documentBean.updatePermission}">
+						<p:ajax update=":document_permission_form" listener="#{documentBean.permissChange(p, 'modifyContent')}"/>
+					</p:selectBooleanCheckbox>
+				</p:column>
+				<p:column headerText="修改属性" style="width: 5%; text-align: center;">
+					<p:selectBooleanCheckbox value="#{p.modifyProperty}" disabled="#{!documentBean.updatePermission}">
+						<p:ajax update=":document_permission_form" listener="#{documentBean.permissChange(p, 'modifyProperty')}"/>
+					</p:selectBooleanCheckbox>
+				</p:column>
+				<p:column headerText="查看内容" style="width: 5%; text-align: center;">
+					<p:selectBooleanCheckbox value="#{p.viewContent}" disabled="#{!documentBean.updatePermission}">
+						<p:ajax update=":document_permission_form" listener="#{documentBean.permissChange(p, 'viewContent')}"/>
+					</p:selectBooleanCheckbox>
+				</p:column>
+				<p:column headerText="查看属性" style="width: 5%; text-align: center;">
+					<p:selectBooleanCheckbox value="#{p.viewProperty}" disabled="#{!documentBean.updatePermission}">
+						<p:ajax update=":document_permission_form" listener="#{documentBean.permissChange(p, 'viewProperty')}"/>
+					</p:selectBooleanCheckbox>
+				</p:column>
+			</p:dataTable>
+			
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					update=":document_permission_form,:growl"
+					actionListener="#{documentBean.editDocumentPermission}"
+					style="margin-right: 5px;" oncomplete="handlePermission(xhr, status, args);"
+					disabled="#{!documentBean.updatePermission}" />
+
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}" type="button"
+					onclick="document_permission_dialog_var.hide();" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

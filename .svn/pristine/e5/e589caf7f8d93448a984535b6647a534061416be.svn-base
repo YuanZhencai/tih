@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="#{companyMainAssetBean.model eq 'add' ? '添加' : '编辑'}折旧或摊销信息" widgetVar="company_depreciation_edit_var"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"
+		id="company_depreciation_edit_id">
+
+		<h:form prependId="false" id="company_depreciation_edit_form">
+			<p:messages showDetail="true" showSummary="true" id="msg_depre"/>
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="原值(万元)："/>
+				<h:column>
+					<p:inputText value="#{companyMainAssetBean.depre.depre.cost}" />
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+				
+				<h:outputText value="净值(万元)："/>
+				<h:column>
+					<p:inputText value="#{companyMainAssetBean.depre.depre.netWorth}" />
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+				
+				<h:outputText value="年度：" />
+				<h:column>
+					<p:calendar pattern="yyyy" navigator="true" locale="cn" 
+						value="#{companyMainAssetBean.depre.depre.year}" readOnlyInputText="true"
+						disabled="#{companyMainAssetBean.model eq 'add' ? false : true}" />
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+
+				<h:outputText value="#{msgs.txt_defunct}" />
+				<h:selectOneRadio value="#{companyMainAssetBean.depre.depre.defunctInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			
+			<div style="margin: 5px 0 0 0; text-align: center">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" 
+					update=":company_depreciation_edit_form:msg_depre,:company_main_asset_edit_form,:assertGrowl"
+					oncomplete="handleDepre(xhr, status, args);"
+					action="#{companyMainAssetBean.addDepre}" 
+					style="margin-right: 5px;"
+					rendered="#{companyMainAssetBean.model eq 'add' ? true : false}"/>
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					update=":company_depreciation_edit_form:msg_depre,:company_main_asset_edit_form,:assertGrowl"
+					oncomplete="handleDepre(xhr, status, args);"
+					action="#{companyMainAssetBean.editDepre}" 
+					style="margin-right: 5px;"
+					rendered="#{companyMainAssetBean.model eq 'edit' ? true : false}"/>
+					
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+					oncomplete="company_depreciation_edit_var.hide();"/>
+			</div>
+		</h:form>
+		
+		<script type="text/javascript">
+			function handleDepre(xhr, status, args) {
+				if(args.option == "success") {
+					company_depreciation_edit_var.hide();
+				}
+			}
+		</script>
+	</p:dialog>
+</ui:composition>

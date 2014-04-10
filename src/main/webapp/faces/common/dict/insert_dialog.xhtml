@@ -1,0 +1,108 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:w="http://www.wcs-global.com/customtaglib"
+	>
+	<p:dialog header="添加字典表信息" widgetVar="addDlgVar" showEffect="fade"
+		hideEffect="fade" modal="true" resizable="false" id="addDlgId">
+		<h:form id="addDlgFormId" prependId="false">
+			<p:messages id="addMessagesId" showDetail="true"  autoUpdate="true"/>
+			
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+
+				<h:outputText value="字典类别：" />
+				<h:panelGroup>
+					<p:inputText value="#{dictBean.addDict.codeCat}" maxlength="50" />
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				
+				<h:outputText value="键：" />
+				<h:panelGroup>
+					<p:inputText value="#{dictBean.addDict.codeKey}" maxlength="16" />
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">	
+				
+				<h:outputText value="字典语言：" />
+				<h:panelGroup>
+					<p:inputText value="#{dictBean.addDict.lang}" maxlength="5"/>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				
+				<h:outputText value="值：" />
+				<h:panelGroup>
+					<p:inputText value="#{dictBean.addDict.codeVal}" maxlength="33"/>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+			</h:panelGrid>
+			
+			
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">	
+				<h:outputText value="字典顺序：" />
+				<h:panelGroup>
+					<p:inputText value="#{dictBean.dictSeqNo}"  />
+					<p:spacer width="6px" />
+				</h:panelGroup>
+				
+			</h:panelGrid>
+			
+			
+			<h:panelGrid columns="2"
+				columnClasses="column1">	
+				<h:outputText value="字典备注：" />
+				<h:panelGroup>
+					<p:inputText value="#{dictBean.addDict.remarks}" style="width:362px" maxlength="66"/>
+					<p:spacer width="6px" />
+				</h:panelGroup>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">	
+				
+			<h:outputText value="系统标识：" />
+				<h:panelGroup >
+				<h:selectOneRadio styleClass="checkbox" 
+					value="#{dictBean.sysInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective }" itemValue="Y"></f:selectItem>
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost }" itemValue="N"></f:selectItem>
+				</h:selectOneRadio>
+				</h:panelGroup>
+				
+			</h:panelGrid>
+			
+			<h:panelGrid columns="4" 
+					columnClasses="column1,column2,column1,column2">
+				
+				<h:outputText value="#{msgs.txt_defunct }" />
+				<h:panelGroup>
+				<h:selectOneRadio styleClass="checkbox" 
+					value="#{dictBean.defunctInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective }" itemValue="N"></f:selectItem>
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost }" itemValue="Y"></f:selectItem>
+				</h:selectOneRadio>
+				</h:panelGroup>
+			</h:panelGrid>
+			
+			
+			
+			<div>&#160;</div>
+			<div align="center">
+				<p:commandButton value="#{msgs.btn_ok}"  icon="ui-icon ui-icon-check"   actionListener="#{dictBean.insertData}"    
+					  style="margin-right:5px"  oncomplete="handleSaveRequest(xhr, status, args);"  
+					update=":addDlgFormId:addMessagesId,:dictFormId,:dictFormId:growl" />
+				<p:commandButton type="button" value="#{msgs.btn_cancel }" onclick="addDlgVar.hide();" 
+					icon="ui-icon ui-icon-cancel" />
+			</div>
+
+		</h:form>
+
+	</p:dialog>
+</ui:composition>

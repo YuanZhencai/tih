@@ -1,0 +1,126 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog header="编辑税务机关信息" widgetVar="thxUpDlgVar" showEffect="fade"
+		hideEffect="fade" modal="true" resizable="false" id="thxUpDlgId">
+		<h:form id="thxUpDlgFormId" prependId="false">
+			<p:messages id="updateMessagesId" showDetail="true" 
+				autoUpdate="true" />
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+
+				<h:outputText value="机关类型：" />
+				<h:panelGroup>
+					<h:selectOneMenu value="#{taxAuthorityBean.tax.type}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="请选择" itemValue="" />
+						<f:selectItems
+							value="#{commonBean.getDictByCat(taxAuthorityBean.finalDropListStr)}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputText style="color:red;" value="*　　　" />
+				</h:panelGroup>
+
+				<h:outputText value="机关名称：" />
+				<h:panelGroup>
+					<p:inputText value="#{taxAuthorityBean.tax.name}" id="nameId">
+					</p:inputText>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+			</h:panelGrid>
+			
+				<h:panelGrid columns="4"
+					columnClasses="column1,column2,column1,column2">
+
+					<h:outputText value="联系电话：" />
+					<h:panelGroup>
+					<p:inputText value="#{taxAuthorityBean.tax.telphone}">
+					</p:inputText>
+					<p:spacer width="42px" height="5px" />
+					</h:panelGroup>
+
+					<h:outputText value="邮编号码：" />
+					<h:panelGroup>
+						<p:inputText value="#{taxAuthorityBean.tax.zipcode}">
+						</p:inputText>
+						<p:spacer width="6px" />
+					</h:panelGroup>
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" columnClasses="column1">
+						<h:outputText value="详细地址：" />
+						<h:panelGroup>
+							<p:inputText value="#{taxAuthorityBean.tax.address}"
+								style="width:398px">
+							</p:inputText>
+							<h:outputText style="color:red;" value="*" />
+						</h:panelGroup>
+					</h:panelGrid>
+
+
+					<h:panelGrid columns="4" columnClasses="column2,column2"
+						style="width:250px">
+						<p:fieldset legend="负责人信息" style="width:218px">
+							<h:panelGrid columns="2" columnClasses="column1,column2">
+
+								<h:outputText value="负责人名：" />
+								<p:inputText value="#{taxAuthorityBean.tax.leaderName}">
+								</p:inputText>
+
+								<h:outputText value="职位名称：" />
+								<p:inputText value="#{taxAuthorityBean.tax.leaderPosition}">
+								</p:inputText>
+
+								<h:outputText value="联系电话：" />
+								<p:inputText value="#{taxAuthorityBean.tax.leaderTelphone}">
+								</p:inputText>
+							</h:panelGrid>
+						</p:fieldset>
+						<p:fieldset legend="联系人信息" style="width:218px">
+							<h:panelGrid columns="2" columnClasses="column1,column2">
+
+								<h:outputText value="联系人名：" />
+								<p:inputText value="#{taxAuthorityBean.tax.contacterName}">
+								</p:inputText>
+
+								<h:outputText value="职位名称：" />
+								<p:inputText value="#{taxAuthorityBean.tax.contacterPosition}">
+								</p:inputText>
+
+								<h:outputText value="联系电话：" />
+								<p:inputText value="#{taxAuthorityBean.tax.contacterTelphone}">
+								</p:inputText>
+								
+							</h:panelGrid>
+						</p:fieldset>
+					</h:panelGrid>
+
+
+					<h:panelGrid columns="6"
+						columnClasses="column1,column2,column1,column2,column1,column2">
+						<h:outputText value="#{msgs.txt_defunct }" />
+						<h:selectOneRadio styleClass="checkbox"
+							value="#{taxAuthorityBean.tax.defunctInd}">
+							<f:selectItem itemLabel="#{msgs.txt_effective }" itemValue="N" />
+							<f:selectItem itemLabel="#{msgs.txt_effectiveLost }"
+								itemValue="Y" />
+						</h:selectOneRadio>
+					</h:panelGrid>
+
+					<div align="center">
+						<p:commandButton value="#{msgs.btn_ok }"
+							icon="ui-icon ui-icon-check"
+							actionListener="#{taxAuthorityBean.modifyData}"
+							update=":thxUpDlgFormId:updateMessagesId,:taxFormId,:taxFormId:growl"
+							style="margin-right:5px"
+							oncomplete="handleUpdateRequest(xhr, status, args);" />
+						<p:commandButton type="button" value="#{msgs.btn_cancel }"
+							onclick="thxUpDlgVar.hide()" icon="ui-icon ui-icon-cancel" />
+					</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

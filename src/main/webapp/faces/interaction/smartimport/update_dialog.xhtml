@@ -1,0 +1,192 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog header="编辑已导入精灵" widgetVar="importTwoDlgVar" showEffect="fade"
+		hideEffect="fade" modal="true" resizable="false"  height="500" width="555" 
+		id="importTwoDlgId">
+		<p:ajax event="close" listener="#{smartImportBean.btnCancel()}" update=":updateImportMsg,:updateImportGrowl" />
+		<p:messages id="updateImportMsg" showDetail="true"/>
+		<p:growl id="updateImportGrowl" life="3000" showDetail="true"/>
+		<h:form id="importTwoDlgFormId" prependId="false">
+
+			<p:accordionPanel id="handFirstAccId" style="width:525px">
+				<p:tab title="问题" titleStyle="width:522px;">
+
+					<h:panelGrid columns="4"
+						columnClasses="column1,column2,column1,column2">
+						<div style="width:60px;">
+						地域：
+						</div>
+						<h:panelGroup>
+						<h:selectOneMenu value="#{smartImportBean.smt.region}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="请选择" itemValue="" />
+							<f:selectItems
+								value="#{commonBean.getDictByCat(applyQuestionBean.dropDownRegion)}"  var="dict"
+								itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+						<h:outputText style="color:red;" value="*" />
+						</h:panelGroup>
+
+						<h:outputLabel value="税种：" />
+						<h:panelGroup>
+						<h:selectOneMenu value="#{smartImportBean.smt.taxType}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="请选择" itemValue="" />
+							<f:selectItems value="#{commonBean.getDictByCat(applyQuestionBean.dropDownTaxType)}" 
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+						<h:outputText style="color:red;" value=" *" />
+						</h:panelGroup>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" columnClasses="column1">
+						<div style="width:60px;">
+						问题标题：
+						</div>
+						<h:panelGroup>
+						<p:inputText style="width:361px"
+							value="#{smartImportBean.smt.name}" >
+							</p:inputText>
+						<h:outputText style="color:red;" value=" *" />
+						</h:panelGroup>	
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" columnClasses="column1,column2,column3">
+					<div style="width:60px;">
+						问题描述：
+						</div>
+						<p:inputTextarea style="width: 361px; height: 120px;" autoResize="false" maxlength="500" 
+							value="#{smartImportBean.smt.question}" >
+							</p:inputTextarea>
+						<h:outputText style="color:red;" value=" *" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" columnClasses="column1,column3">
+						<p:dataTable var="handf"
+							value="#{smartImportBean.updateQueAttListSubmit}"
+							paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+							rows="5"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+							style="margin-top: 5px;width:444px" emptyMessage="#{msgs.dataTable_empty }">
+							<f:facet name="header">
+								<h:outputText value="问题附件清单" />
+								<div
+									style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+									<p:commandButton value="添加附件" icon="ui-icon ui-icon-plus"
+										oncomplete="addAttachmentDlgVar.show();loadUpload();"   update=":addAttachmentDlgFormId" 
+										actionListener="#{smartImportBean.enterPlace('third')}" />
+								</div>
+							</f:facet>
+
+							<p:column style="text-align:left;width:276px;">
+								<f:facet name="header">
+									<h:outputText value="附件名称" />
+								</f:facet>
+								<h:outputText value="#{handf.fileNameRF}" />
+							</p:column>
+							<p:column style="text-align: center;width:60px;">
+								<f:facet name="header">
+									<h:outputText value="操作" />
+								</f:facet>
+								<p:commandButton title="删除" style="width: 18px; height: 18px;"
+									icon="ui-icon ui-icon-close"
+									actionListener="#{smartImportBean.deleteSmtAtt(handf.fileIdRF,'1')}"
+									update=":importTwoDlgFormId:handFirstAccId" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:tab>
+
+			</p:accordionPanel>
+
+			<p:accordionPanel id="handSecondAccId" style="width:525px">
+				<p:tab title="回答" titleStyle="width:522px;">
+					<h:panelGrid columns="4" columnClasses="column1,column2,column3">
+					<div style="width:60px;">
+					回答描述：
+					</div>
+					<p:inputTextarea style="width: 361px; height: 120px;" autoResize="false" maxlength="500" 
+						value="#{smartImportBean.smt.answer}" >
+						</p:inputTextarea>
+					<h:outputText style="color:red;" value="*" />
+					</h:panelGrid>
+					<h:panelGrid columns="4" columnClasses="column1,column3">
+
+						<p:dataTable var="ss"
+							value="#{smartImportBean.updateRepAttListSubmit}"
+							paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+							rows="5"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+							style="margin-top: 5px;width:444px" emptyMessage="#{msgs.dataTable_empty }">
+							<f:facet name="header">
+								<h:outputText value="回答附件清单" />
+								<div
+									style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+									<p:commandButton value="添加附件" icon="ui-icon ui-icon-plus"
+										oncomplete="addAttachmentDlgVar.show();loadUpload();"   update=":addAttachmentDlgFormId" 
+										actionListener="#{smartImportBean.enterPlace('fourth')}" />
+								</div>
+							</f:facet>
+							<p:column style="text-align:left;width:276px;">
+								<f:facet name="header">
+									<h:outputText value="附件名称" />
+								</f:facet>
+								<h:outputText value="#{ss.fileNameRF }" />
+							</p:column>
+							<p:column style="text-align: center;width:60px;">
+								<f:facet name="header">
+									<h:outputText value="操作" />
+								</f:facet>
+								<p:commandButton title="删除" style="width: 18px; height: 18px;"
+									icon="ui-icon ui-icon-close"
+									actionListener="#{smartImportBean.deleteSmtAtt(ss.fileIdRF,'2')}"
+									update=":importTwoDlgFormId:handSecondAccId" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:tab>
+				
+			</p:accordionPanel>
+			
+			<div align="left"  style="width:513px;" >
+					<h:panelGrid  columns="4" columnClasses="column1,column2,column3">
+					<h:outputText value="有效：" />
+					<h:selectOneRadio styleClass="checkbox"
+						value="#{smartImportBean.secondUsedDefunct}">
+						<f:selectItem itemLabel="#{msgs.txt_effective }" itemValue="N"></f:selectItem>
+						<f:selectItem itemLabel="#{msgs.txt_effectiveLost }" itemValue="Y"></f:selectItem>
+					</h:selectOneRadio>
+					</h:panelGrid>
+			</div>
+			<div align="center"  style="width:513px;" >	
+					<p:commandButton value="#{msgs.btn_ok}"  icon="ui-icon ui-icon-check" 
+						oncomplete="handleSumbitHandRequest(xhr, status, args);" style="margin-right:7px;" 
+						actionListener="#{smartImportBean.sumbitHandImport()}"
+						update=":firstFormId,:updateImportMsg,:updateImportGrowl"  />
+					<p:commandButton value="#{msgs.btn_cancel }"  type="button" style="margin-right:7px;" 
+						icon="ui-icon ui-icon-cancel"  onclick="importTwoDlgVar.hide();" />
+			</div>
+				<p:spacer width="20px" height="20px"></p:spacer>
+		</h:form>
+			<script type="text/javascript">
+			function handleSumbitHandRequest(xhr, status, args) {
+				if (args.sumbitHand == "yes") {
+					importTwoDlgVar.hide();
+				}
+			}
+			
+		</script>
+	</p:dialog>
+</ui:composition>

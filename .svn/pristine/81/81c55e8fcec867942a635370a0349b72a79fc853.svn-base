@@ -1,0 +1,56 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog id="add_permission_dialog_id" header="添加权限" width="600" height="500"
+		widgetVar="add_permission_dialog_var" resizable="false" modal="true">
+		<h:form id="add_permission_form" prependId="false">
+			<p:messages showDetail="true" showSummary="true"/>
+			<div class="style1">
+				<h:panelGrid columns="5" columnClasses="column1,column2,column1,column2">
+					<h:outputLabel value="类型："/>
+					<h:selectOneRadio value="#{documentBean.userGroupQuery['type']}">
+						<f:selectItems value="#{documentBean.userGroupType}"/>
+					</h:selectOneRadio>
+
+					<h:outputLabel value="名称：" for="name"/>
+					<p:inputText value="#{documentBean.userGroupQuery['name']}" id="name" />
+					<h:outputText value="*" style="color: red;" />
+				</h:panelGrid>
+				<div align="right">
+					<p:commandButton icon="ui-icon ui-icon-search" value="#{msgs.btn_query}" 
+						style="margin-right: 5px;" action="#{documentBean.searchUserGroup}" 
+						update=":add_permission_form" />
+					<p:commandButton icon="ui-icon ui-icon-cancel" update=":add_permission_form"
+						value="#{msgs.btn_reset}" actionListener="#{documentBean.initAddUserGroup}"/>
+				</div>
+			</div>
+
+			<p:dataTable var="ug" value="#{documentBean.userGroups}" paginatorPosition="bottom" paginator="true" rows="10"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				selection="#{documentBean.currentUserGroup}" emptyMessage="#{msgs.dataTable_empty}" style="margin-top: 5px;">
+				<f:facet name="header">
+					<h:outputText value="#{documentBean.userGroupQuery['type'] == 'GROUP' ? '组' : '用户'}列表"/>
+				</f:facet>
+				<p:column selectionMode="single" headerText="选择" style="width: 10%; text-align: center;"/>
+				<p:column headerText="名称">
+					<h:outputText title="#{ug.name}" value="#{ug.value}"/>
+				</p:column>
+			</p:dataTable>
+			
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					update=":document_permission_form"
+					actionListener="#{documentBean.addUserGroup}"
+					style="margin-right: 5px;" oncomplete="add_permission_dialog_var.hide();" />
+
+				<p:commandButton icon="ui-icon ui-icon-cancel"
+					value="#{msgs.btn_cancel}" type="button"
+					onclick="add_permission_dialog_var.hide();" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog modal="true" 
+		header="#{newsManagerBean.flag==false?'添加新闻频道':'编辑新闻频道'}"
+		widgetVar="newsDialog" id="insertConfirmDiaLog" resizable="false">
+		<h:form id="insertOrUpdate">
+			<p:messages id="insertMessagesId" autoUpdate="true"
+				showDetail="true" />
+			<h:panelGrid id="formItems" columns="2"
+				columnClasses="column1,column2">
+				<h:outputText value="链接名称：" />
+				<h:panelGroup>
+					<p:inputText id="name" value="#{newsManagerBean.updateNews.name}"
+						style="width:340px;">
+					</p:inputText>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+
+				<h:outputText value="RSS地址：" />
+				<h:panelGroup>
+					<p:inputText value="#{newsManagerBean.updateNews.rss}"
+						style="width:340px;" id="rsstext">
+					</p:inputText>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+
+				<h:outputText value="过滤字：" />
+				<p:inputText value="#{newsManagerBean.updateNews.keywords}"
+					style="width:340px;">
+				</p:inputText>
+
+				<h:outputText value="优先级：" />
+				<h:panelGroup>
+					<h:selectOneMenu value="#{newsManagerBean.updateNews.priority}"
+						style="width:345px;">
+						<f:selectItem itemLabel="请选择" itemValue="0" />
+						<f:selectItem itemLabel="1" itemValue="1" />
+						<f:selectItem itemLabel="2" itemValue="2" />
+						<f:selectItem itemLabel="3" itemValue="3" />
+						<f:selectItem itemLabel="4" itemValue="4" />
+						<f:selectItem itemLabel="5" itemValue="5" />
+						<f:selectItem itemLabel="6" itemValue="6" />
+						<f:selectItem itemLabel="7" itemValue="7" />
+						<f:selectItem itemLabel="8" itemValue="8" />
+						<f:selectItem itemLabel="9" itemValue="9" />
+						<f:selectItem itemLabel="10" itemValue="10" />
+					</h:selectOneMenu>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+
+				<h:outputText value="有效：" />
+				<h:selectOneRadio value="#{newsManagerBean.updateNews.defunctInd}"
+					id="sRadion">
+					<f:selectItem itemLabel="是" itemValue="N" />
+					<f:selectItem itemLabel="否" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+
+			<div style="text-align: center; position: relative; margin-top: 5px;">
+				<p:commandButton value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+					style="margin-right: 5px;"
+					actionListener="#{newsManagerBean.saveOrUpdateNews}" onclick=""
+					update=":newsForm,:insertOrUpdate"
+					oncomplete="handleSaveRequest(xhr, status, args);" />
+				<p:commandButton value="#{msgs.btn_cancel}"
+					icon="ui-icon ui-icon-cancel" type="button"
+					onclick="newsDialog.hide();" style="margin-right: 5px;" />
+			</div>
+			<h:inputHidden id="countPage"
+				value="#{newsManagerBean.updateNews.pageCount}" />
+		</h:form>
+	</p:dialog>
+</ui:composition>

@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+	
+	<ui:define name="title">新闻频道管理</ui:define>
+		
+	<ui:define name="content">
+	<style type="text/css">
+input[type='checkbox'] {
+	width: 10px;
+}
+
+input[type='radio'] {
+	width: 10px;
+}
+</style>
+<shiro:hasPermission name="system:home:news">
+<p:panel styleClass="panel1">
+	<p:breadCrumb id="dataTable_breadCrumb" preview="true"
+		expandEffectDuration="200" previewWidth="24"  style="margin-bottom: 5px;">
+		<p:menuitem value="系统管理" url="#" />
+		<p:menuitem value="系统管理" url="#" />
+		<p:menuitem value="首页管理 " url="#" />
+		<p:menuitem value="新闻频道管理" url="#" />
+	</p:breadCrumb>
+		
+	<h:form id="newsForm"  >
+<p:growl id="mymygrowl" showDetail="true"  autoUpdate="true" life="10000" /> 
+		<p:fieldset>
+		<h:panelGrid id="formItems" columns="8" 	columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+			<h:outputText value="链接名称：" />
+			
+				<p:inputText value="#{newsManagerBean.searchContion.name}" />
+				<h:outputText value="RSS地址：" />
+				<p:inputText value="#{newsManagerBean.searchContion.rss}" />
+				<h:outputText value="有效：" />
+				<h:selectOneMenu value="#{newsManagerBean.searchContion.defunctInd}" styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"> 
+					<f:selectItem itemLabel="请选择" itemValue="" />
+					<f:selectItem itemLabel="是" itemValue="N"  />
+					<f:selectItem itemLabel="否" itemValue="Y" />
+				</h:selectOneMenu>
+		</h:panelGrid>
+			<div align="right">
+
+				<p:commandButton  value="#{msgs.btn_query}"
+					icon="ui-icon ui-icon-search" actionListener="#{newsManagerBean.searchNews}" update=":newsForm:companyDataTable" style="margin-right: 5px;"/>
+					
+				<p:commandButton  value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel" actionListener="#{newsManagerBean.resetForm}" update=":newsForm" style="margin-right: 5px;"/>
+			</div>
+			</p:fieldset>
+		<p:dataTable id="companyDataTable" emptyMessage="#{msgs.dataTable_empty}" value="#{newsManagerBean.lazyModel}" var="company"
+			 paginator="true" rows="10" paginatorPosition="bottom"
+			paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+			  style="margin-top: 5px;"  rowIndexVar="index" 
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}" selectionMode="single"  >
+			
+				<f:facet name="header">
+				<div class="header">
+					<h:outputText value="链接列表" />
+
+					<p:commandButton styleClass="header_button" icon="ui-icon ui-icon-plus" value="#{msgs.btn_add}" actionListener="#{newsManagerBean.insertDiaLog}" update=":insertConfirmDiaLog,:insertOrUpdate:insertMessagesId" oncomplete="document.getElementById('insertOrUpdate:countPage').value=5;newsDialog.show();"	 />
+				</div>
+				</f:facet>
+			<p:column headerText="链接名称">
+				<h:outputText value="#{company.name}" />
+			</p:column>
+
+			<p:column headerText="RSS地址">
+				<h:outputText value="#{company.rss}" />
+
+			</p:column>
+			
+			<p:column headerText="有效">
+				<h:outputText value="#{company.defunctInd=='N' ?'是' : '否'}" />
+			</p:column>
+			
+			<p:column headerText="操作" style="text-align: center;">
+					<p:commandButton oncomplete="newsDialog.show();"
+					update=":insertConfirmDiaLog,:insertOrUpdate" actionListener="#{newsManagerBean.selectSingle}"
+					icon="ui-icon ui-icon-pencil" style="width: 18px;height: 18px;" title="编辑" >
+					<f:setPropertyActionListener target="#{newsManagerBean.updateNews}"
+						value="#{company}" />
+				</p:commandButton>
+				<p:commandButton
+					update=":newsForm:mymygrowl" action="#{newsManagerBean.testLink}"
+					icon="ui-icon ui-icon-gear" style="width: 18px;height: 18px;" title="测试连接" >
+					<f:setPropertyActionListener target="#{newsManagerBean.updateNews}"
+						value="#{company}" />
+				</p:commandButton>
+				<p:commandButton
+					update=":newsForm:mymygrowl" action="#{newsManagerBean.userRefresh}"
+					icon="ui-icon ui-icon-refresh" style="width: 18px;height: 18px;" title="应用/刷新" >
+					<f:setPropertyActionListener target="#{newsManagerBean.updateNews}"
+						value="#{company}" />
+				</p:commandButton>
+			</p:column>
+
+			
+			</p:dataTable>
+	</h:form>
+		<ui:include src="news_insertor_update_diaLog.xhtml" />
+		<code>
+			<script type="text/javascript">
+			function handleSaveRequest(xhr, status, args) {
+				
+				if (args.addInfo == "yes") {
+					newsDialog.hide();
+				} else {
+
+				}
+				
+			}
+			
+			function checkRadion(){
+				document.getElementById("insertOrUpdate:sRadion:0").checked=true;
+			}
+		
+			
+			
+			</script>
+			</code>
+			<script type="text/javascript" src="js.js" />
+			</p:panel>
+			
+			</shiro:hasPermission>
+			<shiro:lacksPermission name="system:home:news">
+				<ui:include src="/errorshiro.xhtml" />
+			</shiro:lacksPermission>
+			
+	</ui:define>
+	</ui:composition>

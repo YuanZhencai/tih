@@ -1,0 +1,23 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="attachment_confirm_dialog_id" resizable="false" modal="true"
+		header="确认对话框" widgetVar="attachment_confirm_dialog_var">
+		<h:form prependId="false" id="attachment_confirm_form_id" style="text-align: center;">
+			<h:outputText value="确定要删除所选的附件吗？"/>
+			<br/>
+			
+			<p:commandButton value="#{msgs.btn_ok}" action="#{attachmentBean.deleteDocument()}"
+				rendered="#{attachmentBean.confirmType == 'single' ? true : false}"  update=":attachmentTabView:common_attachment_form_id"
+				oncomplete="attachment_confirm_dialog_var.hide()"/>
+			
+			<p:commandButton value="#{msgs.btn_ok}" action="#{attachmentBean.deleteDocuments()}"
+				rendered="#{attachmentBean.confirmType == 'multiple' ? true : false}" update=":attachmentTabView:common_attachment_form_id"
+				oncomplete="attachment_confirm_dialog_var.hide()"/>
+			
+			<p:commandButton value="#{msgs.btn_cancel}" onclick="attachment_confirm_dialog_var.hide()" style="margin: 10px 5px 5px 5px;"/>
+		</h:form>
+	</p:dialog>
+</ui:composition>

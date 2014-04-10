@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<style>
+	.changeColor {
+		background: #DEEDF7;
+	}
+	.columndiv > div{
+		width:125px;
+		word-wrap:break-word;
+	}
+	.column01 {
+		text-align: right;
+		width: 65px;
+	}
+			div.ui-dt-c {
+				padding: 0px;
+				overflow: hidden;
+				word-wrap: break-word;
+				word-break: break-all;
+			}
+	</style>
+	<p:dialog header="公司查询" widgetVar="commoncompanyvar" id="commoncompanyid" resizable="false" modal="true">
+		<h:form id="commonCompany" prependId="false">
+			<div class="style1">
+			<h:panelGrid columns="6" columnClasses="column01,column2,column01,column2,column01,column2">
+					<h:outputText value="公司名称：" />
+					<p:inputText value="#{companyCommonBean.companyManagerModel.stext}" />
+					<h:outputText value="公司代码：" />
+					<p:inputText value="#{companyCommonBean.companyManagerModel.code}" />
+					<h:outputText value="公司地址：" />
+					<p:inputText value="#{companyCommonBean.companyManagerModel.address}" />		
+					<h:outputText value="地域："/>
+					<h:selectOneMenu value="#{companyCommonBean.companyManagerModel.region}" >
+						<f:selectItem itemLabel="请选择"/>
+						<f:selectItems value="#{companyCommonBean.regionItems}" />
+						<p:ajax update="provinces" event="change" listener="#{companyCommonBean.handleRegionChange(companyCommonBean.companyManagerModel.region)}"/>
+					</h:selectOneMenu>
+					<h:outputText value="省："/>
+					<h:selectOneMenu id="provinces" value="#{companyCommonBean.companyManagerModel.province}">
+						<f:selectItem itemLabel="请选择"/>
+						<f:selectItems value="#{companyCommonBean.provinceItems}" />
+					</h:selectOneMenu>
+			</h:panelGrid>
+				<div>
+					<p:commandButton action="#{companyCommonBean.search}" value="#{msgs.btn_query}" update=":datatableform:singleCompanyDataTable,:datatableform:multipleCompanyDataTable" icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
+					<p:commandButton action="#{companyCommonBean.reset()}" value="重置" update=":commonCompany" icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
+				</div>
+			</div>
+		</h:form>
+			<h:form id="datatableform">
+			<p:dataTable var="company" value="#{companyCommonBean.companys}" rendered="#{companyCommonBean.type eq 'single' ? true : false}" 
+				scrollable="true" scrollWidth="813" scrollHeight="300" id="singleCompanyDataTable"
+				selection="#{companyCommonBean.selectCompany}" rowKey="#{company.id}" emptyMessage="没有记录"
+				rowIndexVar="index" rowStyleClass="#{index mod 2 == 1 ? 'changeColor' : null}">
+						<f:facet name="header">
+							<h:outputText value="公司列表" />
+						</f:facet>
+						<p:column selectionMode="single" style="text-align: center;width: 50px;"/>
+						<p:column headerText="公司名称" sortBy="#{company.hanYuStext}" style="width:125px">
+							<h:outputText value="#{company.stext}" />
+						</p:column>
+						<p:column headerText="公司代码" sortBy="#{company.code}" style="width:125px">
+							<h:outputText value="#{company.code}" />
+						</p:column>
+						<p:column headerText="地址" sortBy="#{company.hanYuAddress}" style="width:125px">
+							<h:outputText value="#{company.address}" />
+						</p:column>
+						<p:column headerText="邮编" sortBy="#{company.zipcode}" style="width:125px">
+							<h:outputText value="#{company.zipcode}" />
+						</p:column>
+						<p:column headerText="联系电话" sortBy="#{company.telphone}" style="width:125px">
+							<h:outputText value="#{company.telphone}" />
+						</p:column>
+				</p:dataTable>
+				
+				<p:dataTable var="company" value="#{companyCommonBean.companys}" rendered="#{companyCommonBean.type eq 'multiple' ? true : false}" 
+				scrollable="true" scrollWidth="813" scrollHeight="300" id="multipleCompanyDataTable"
+				selection="#{companyCommonBean.selectCompanys}" rowKey="#{company.id}"
+				rowIndexVar="index" emptyMessage="没有记录">
+						<f:facet name="header">
+							<h:outputText value="公司列表" />
+						</f:facet>
+						<p:column selectionMode="multiple" style="text-align: center;width:50px;"></p:column>
+						<p:column headerText="公司名称" sortBy="#{company.hanYuStext}" style="width:125px">
+							<h:outputText value="#{company.stext}" />
+						</p:column>
+						<p:column headerText="公司代码" sortBy="#{company.lowererCode}" style="width:125px">
+							<h:outputText value="#{company.code}" />
+						</p:column>
+						<p:column headerText="地址" sortBy="#{company.hanYuAddress}" style="width:125px">
+							<h:outputText value="#{company.address}" />
+						</p:column>
+						<p:column headerText="邮编" sortBy="#{company.zipcode}" style="width:125px">
+							<h:outputText value="#{company.zipcode}" />
+						</p:column>
+						<p:column headerText="联系电话" sortBy="#{company.telphone}" style="width:125px">
+							<h:outputText value="#{company.telphone}" />
+						</p:column>
+				</p:dataTable>
+			<div
+				style="text-align: center; position: relative; margin-top: 5px; margin-bottom: 5px;">
+				<p:commandButton update="#{companyCommonBean.update}" oncomplete="commoncompanyvar.hide()" action="#{companyCommonBean.invoke}" value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check" style="margin-right: 5px;" />
+				<p:commandButton type="button" onclick="commoncompanyvar.hide()" value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+				
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

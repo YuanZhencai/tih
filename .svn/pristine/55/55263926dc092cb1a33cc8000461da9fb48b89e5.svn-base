@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog id="warrantDialogId" widgetVar="warrantDialogWidgetVar"
+		resizable="false"
+		header="#{taskManagementBean.excuteMethod eq 'insert' ? '创建授权信息' : '编辑授权信息'}"
+		modal="true">
+		<p:ajax event="close" listener="#{taskManagementBean.createWarrant()}"
+			update=":taskFrom" />
+		<p:messages id="warrantMsg" showDetail="true" />
+		<h:form prependId="false" id="warrantform">
+			<h:panelGrid columns="2" columnClasses="column1,column1">
+				<h:outputText value="授权人： " />
+				<p:inputText value="#{taskManagementBean.showAuthorizedBy}"
+					style="width:364px;" disabled="true" />
+			</h:panelGrid>
+			<h:panelGrid columns="4"
+				columnClasses="column1,column1,column2,column2">
+				<h:outputText value="被授权人： " />
+				<p:inputText id="authorizedTo"
+					value="#{taskManagementBean.showAuthorizedTo}" style="width:335px;"
+					disabled="true" />
+				<p:commandButton
+					actionListener="#{userCommonBean.init(':warrantform:authorizedTo','single','taskManagementBean','getNeedAuthorizedTo')}"
+					update=":commonUserDialog"
+					oncomplete="commonUserDialogWidgetVar.show()"
+					icon="ui-icon ui-icon-search" title="请选择"
+					style="width:25px;height:25px;" />
+				<h:outputText value="*" style="color:red;" />
+			</h:panelGrid>
+			<h:panelGrid columns="3" columnClasses="column1,column1,column2">
+				<h:outputText value="授权任务： " />
+				<h:selectOneMenu value="#{taskManagementBean.authorizmstrVo.type}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all"
+					style="width:375px;">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems
+						value="#{commonBean.getDictByCat(commonBean.tihTaxRequestform)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+				<h:outputText value="*" style="color:red;" />
+			</h:panelGrid>
+			<h:panelGrid columns="6"
+				columnClasses="column1,column1,column2,column1,column1,column2">
+				<h:outputText value="生效日期： " />
+				<p:calendar
+					value="#{taskManagementBean.authorizmstrVo.startDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" showButtonPanel="true"
+					navigator="true" readOnlyInputText="true"/>
+				<h:outputText value="*" style="color:red;" />
+				<h:outputText value="失效日期： " />
+				<p:calendar value="#{taskManagementBean.authorizmstrVo.endDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" showButtonPanel="true"
+					navigator="true" readOnlyInputText="true"/>
+				<h:outputText value="*" style="color:red;" />
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column1,column1">
+				<h:outputText value="备注：" />
+				<p:inputTextarea
+					value="#{taskManagementBean.authorizmstrVo.remarks}"
+					style="width:366px;height:60px;" autoResize="false"
+					effectDuration="400" maxlength="198" />
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="发送邮件：" />
+				<p:selectBooleanCheckbox
+					value="#{taskManagementBean.authorizmstrVo.emailFlag}" />
+				<h:outputText value="发送消息：" />
+				<p:selectBooleanCheckbox
+					value="#{taskManagementBean.authorizmstrVo.sysNoticeFlag}" />
+			</h:panelGrid>
+			<div style="margin-top: 5px; text-align: center;">
+				<p:commandButton value="#{msgs.btn_ok}"
+					actionListener="#{taskManagementBean.saveWarrant()}"
+					update=":warrantMsg,:growl,:taskFrom"
+					oncomplete="handleRequest(xhr, status, args)"
+					style="margin-right: 5px;" icon="ui-icon ui-icon-check" />
+				<p:commandButton value="#{msgs.btn_cancel}"
+					icon="ui-icon ui-icon-cancel" type="button"
+					onclick="warrantDialogWidgetVar.hide()" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

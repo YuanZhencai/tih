@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="inspectionSeachForm" prependId="false">
+	
+		<div class="style1">
+			<h:panelGrid id="SeachForm1" columns="8" columnClasses="column43,column2">
+				<h:outputText value="公司名称：" />
+				<p:inputText value="#{feedBackInspectationBean.inspectionVo.companyName}" maxlength="48" style="width:310px"/>
+				
+				<h:outputLabel value="稽（检）查时间："/>
+				<p:calendar value="#{feedBackInspectationBean.inspectionVo.missionStartDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+				<h:column>
+					<div style="text-align: right;width: 40px;">
+						<h:outputLabel value="到" />
+						<p:spacer width="12"/>
+					</div>
+				</h:column>
+				<p:calendar value="#{feedBackInspectationBean.inspectionVo.missionEndDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+			</h:panelGrid>
+			
+			<h:panelGrid id="SeachForm2" columns="8" columnClasses="column43,column2">	
+				<h:outputLabel value="稽（检）查业务期间："/>
+				<p:calendar value="#{feedBackInspectationBean.inspectionVo.inspectStartDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+				<h:column>
+					<div style="width: 25px;text-align: right;">
+						<h:outputLabel value="到"/>
+					</div>
+				</h:column>
+				<p:calendar value="#{feedBackInspectationBean.inspectionVo.inspectEndDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+				
+				<h:column>
+					<div style="text-align: right;width: 95px;">
+						<h:outputText value="检查类型：" />
+					</div>
+				</h:column>
+				<h:selectOneMenu value="#{feedBackInspectationBean.inspectionVo.inspectType}">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+					<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxInspectionType)}" 
+							var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}">
+					</f:selectItems>
+				</h:selectOneMenu>
+				
+				<h:column>
+					<div style="text-align: right;width: 40px;">
+						<h:outputText value="有效：" />
+					</div>
+				</h:column>
+				<h:selectOneMenu value="#{feedBackInspectationBean.inspectionVo.defunctInd}">
+					<f:selectItem itemLabel="是" itemValue="N"/>
+					<f:selectItem itemLabel="否" itemValue="Y"/>
+				</h:selectOneMenu>
+			</h:panelGrid>
+			<div>
+				<p:commandButton action="#{feedBackInspectationBean.searchAllInspection}"
+					style="margin-right: 5px;" update=":inspectionSeachForm" ajax="false"
+					value="#{msgs.btn_query}" icon="ui-icon ui-icon-search" />
+				<p:commandButton action="#{feedBackInspectationBean.clearSearch()}"
+					update="SeachForm1,SeachForm2" value="#{msgs.btn_reset}"
+					style="margin-right: 5px;" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</div>
+	</h:form>
+	
+</ui:composition>

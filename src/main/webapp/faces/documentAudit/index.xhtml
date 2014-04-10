@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	template="/template/template.xhtml">
+		<ui:define name="title"></ui:define>
+
+	<ui:define name="content">
+		<p:growl id="growl" showDetail="true" showSummary="true" life="3000"/>
+		<h:form id="query_document_property_form2" prependId="false">
+		<p:commandButton icon="ui-icon ui-icon-check" value="show"
+			 onclick="query_document_property_dialog_var.show();" 		 oncomplete="query_document_property_dialog_var。show();"  style="margin-right: 5px;" ajax="true"/>
+			 
+			 <p:commandButton icon="ui-icon ui-icon-check" value="show" type="button"
+			 onclick="query_document_property_dialog_var.show();" 		 style="margin-right: 5px;" ajax="true"/>
+					 </h:form>
+		
+
+	<ui:include src="dialog.xhtml"/>
+	<ui:include src="/faces/common/user/common_user_dialog.xhtml"/>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,254 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog header="新建提问申请流程" widgetVar="newApplyQuestionDlgVar"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false" 
+		id="newApplyQuestionDlgId">
+		<p:ajax event="close" listener="#{applyQuestionBean.clearCreateDialog()}"   update=":newApplyQuestionFormId"/>
+		<p:growl id="newQuestionGrowlId" life="8000" showDetail="true"/>
+		<p:messages id="newQuestionMsgId" showDetail="true"/>
+		<h:form id="newApplyQuestionFormId" rependId="false">
+
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="填制日期：" />
+				<h:panelGroup>
+				<p:calendar locale="cn" pattern="yyyy-MM-dd" showButtonPanel="true"
+					navigator="true" disabled="true"
+					value="#{applyQuestionBean.createDlgParamMap['createDate']}" />
+				<p:spacer width="6px" />
+				</h:panelGroup>
+
+				<h:outputText value="填制人：" />
+				<h:panelGroup>
+				<p:inputText value="#{applyQuestionBean.createDlgParamMap['createUser']}" disabled="true" />
+				<p:spacer width="6px" />
+				</h:panelGroup>
+			</h:panelGrid>
+
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="重要程度：" />
+				<h:panelGroup>
+				<p:selectOneMenu value="#{applyQuestionBean.selectedhoto}" var="p" converter="playerConverter"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all" style="width:130px;height:18px;">
+					<!-- 
+					<f:selectItem itemLabel="一般" itemValue="TIH.TAX.WORKFLOWIMPORTANCE.1"/>
+					 -->
+					<f:selectItems value="#{applyQuestionBean.photos}" var="DictPictureVO" itemLabel="#{DictPictureVO.name}" itemValue="#{DictPictureVO}" />
+						
+					<p:column>
+						<p:graphicImage value="/images/#{p.photo}" style="width:50px;height:15px;"/>
+					</p:column>
+					
+					<p:column>
+						<span style="text-shadow: none;">#{p.name}</span>
+					</p:column>
+				</p:selectOneMenu>
+				<h:outputText style="color:red;" value=" *" />
+				</h:panelGroup>
+
+				<h:outputText value="紧急程度：" />
+				<h:panelGroup>
+				<p:selectOneMenu value="#{applyQuestionBean.selectedUrgent}" var="p" converter="playerConverter"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all" style="width:130px;height:18px;">
+					<!-- 
+					<f:selectItem itemLabel="一般" itemValue="TIH.TAX.WORKFLOWURGENCY.1"/>
+					 -->
+					<f:selectItems value="#{applyQuestionBean.photosUrgent}" var="DictPictureVO" itemLabel="#{DictPictureVO.name}" itemValue="#{DictPictureVO}" />
+					
+					<p:column>
+						<p:graphicImage value="/images/#{p.photo}" style="width:50px;height:15px;"/>
+					</p:column>
+					
+					<p:column>
+						<span style="text-shadow: none;">#{p.name}</span>
+					</p:column>
+					
+				</p:selectOneMenu>
+				<h:outputText style="color:red;" value=" *" />
+				</h:panelGroup>
+			</h:panelGrid>
+
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="地域：" />
+				<h:panelGroup>
+				<h:selectOneMenu value="#{applyQuestionBean.createDlgParamMap['region']}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="请选择" itemValue="" />
+					<f:selectItems value="#{commonBean.getDictByCat(applyQuestionBean.dropDownRegion)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+				<h:outputText style="color:red;" value=" *" />
+				</h:panelGroup>
+
+				<h:outputText value="税种：" />
+				<h:panelGroup>
+				<h:selectOneMenu value="#{applyQuestionBean.createDlgParamMap['taxType']}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="请选择" itemValue="" />
+					<f:selectItems value="#{commonBean.getDictByCat(applyQuestionBean.dropDownTaxType)}"
+						var="dict" itemLabel="#{dict.codeVal}"
+						itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+				</h:selectOneMenu>
+				<h:outputText style="color:red;" value=" *" />
+				</h:panelGroup>
+			</h:panelGrid>
+			<h:panelGrid columns="4" rendered="#{'Y' == applyQuestionBean.wfRemindVo.wfTimeoutInd}"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="完成日期：" />
+				<h:column>
+					<p:calendar locale="cn" pattern="yyyy-MM-dd" showButtonPanel="true"
+						navigator="true" value="#{applyQuestionBean.wfRemindVo.wfCompleteDate}" />
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="提醒频率（天）：" />
+				<h:column>
+					<p:inputText value="#{applyQuestionBean.wfRemindVo.wfIntervalDays}" />
+					<span style="color: red">*</span>
+				</h:column>
+				<h:outputText value="催促日期：" />
+				<h:column>
+					<p:calendar locale="cn" pattern="yyyy-MM-dd" showButtonPanel="true"
+						navigator="true" value="#{applyQuestionBean.wfRemindVo.wfUrgeDate}" />
+					<span style="color: red">*</span>
+				</h:column>
+			</h:panelGrid>
+			<h:panelGrid columns="4" columnClasses="column1,column3">
+				<h:outputText value="问题标题：" />
+				<h:panelGroup>
+				<p:inputText value="#{applyQuestionBean.createDlgParamMap['queHead']}" maxlength="50" 
+					style="width:365px">
+				</p:inputText>
+				<h:outputText style="color:red;" value=" *" />
+				</h:panelGroup>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="4" columnClasses="column1">
+				<h:outputText value="问题描述：" />
+				<p:inputTextarea style="width: 365px; height: 70px;" maxlength="500"
+					value="#{applyQuestionBean.createDlgParamMap['queMore']}" autoResize="false">
+				</p:inputTextarea>
+				<h:outputText style="color:red;" value="*" />
+				
+			</h:panelGrid>
+				
+			
+			<h:panelGrid columns="4" columnClasses="column1,column3">
+				<h:outputText value="收件人：" />
+				<p:selectCheckboxMenu value="#{applyQuestionBean.recipientsSelectList}" label="#{applyQuestionBean.recipientsTitle}" id="recipientsId" style="width:347px" 
+										disabled="#{applyQuestionBean.recipientsMap.size()==0?true:false}"	>
+					<f:selectItems value="#{applyQuestionBean.recipientsMap}" />
+				</p:selectCheckboxMenu>
+				<p:commandButton
+							actionListener="#{userCommonBean.init(':newApplyQuestionFormId:recipientsId','multiple','applyQuestionBean','queryManyEmailUserName')}"
+							update=":commonUserDialog,:newQuestionMsgId,:newQuestionGrowlId" 
+							oncomplete="controlCommonUserDlg();"
+							icon="ui-icon ui-icon-search" title="请选择" style="width: 22px; height: 22px;"
+							 /> 
+					
+			</h:panelGrid>
+
+			<p:spacer width="5px" height="15px"></p:spacer>
+			<h:panelGrid columns="4" columnClasses="column1,column3"
+				id="newPanelIID">
+				<h:outputText value="上传附件：" />
+				<p:dataTable var="ss" value="#{applyQuestionBean.createDlgTableList}" 
+					paginatorPosition="bottom" rowIndexVar="index" paginator="true" 
+					id="newAppTable1" rows="5" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} " 
+					rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}" 
+					style="margin-top: 5px;width:375px" emptyMessage="#{msgs.dataTable_empty }" >
+					<f:facet name="header">
+					问题附件清单
+					<div style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+							<p:commandButton  value="添加附件" actionListener="#{applyQuestionBean.enterPlace('1')}"  icon="ui-icon ui-icon-plus" 
+							           oncomplete="loadUploadX();createShowAttDlgRequest(xhr, status, args);" update=":newQuestionGrowlId,:newQuestionMsgId,:addAttachmentDlgFormId" />
+						</div>
+					</f:facet>
+
+					<p:column style="width:224px;">
+						<f:facet name="header">
+							<h:outputText value="附件名称" />
+						</f:facet>
+						<div style="width:220px;word-wrap:break-word;overflow:hidden;">
+						<h:outputText value="#{ss.fileName}" />
+						</div>
+					</p:column>
+					<p:column style="text-align: center;width:100px;">
+						<f:facet name="header">
+							<h:outputText value="操作" />
+						</f:facet>
+						<p:commandButton title="下载" icon="ui-icon ui-icon-arrowthick-1-s"
+							style="width: 18px; height: 18px;" ajax="false">
+							<p:fileDownload value="#{wizardAnswerBean.getFile(ss.fileId)}" />
+						</p:commandButton>
+						<p:commandButton title="删除"
+							actionListener="#{applyQuestionBean.deleteFile(ss.fileId,ss.fileName,true)}"
+							update=":newApplyQuestionFormId:newPanelIID"
+							style="width: 18px; height: 18px;" icon="ui-icon ui-icon-close" />
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+
+			<p:spacer width="5px" height="15px" />
+			<div align="center" style="width: 445px">
+				<p:commandButton value="删除" icon="ui-icon ui-icon-close"
+					rendered="#{applyQuestionBean.btnDelShow}" 
+					style="margin-right:5px"
+					actionListener="#{applyQuestionBean.deleteWorkflowFromDraft()}"
+					oncomplete="handleSumbitRequest(xhr, status, args)"
+					update=":newQuestionMsgId,:newQuestionGrowlId,:treeForm,:taskFrom" />
+				<p:commandButton value="保存" icon="ui-icon ui-icon-disk"
+					style="margin-right:5px"
+					actionListener="#{applyQuestionBean.createWorkflowToSave()}"
+					oncomplete="handleSumbitRequest(xhr, status, args)"
+					update=":newQuestionGrowlId,:newQuestionMsgId,:treeForm,:taskFrom" />
+				<p:commandButton value="提交" icon="ui-icon ui-icon-check"
+					style="margin-right:5px"
+					actionListener="#{applyQuestionBean.createWorkflowToSubmit()}"
+					oncomplete="handleSumbitRequest(xhr, status, args);"
+					update=":newQuestionGrowlId,:newQuestionMsgId,:newApplyQuestionFormId,:treeForm,:taskFrom" />
+				<p:commandButton value="取消" icon="ui-icon ui-icon-cancel"
+					onclick="newApplyQuestionDlgVar.hide();" 
+					type="button" 
+					/>
+			</div>  
+
+		</h:form>
+		<script type="text/javascript">
+			function handleApplyRequest(xhr, status, args) {
+				if (args.applyInfo == "yes") {
+					answerGroupDlgVar.show();
+				}
+			}
+
+			function handleSumbitRequest(xhr, status, args) {
+				if (args.dataInfoSumbit == "yes") {
+					newApplyQuestionDlgVar.hide();
+				}
+			}
+			function createShowAttDlgRequest(xhr, status, args) {
+				if (args.attShow == "yes") {
+					addAttachmentDlgVar.show();
+				}
+			}
+			function controlCommonUserDlg(){
+				var div =$("#newQuestionMsgId").html();
+				if(div==''){
+				commonUserDialogWidgetVar.show();
+				}
+			}
+			
+		</script>
+	</p:dialog>
+
+</ui:composition>
