@@ -8,8 +8,10 @@
 	<p:dialog id="contactSaveDialog" widgetVar="contactSaveDialogVar"
 		resizable="false" header="添加通讯录" modal="true">
 		<h:form id="contactSaveForm" prependId="false">
+			<p:messages id="contactSaveMessage" autoUpdate="false"
+				showDetail="true" />
 			<h:panelGrid columns="4"
-				columnClasses="column41,column2,column41,column2">
+				columnClasses="column1,column2,column1,column2">
 				<h:outputText value="人员姓名：" />
 				<p:inputText value="#{contactBean.contactVo.username}" />
 				<h:outputText value="手机号码：" />
@@ -19,18 +21,29 @@
 				<h:outputText value="电子邮箱：" />
 				<p:inputText value="#{contactBean.contactVo.email}" />
 			</h:panelGrid>
-			<h:panelGrid columns="2" columnClasses="column41,column2">
+			<h:panelGrid columns="2" columnClasses="column1,column2">
 				<h:outputText value="公司名称：" />
-				<p:inputText value="#{contactBean.contactVo.company}" />
+				<p:inputText value="#{contactBean.contactVo.company}"
+					style="width: 356px;" />
 				<h:outputText value="岗位描述：" />
-				<p:inputText value="#{contactBean.contactVo.position}" />
+				<p:inputText value="#{contactBean.contactVo.position}"
+					style="width: 356px;" />
 				<h:outputText value="联系地址：" />
-				<p:inputText value="#{contactBean.contactVo.address}" />
+				<p:inputText value="#{contactBean.contactVo.address}"
+					style="width: 356px;" />
 				<h:outputText value="备注：" />
-				<p:inputTextarea value="#{contactBean.contactVo.remark}" />
+				<p:inputTextarea value="#{contactBean.contactVo.remark}"
+					style="width: 356px;" />
+				<h:outputText value="有效：" />
+				<h:selectOneRadio value="#{contactBean.contactVo.defunctInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
 			</h:panelGrid>
 			<div style="text-align: center; margin-top: 5px;">
 				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					oncomplete="handleDialog(xhr, status, args);"
+					update=":contactSaveForm:contactSaveMessage,:contactForm:contactDataTable,:contactForm:contactMsg"
 					action="#{contactBean.saveContact()}" style="margin-right: 5px;" />
 				<p:commandButton icon="ui-icon ui-icon-cancel"
 					value="#{msgs.btn_cancel}" type="button"

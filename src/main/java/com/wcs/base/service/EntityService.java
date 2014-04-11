@@ -51,7 +51,7 @@ public class EntityService implements Serializable {
 	final Logger logger = LoggerFactory.getLogger(getClass());
 
 	
-    @PersistenceContext(unitName = "sample")
+    @PersistenceContext
     protected EntityManager entityManager;
 	
 	public EntityService(){

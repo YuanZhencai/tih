@@ -32,3 +32,14 @@ function stopInterval(xhr, status, args) {
 		console.info("success");
 	}
 }
+
+function handleDialog(xhr, status, args) {
+	if (args.option == "close") {
+		eval(args.widgetVar).hide();
+	} 
+	
+	if (args.option == "open") {
+		eval(args.widgetVar).show();
+	} 
+	
+}

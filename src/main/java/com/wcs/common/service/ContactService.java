@@ -53,7 +53,7 @@ public class ContactService implements Serializable {
 			contact = new Contact();
 			contact.setCreatedBy(username);
 			contact.setCreatedDatetime(date);
-			contact.setDefunctInd("N");
+			contactVo.setDefunctInd("N");
 		}
 
 		contact.setUpdatedBy(username);
@@ -72,7 +72,7 @@ public class ContactService implements Serializable {
 	}
 
 	public List<ContactVo> findContactsBy(Map<String, Object> filter, int first, int pageSize) {
-		List<Contact> contacts = entityService.findByMap(buildXsql(filter, false), filter);
+		List<Contact> contacts = entityService.createQueryByMap(buildXsql(filter, false), filter).setFirstResult(first).setMaxResults(pageSize).getResultList();
 
 		List<ContactVo> contactVos = new ArrayList<ContactVo>();
 		for (Contact contact : contacts) {
@@ -104,24 +104,23 @@ public class ContactService implements Serializable {
 	}
 
 	public Integer findContactsCountBy(Map<String, Object> filter) {
-		List<Integer> count = entityService.findByMap(buildXsql(filter, true), filter);
-		return count.get(0);
+		List<Long> count = entityService.findByMap(buildXsql(filter, true), filter);
+		return Integer.valueOf(count.get(0).toString());
 	}
 
 	public String buildXsql(Map<String, Object> filter, boolean isCount) {
 		StringBuffer xsql = new StringBuffer();
 		xsql.append("select");
 		if (isCount) {
-			xsql.append(" count(1)");
+			xsql.append(" count(c.id)");
 		} else {
 			xsql.append(" c");
 		}
 		xsql.append(" from Contact c where 1=1");
-		// xsql.append(" /~ and p.id = {id}~/ ");
-		// xsql.append(" /~ and p.nachn = {nachn}~/ ");
-		// xsql.append(" /~ and p.name2 = {name2}~/ ");
-		// xsql.append(" /~ and p.orgeh = {orgeh}~/ ");
-		// xsql.append(" /~ and p.email = {email}~/ ");
+		xsql.append(" /~ and c.username like {username} ~/ ");
+		xsql.append(" /~ and c.position like {position} ~/ ");
+		xsql.append(" /~ and c.company like {company} ~/ ");
+		xsql.append(" /~ and c.defunctInd = {defunctInd} ~/ ");
 		return xsql.toString();
 	}
 

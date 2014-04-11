@@ -208,3 +208,6 @@ insert into RESOURCEMSTR (ID, NAME, CODE, SEQ_NO, PARENT_ID, TYPE, URI, DEFUNCT_
 --移动我的公司管理
 update ROLERESOURCE  set DEFUNCT_IND = 'Y'  where RESOURCEMSTR_ID = 34;
 update RESOURCEMSTR  set PARENT_ID = 50,SEQ_NO = '4',CODE = 'affair:special:mycompany'  where id = 34;
+
+--通讯录管理
+insert into RESOURCEMSTR (ID, NAME, CODE, SEQ_NO, PARENT_ID, TYPE, URI, DEFUNCT_IND, CREATED_BY, CREATED_DATETIME, UPDATED_BY, UPDATED_DATETIME) values (58, '通讯录管理', 'system:user:contact', '7', 7, 'MENU', '/faces/common/contact/index.xhtml', 'N', 'admin', '2012-01-01 00:00:00', 'admin', '2011-01-01 00:00:00');

@@ -104,11 +104,6 @@ input[type='radio'] {
 				}
 			}
 			
-			function handleDialog(xhr, status, args) {
-				if(args.option == "close"){
-					eval(args.widgetVar).hide();
-				}
-			}
 			function disableItems(){
 				var checkbokItems = $("[id*='configTable:'] .ui-chkbox-box.ui-widget.ui-corner-all.ui-state-default");
 				console.info(checkbokItems.size());
