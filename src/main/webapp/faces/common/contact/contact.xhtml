@@ -5,71 +5,65 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
-	<h:form id="userDataTableForm" prependId="false">
-		<p:dataTable emptyMessage="#{msgs.dataTable_empty}" id="userDataTable"
-			var="user" value="#{userBean.lazyUsermstrVoModel}" paginator="true"
-			rows="10" paginatorPosition="bottom"
-			paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
-			rowIndexVar="index"
-			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
-			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
-			selectionMode="single">
+	<h:form id="contactForm" prependId="false">
+		<div class="style1">
+			<h:panelGrid id="contactSearchPanel" columns="6"
+				columnClasses="column41,column2,column40,column2,column1,column2">
+				<h:outputText value="人员姓名：" />
+				<p:inputText />
+				<h:outputText value="岗位描述：" />
+				<p:inputText />
+				<h:outputText value="公司名称：" />
+				<p:inputText />
+				<h:outputText value="有效：" />
+				<p:inputText />
+			</h:panelGrid>
+			<div>
+				<p:commandButton value="查询" icon="ui-icon ui-icon-search"
+					style="margin-right: 5px;" />
+				<p:commandButton value="重置" icon="ui-icon ui-icon-search"
+					style="margin-right: 5px;" />
+			</div>
+		</div>
+		<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+			id="contactDataTable" value="#{contactBean.contactVos}"
+			var="contact" rowIndexVar="index" style="margin-top:5px;"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
 			<f:facet name="header">
 				<div class="header">
-					<h:outputText value="用户列表" />
-					<p:commandButton value="#{msgs.btn_add}"
-						actionListener="#{userBean.addUser}" styleClass="header_button"
-						oncomplete="addUserDialog.show()" update=":addUserDlg"
-						icon="ui-icon ui-icon-plus" />
+					<h:outputText value="通讯录列表" />
+					<p:commandButton styleClass="header_button" value="添加"
+						action="#{contactBean.initAddContact()}"/>
 				</div>
 			</f:facet>
-			<p:column headerText="用户帐号">
-				<h:outputText value="#{user.usermstr.adAccount}" />
+			<p:column headerText="公司名称">
+				<h:outputText value="#{contact.company}" />
 			</p:column>
-			<p:column headerText="用户姓名">
-				<h:outputText value="#{user.p.nachn}" />
+			<p:column headerText="人员姓名">
+				<h:outputText value="#{contact.username}" />
 			</p:column>
-			<p:column headerText="联系电话">
-				<h:outputText value="#{user.p.telno}" />
+			<p:column headerText="岗位描述">
+				<h:outputText value="#{contact.position}" />
 			</p:column>
 			<p:column headerText="手机号码">
-				<h:outputText value="#{user.p.celno}" />
+				<h:outputText value="#{contact.mobile}" />
 			</p:column>
-			<p:column headerText="邮箱地址">
-				<h:outputText value="#{user.p.email}" />
+			<p:column headerText="办公电话">
+				<h:outputText value="#{contact.telephone}" />
 			</p:column>
-			<p:column headerText="有效" style="text-align: center;">
-				<h:outputText
-					value="#{user.usermstr.defunctInd eq 'N' ? (msgs.txt_effective):(msgs.txt_effectiveLost)}" />
+			<p:column headerText="电子邮箱">
+				<h:outputText value="#{contact.email}" />
 			</p:column>
-			<p:column headerText="操作" style="text-align: center;">
-				<p:commandButton action="#{userBean.updateUser}"
-					oncomplete="updateUserDialog.show()" update=":updateUserDlg"
-					title="编辑" icon="ui-icon ui-icon-pencil"
-					style="width: 18px;height: 18px;">
-					<f:setPropertyActionListener target="#{userBean.excuteMethod}"
-						value="update" />
-					<f:setPropertyActionListener
-						target="#{userBean.selectedUsermstrVo}" value="#{user}" />
+			<p:column headerText="联系地址">
+				<h:outputText value="#{contact.address}" />
+			</p:column>
+			<p:column headerText="有效">
+				<h:outputText value="#{contact.defunctInd}" />
+			</p:column>
+			<p:column headerText="操作" style="text-align: center;width:20px">
+				<p:commandButton
+					icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;">
 				</p:commandButton>
-				<p:commandButton action="#{userBean.userRole}"
-					oncomplete="userRoleDialog.show()" update=":userRoleDlg"
-					title="分配角色" icon="ui-icon ui-icon-person"
-					style="width: 18px;height: 18px;">
-					<f:setPropertyActionListener
-						target="#{userBean.selectedUsermstrVo}" value="#{user}" />
-				</p:commandButton>
-				<p:commandButton action="#{userBean.userPosition}"
-					oncomplete="userPositionorgDialog.show()"
-					update=":userPositionorgDlg" title="分配岗位"
-					icon="ui-icon ui-icon-org" style="width: 18px;height: 18px;">
-					<f:setPropertyActionListener
-						target="#{userBean.selectedUsermstrVo}" value="#{user}" />
-				</p:commandButton>
-				<p:commandButton action="#{organizationLevelBean.loadUserArganizationLevel(user.usermstr.adAccount)}"
-					oncomplete="organizationLevelDialogWidgetVar.show()"
-					update=":organizationLevelDialog" title="分配组织层级"
-					icon="ui-icon ui-icon-assign" style="width: 18px;height: 18px;" />
 			</p:column>
 		</p:dataTable>
 	</h:form>
