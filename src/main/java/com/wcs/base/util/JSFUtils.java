@@ -11,6 +11,7 @@ import javax.faces.context.Flash;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,5 +124,11 @@ public final class JSFUtils {
 
 	public static void addMessage(FacesMessage msg) {
 		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+	
+	public static void handleDialogByWidgetVar(String widgetVar, String option) {
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.addCallbackParam("widgetVar", widgetVar);
+		context.addCallbackParam("option", option);
 	}
 }

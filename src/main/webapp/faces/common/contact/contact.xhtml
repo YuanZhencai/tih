@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="userDataTableForm" prependId="false">
+		<p:dataTable emptyMessage="#{msgs.dataTable_empty}" id="userDataTable"
+			var="user" value="#{userBean.lazyUsermstrVoModel}" paginator="true"
+			rows="10" paginatorPosition="bottom"
+			paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+			rowIndexVar="index"
+			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+			selectionMode="single">
+			<f:facet name="header">
+				<div class="header">
+					<h:outputText value="用户列表" />
+					<p:commandButton value="#{msgs.btn_add}"
+						actionListener="#{userBean.addUser}" styleClass="header_button"
+						oncomplete="addUserDialog.show()" update=":addUserDlg"
+						icon="ui-icon ui-icon-plus" />
+				</div>
+			</f:facet>
+			<p:column headerText="用户帐号">
+				<h:outputText value="#{user.usermstr.adAccount}" />
+			</p:column>
+			<p:column headerText="用户姓名">
+				<h:outputText value="#{user.p.nachn}" />
+			</p:column>
+			<p:column headerText="联系电话">
+				<h:outputText value="#{user.p.telno}" />
+			</p:column>
+			<p:column headerText="手机号码">
+				<h:outputText value="#{user.p.celno}" />
+			</p:column>
+			<p:column headerText="邮箱地址">
+				<h:outputText value="#{user.p.email}" />
+			</p:column>
+			<p:column headerText="有效" style="text-align: center;">
+				<h:outputText
+					value="#{user.usermstr.defunctInd eq 'N' ? (msgs.txt_effective):(msgs.txt_effectiveLost)}" />
+			</p:column>
+			<p:column headerText="操作" style="text-align: center;">
+				<p:commandButton action="#{userBean.updateUser}"
+					oncomplete="updateUserDialog.show()" update=":updateUserDlg"
+					title="编辑" icon="ui-icon ui-icon-pencil"
+					style="width: 18px;height: 18px;">
+					<f:setPropertyActionListener target="#{userBean.excuteMethod}"
+						value="update" />
+					<f:setPropertyActionListener
+						target="#{userBean.selectedUsermstrVo}" value="#{user}" />
+				</p:commandButton>
+				<p:commandButton action="#{userBean.userRole}"
+					oncomplete="userRoleDialog.show()" update=":userRoleDlg"
+					title="分配角色" icon="ui-icon ui-icon-person"
+					style="width: 18px;height: 18px;">
+					<f:setPropertyActionListener
+						target="#{userBean.selectedUsermstrVo}" value="#{user}" />
+				</p:commandButton>
+				<p:commandButton action="#{userBean.userPosition}"
+					oncomplete="userPositionorgDialog.show()"
+					update=":userPositionorgDlg" title="分配岗位"
+					icon="ui-icon ui-icon-org" style="width: 18px;height: 18px;">
+					<f:setPropertyActionListener
+						target="#{userBean.selectedUsermstrVo}" value="#{user}" />
+				</p:commandButton>
+				<p:commandButton action="#{organizationLevelBean.loadUserArganizationLevel(user.usermstr.adAccount)}"
+					oncomplete="organizationLevelDialogWidgetVar.show()"
+					update=":organizationLevelDialog" title="分配组织层级"
+					icon="ui-icon ui-icon-assign" style="width: 18px;height: 18px;" />
+			</p:column>
+		</p:dataTable>
+	</h:form>
+
+</ui:composition>

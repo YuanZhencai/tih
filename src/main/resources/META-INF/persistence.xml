@@ -76,6 +76,7 @@
 		<class>com.wcs.tih.model.PositionTimeoutRemind</class>
 		<class>com.wcs.tih.model.WfTimeoutConfig</class>
 		<class>com.wcs.tih.model.WfTimeoutRemind</class>
+		<class>com.wcs.tih.model.Contact</class>
 		<properties>
 			<property name="openjpa.Log" value="SQL=TRACE"/>
 		</properties>
