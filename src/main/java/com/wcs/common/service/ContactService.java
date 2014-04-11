@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.Query;
 
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -72,7 +73,14 @@ public class ContactService implements Serializable {
 	}
 
 	public List<ContactVo> findContactsBy(Map<String, Object> filter, int first, int pageSize) {
-		List<Contact> contacts = entityService.createQueryByMap(buildXsql(filter, false), filter).setFirstResult(first).setMaxResults(pageSize).getResultList();
+		Query query = entityService.createQueryByMap(buildXsql(filter, false), filter);
+		if(first > 0){
+			query = query.setFirstResult(first);
+		}
+		if(pageSize > 0){
+			query = query.setMaxResults(pageSize);
+		}
+		List<Contact> contacts = query.getResultList();
 
 		List<ContactVo> contactVos = new ArrayList<ContactVo>();
 		for (Contact contact : contacts) {

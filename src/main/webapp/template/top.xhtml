@@ -22,12 +22,16 @@
 		<h:form prependId="false" id="up_center">
 			<ul>
 				<li>
+					<img src="#{request.contextPath}/images/icons/tongxunlu.png" />
+					<p:commandLink id="contactLink" action="#{contactCommonBean.initMode(':up_center:contactLink','nomal','','')}" oncomplete="contactCommonDialogVar.show()" update=":contactCommonForm" value="通讯录">
+					</p:commandLink>
+				</li>
+				<li>
 					<img src="#{request.contextPath}/images/icons/exit.gif" />
 					<p:commandLink ajax="false" action="#{currentUser.doLogout()}" value="注销">
 						<f:param name="casServerUrl" value="${cas.server.url}"/>
 						<f:param name="appUrl" value="${app.url}"/>
 					</p:commandLink>
-					<!-- <a href="${cas.server.url}/logout?service=${app.url}" >注销</a> -->
 				</li>
 			<!-- 
 				<li><img src="#{request.contextPath}/images/icons/help.gif" />帮助</li>
