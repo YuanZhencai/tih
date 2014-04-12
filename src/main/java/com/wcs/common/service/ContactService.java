@@ -73,7 +73,7 @@ public class ContactService implements Serializable {
 	}
 
 	public List<ContactVo> findContactsBy(Map<String, Object> filter, int first, int pageSize) {
-		Query query = entityService.createQueryByMap(buildXsql(filter, false), filter);
+		Query query = entityService.createQueryByMap(buildXsql(false), filter);
 		if(first > 0){
 			query = query.setFirstResult(first);
 		}
@@ -112,11 +112,11 @@ public class ContactService implements Serializable {
 	}
 
 	public Integer findContactsCountBy(Map<String, Object> filter) {
-		List<Long> count = entityService.findByMap(buildXsql(filter, true), filter);
+		List<Long> count = entityService.findByMap(buildXsql(true), filter);
 		return Integer.valueOf(count.get(0).toString());
 	}
 
-	public String buildXsql(Map<String, Object> filter, boolean isCount) {
+	public String buildXsql(boolean isCount) {
 		StringBuffer xsql = new StringBuffer();
 		xsql.append("select");
 		if (isCount) {

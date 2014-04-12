@@ -1,6 +1,7 @@
 package com.wcs.base.service;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -749,6 +750,15 @@ public class EntityService implements Serializable {
         }
         return query.getResultList();
     }
+    
+    public Query createNativeQuery(final String queryString, final Map<String, ?> values) {
+        Validate.hasText(queryString, "queryString不能为空");
+        Query query = entityManager.createNativeQuery(queryString);
+        for (Map.Entry<String, ?> kv : values.entrySet()) {
+            query.setParameter(kv.getKey() + 1, kv.getValue());
+        }
+        return query;
+    }
 
     /**
      * 根据查询JPQL与参数列表创建Query对象.
@@ -824,6 +834,49 @@ public class EntityService implements Serializable {
         String jpql = builder.generateHql(xsql, paramMap).getXsql().toString();
 
         return jpql;
+    }
+    
+    public Query createNativeQueryByMap(String xsql, Map<String, Object> filterMap) {
+        Map<String, Object> paramMap = Maps.newHashMapWithExpectedSize(5);
+        String jpql = this.buildSqlAndParams(xsql, filterMap, paramMap);
+
+        return createNativeQuery(jpql, paramMap);
+    }
+    
+    public String buildSqlAndParams(String xsql, Map<String, Object> filterMap, Map<String, Object> paramMap) {
+    	// 得到需要动态构建的字段
+    	List<String> avialableKeys = Lists.newArrayList();
+    	
+    	Pattern p = Pattern.compile("\\{(.+?)\\}");
+    	Matcher m = p.matcher(xsql);
+    	
+    	while (m.find()) {
+    		avialableKeys.add(m.group(1));
+    	}
+    	//剔除不需要的过滤属性 和 空值的属性
+    	Map<String, Object> tmpMap = Maps.newHashMap();
+    	Map<String, Object> avialableFilterMap = Maps.newHashMap();
+    	for (Map.Entry<String, Object> kv : filterMap.entrySet()){
+    		if (kv.getValue()==null || "".equals(kv.getValue())){
+    			continue;
+    		}
+    		for (int i = 0; i <= avialableKeys.size() ; i++) {
+    			String s = avialableKeys.get(i);
+    			if (kv.getKey().contains(s)){
+    				tmpMap.put(kv.getKey().replace(s, String.valueOf(i)),kv.getValue());
+    				avialableFilterMap.put(s, kv.getValue());
+    				break;
+    			}
+			}
+    	}
+    	//Assert.isTrue(avialableKeys.size()== filterMap.size());
+    	this.convertMap(tmpMap, paramMap);
+    	
+    	// 构建 JPQL 语句
+    	XsqlBuilder builder = new XsqlBuilder();
+    	String sql = builder.generateSql(xsql, avialableFilterMap).getXsql().toString();
+    	
+    	return sql;
     }
     
     private Map<String,Object> convertMap(Map<String, Object> filterMap,Map<String, Object> paramMap){

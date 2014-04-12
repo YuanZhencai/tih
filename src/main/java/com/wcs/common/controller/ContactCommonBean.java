@@ -1,4 +1,4 @@
-/** * ContactBean.java 
+/** * ContactCommonBean.java 
  * Created on 2014年4月10日 下午5:24:44 
  */
 
