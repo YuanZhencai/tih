@@ -4,7 +4,9 @@
 
 package com.wcs.common.controller;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -95,7 +99,6 @@ public class ContactBean implements Serializable {
 				Integer contactCount = contactService.findContactsCountBy(filter);
 				Integer usersCount = contactCommonService.findUsersCountBy(filter);
 				rowCount = contactCount + usersCount;
-				System.out.println("[contactCount]" + contactCount + "[usersCount]" + usersCount);
 				List<ContactVo> contacts = contactService.findContactsBy(filter, first, pageSize);
 				contactVos.addAll(contacts);
 				if (contactCount > first) {
@@ -164,6 +167,36 @@ public class ContactBean implements Serializable {
 		filter.clear();
 	}
 
+	public void exportContacts() {
+		HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+		ServletOutputStream servletOutputStream = null;
+        try {
+            String fileName = java.net.URLEncoder.encode("通讯录.xls", "UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+			servletOutputStream = response.getOutputStream();
+            contactCommonService.exportContactsReport(new HashMap<String, Object>(), servletOutputStream);
+            servletOutputStream.close();
+            JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_INFO, "导出成功", ""));
+        } catch (UnsupportedEncodingException e) {
+        	logger.error(e.getMessage(), e);
+            JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "导出失败：", "文件名编码错误，请重新操作。"));
+            return;
+        } catch (Exception e) {
+        	JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "导出失败：", "生成excel错误，请重新操作。"));
+        	logger.error(e.getMessage(), e);
+            return;
+        } finally {
+        	try {
+				servletOutputStream.close();
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+            FacesContext.getCurrentInstance().responseComplete();
+        }
+		
+	}
+	
 	// ============================================GET && SET ===============================================//
 
 	public Map<String, Object> getFilter() {

@@ -1,7 +1,6 @@
 package com.wcs.base.service;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -842,7 +841,6 @@ public class EntityService implements Serializable {
 
 	public String buildSqlAndParams(String xsql, Map<String, Object> filterMap, Map<String, Object> paramMap) {
 
-		System.out.println("[filterMap]" + filterMap);
 
 		// 得到需要动态构建的字段
 		List<String> avialableKeys = Lists.newArrayList();
@@ -872,15 +870,12 @@ public class EntityService implements Serializable {
 				}
 			}
 		}
-		System.out.println("[tmpMap]" + tmpMap);
 		this.convertMap(tmpMap, paramMap);
-		System.out.println("[paramMap]" + paramMap);
 
 		// 构建 SQL 语句
 		XsqlBuilder builder = new XsqlBuilder();
 		String sql = builder.generateSql(xsql, avialableFilterMap).getXsql().toString();
 
-		System.out.println("[sql]" + sql);
 		return sql;
 	}
 

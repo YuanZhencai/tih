@@ -4,7 +4,9 @@
 
 package com.wcs.common.service;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +15,9 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import com.wcs.base.service.EntityService;
+import com.wcs.base.util.JSFUtils;
 import com.wcs.common.controller.vo.ContactVo;
+import com.wcs.common.util.JasperUtil;
 
 /** 
  * <p>Project: tih</p> 
@@ -31,10 +35,20 @@ public class ContactCommonService {
 	@EJB
 	private ContactService contactService;
 	
+	private static final String TEMPLATE_FOLDER = "/faces/report/excel/jasper/";
+
+	
+	public void exportContactsReport(Map<String, Object> filter, OutputStream os) {
+		List<ContactVo> contacts = findContactsAndUsersBy(filter);
+		String templatePath = JSFUtils.getRealPath() + TEMPLATE_FOLDER + "Contact.jasper";
+		JasperUtil.createXlsReport(templatePath, contacts, os, new HashMap<String, Object>());
+	}
 	
 	public List<ContactVo> findContactsAndUsersBy(Map<String, Object> filter) {
-		
-		return null;
+		List<ContactVo> contacts = contactService.findContactsBy(filter, 0, 0);
+		List<ContactVo> users = findUsersBy(filter, 0, 0);
+		contacts.addAll(users);
+		return contacts;
 	}
 	
 	public List<ContactVo> findUsersBy(Map<String, Object> filter, int first, int pageSize) {
@@ -50,7 +64,7 @@ public class ContactCommonService {
 		return getContactVosBy(resultList);
 	}
 	
-	public List<ContactVo> getContactVosBy(List<Object[]> rows){
+	private List<ContactVo> getContactVosBy(List<Object[]> rows){
 		List<ContactVo> contactVos = new ArrayList<ContactVo>();
 		
 		ContactVo contactVo = null;
@@ -59,9 +73,9 @@ public class ContactCommonService {
 			contactVo.setCompany(coulums[31] == null ? "":(coulums[31].toString()));
 			contactVo.setDefunctInd(coulums[8] == null ? "":(coulums[8].toString()));
 			contactVo.setEmail(coulums[17] == null? "":(coulums[17].toString()));
-			contactVo.setMobile(coulums[19] == null? "":(coulums[19].toString()));
+			contactVo.setTelephone(coulums[19] == null? "":(coulums[19].toString()));
 			contactVo.setPosition(coulums[28] == null? "":(coulums[28].toString()));
-			contactVo.setTelephone(coulums[20] == null? "":(coulums[20].toString()));
+			contactVo.setMobile(coulums[20] == null? "":(coulums[20].toString()));
 			contactVo.setAccount(coulums[1] == null? "":(coulums[1].toString()));
 			contactVo.setUsername(coulums[14] == null? "":(coulums[14].toString()));
 			contactVos.add(contactVo);
@@ -76,7 +90,7 @@ public class ContactCommonService {
 		return count;
 	}
 	
-	public String buildSql(boolean isCount){
+	private String buildSql(boolean isCount){
 		StringBuffer xsql = new StringBuffer();
 		xsql.append(" select");
 		if(isCount){

@@ -42,6 +42,7 @@
 			<f:facet name="header">
 				<div class="header">
 					<h:outputText value="通讯录列表" />
+					<p:commandButton styleClass="header_button" value="导出" ajax="false" action="#{contactBean.exportContacts()}" />
 				</div>
 			</f:facet>
 			<p:column headerText="公司名称">
