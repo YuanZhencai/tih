@@ -3,15 +3,19 @@ package com.wcs.common.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
+import com.wcs.base.service.EntityService;
 import com.wcs.base.service.LoginService;
 import com.wcs.common.controller.vo.CompanyManagerModel;
+import com.wcs.common.controller.vo.CompanyVo;
 import com.wcs.common.model.Companymstr;
 import com.wcs.common.model.O;
 import com.wcs.tih.model.Taxauthority;
@@ -21,6 +25,8 @@ import com.wcs.tih.util.HanYuUtil;
 public class CompanyService {
     @EJB
     private LoginService loginService;
+    @EJB
+    private EntityService entityService;
     @PersistenceContext
     private EntityManager em;
 
@@ -236,5 +242,35 @@ public class CompanyService {
             list.add(model);
         }
         return list;
+    }
+    
+    public List<CompanyVo> findCompanysBy(Map<String, Object> filter, int first, int pageSize) {
+    	StringBuilder xsql = new StringBuilder();
+    	//xsql
+    	
+    	Query query = entityService.createNativeQueryByMap(xsql.toString(), filter);
+    	if(first > 0){
+			query = query.setFirstResult(first);
+		}
+		if(pageSize > 0){
+			query = query.setMaxResults(pageSize);
+		}
+		List resultList = query.getResultList();
+		return getCompanyVosBy(resultList);
+	}
+    
+    private List<CompanyVo> getCompanyVosBy(List<Object[]> rows){
+    	List<CompanyVo> companyVos = new ArrayList<CompanyVo>();
+    	CompanyVo companyVo = null;
+    	for (Object[] coloums : rows) {
+    		companyVo = new CompanyVo();
+    		//....
+    		//....
+    		//....
+    		//....
+    		//....
+    		companyVos.add(companyVo);
+		}
+		return companyVos;
     }
 }

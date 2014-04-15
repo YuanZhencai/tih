@@ -359,6 +359,7 @@ public interface DictConsts {
 	public String TIH_TAX_REPORT_4 = "TIH.TAX.REPORT.4";// 转让定价信息汇总
 	public String TIH_TAX_REPORT_5 = "TIH.TAX.REPORT.5";// 反避税信息汇总
 	public String TIH_TAX_REPORT_6 = "TIH.TAX.REPORT.6";// 稽查信息汇总
+	public String TIH_TAX_REPORT_7 = "TIH.TAX.REPORT.7";// 财政返还信息汇总
 
 	public String TIH_TAX_DOCTYPE = "TIH.TAX.DOCTYPE";// 文档分类
 	public String TIH_TAX_1 = "TIH.TAX.1";// 纳税登记、申报及征管
