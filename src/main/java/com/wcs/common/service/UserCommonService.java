@@ -42,7 +42,21 @@ public class UserCommonService {
 	@SuppressWarnings({ "rawtypes" })
     public List<UsermstrVo> queryCommomUser(UserCommonFormItemsVo ucfiv) {
 	    StringBuffer sql = new StringBuffer();
-	    sql.append(" select u.*,p.*,lower(u.ad_account) from Usermstr u");
+	    sql.append(" select");
+	    sql.append(" u.ID,");
+	    sql.append(" u.AD_ACCOUNT,");
+	    sql.append(" u.PERNR,");
+	    sql.append(" u.ONBOARD_DATE,");
+	    sql.append(" u.BIRTHDAY,");
+	    sql.append(" u.IDENTITY_TYPE,");
+	    sql.append(" u.IDTENTITY_ID,");
+	    sql.append(" u.BACKGROUND_INFO,");
+	    sql.append(" u.DEFUNCT_IND,");
+	    sql.append(" u.CREATED_BY,");
+	    sql.append(" u.CREATED_DATETIME,");
+	    sql.append(" u.UPDATED_BY,");
+	    sql.append(" u.UPDATED_DATETIME,");
+	    sql.append(" p.*,lower(u.ad_account),u.POSITION_REMARK from Usermstr u");
 	    sql.append(" left join cas_usr_p cup on u.ad_account = cup.id");
 	    sql.append(" left join P p on cup.pernr=p.id");
 	    sql.append(" where u.defunct_ind <> 'Y'");
@@ -93,7 +107,8 @@ public class UserCommonService {
         usermstr.setCreatedDatetime(result[10] == null? null:(new Timestamp(((Date)result[10]).getTime())));
         usermstr.setUpdatedBy(result[11] == null? "":(result[11].toString()));
         usermstr.setUpdatedDatetime(result[12] == null? null:(new Timestamp(((Date)result[12]).getTime())));
-		return usermstr;
+        usermstr.setPositionRemark(result[28] == null? "":(result[28].toString()));
+        return usermstr;
     }
     
     private P getPersonBy(Object[] result) {
@@ -123,8 +138,16 @@ public class UserCommonService {
 
     private O getOBy(Object[] result) {
     	O o = new O();
-    	o.setId(result[28] == null? "":(result[28].toString()));
-    	o.setStext(result[30] == null? "":(result[30].toString()));
+    	o.setId(result[29] == null? "":(result[29].toString()));
+    	o.setBukrs(result[30] == null? "":(result[30].toString()));
+    	o.setStext(result[31] == null? "":(result[31].toString()));
+    	o.setParent(result[32] == null? "":(result[32].toString()));
+    	o.setKostl(result[33] == null? "":(result[33].toString()));
+    	o.setZhrzzcjid(result[34] == null? "":(result[34].toString()));
+    	o.setZhrzzdwid(result[35] == null? "":(result[35].toString()));
+    	o.setZhrtxxlid(result[36] == null? "":(result[36].toString()));
+    	o.setZhrtxxlms(result[37] == null? "":(result[37].toString()));
+    	o.setDefunctInd(result[38] == null? "":(result[38].toString()));
 		return o;
     }
     
@@ -164,7 +187,21 @@ public class UserCommonService {
      */
     public UsermstrVo getUsermstrVo(String adAccount) {
         StringBuffer sql = new StringBuffer();
-        sql.append(" select u.*,p.*,lower(u.ad_account) from Usermstr u");
+        sql.append(" select");
+	    sql.append(" u.ID,");
+	    sql.append(" u.AD_ACCOUNT,");
+	    sql.append(" u.PERNR,");
+	    sql.append(" u.ONBOARD_DATE,");
+	    sql.append(" u.BIRTHDAY,");
+	    sql.append(" u.IDENTITY_TYPE,");
+	    sql.append(" u.IDTENTITY_ID,");
+	    sql.append(" u.BACKGROUND_INFO,");
+	    sql.append(" u.DEFUNCT_IND,");
+	    sql.append(" u.CREATED_BY,");
+	    sql.append(" u.CREATED_DATETIME,");
+	    sql.append(" u.UPDATED_BY,");
+	    sql.append(" u.UPDATED_DATETIME,");
+	    sql.append(" p.*,lower(u.ad_account),u.POSITION_REMARK from Usermstr u");
         sql.append(" left join cas_usr_p cup on u.ad_account = cup.id");
         sql.append(" left join P p on cup.pernr=p.id");
         sql.append(" where u.ad_account = '"+ adAccount +"'");
@@ -418,10 +455,25 @@ public class UserCommonService {
     
     public List<UsermstrVo> findUsers(UserSearchVo usv){
     	StringBuffer sql = new StringBuffer();
-	    sql.append(" select distinct u.*,p.*,lower(u.ad_account),c.* from Usermstr u");
+    	sql.append(" select distinct");
+	    sql.append(" u.ID,");
+	    sql.append(" u.AD_ACCOUNT,");
+	    sql.append(" u.PERNR,");
+	    sql.append(" u.ONBOARD_DATE,");
+	    sql.append(" u.BIRTHDAY,");
+	    sql.append(" u.IDENTITY_TYPE,");
+	    sql.append(" u.IDTENTITY_ID,");
+	    sql.append(" u.BACKGROUND_INFO,");
+	    sql.append(" u.DEFUNCT_IND,");
+	    sql.append(" u.CREATED_BY,");
+	    sql.append(" u.CREATED_DATETIME,");
+	    sql.append(" u.UPDATED_BY,");
+	    sql.append(" u.UPDATED_DATETIME,");
+	    sql.append(" p.*,lower(u.ad_account),u.POSITION_REMARK,o.* from Usermstr u");
 	    sql.append(" left join cas_usr_p cup on u.ad_account = cup.id");
 	    sql.append(" left join P p on cup.pernr=p.id");
 	    sql.append(" left join vw_org_and_com c on p.orgeh = c.oid");
+	    sql.append(" left join O o on o.id = c.id");
 	    sql.append(" left join Userpositionorg upo on u.id=upo.usermstr_id and upo.defunct_ind='N'");
 	    sql.append(" left join Positionorg po on po.id=upo.positionorg_id and upo.defunct_ind='N'");
 	    sql.append(" left join Userrole ur on u.id=ur.usermstr_id and ur.defunct_ind='N'");

@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.wcs.base.util.StringUtils;
 import com.wcs.common.controller.vo.ContactVo;
+import com.wcs.common.service.ContactCommonService;
 import com.wcs.common.service.ContactService;
 
 @ManagedBean
@@ -33,6 +34,8 @@ public class ContactCommonBean implements Serializable {
 
 	@EJB
 	private ContactService contactService;
+	@EJB
+	private ContactCommonService contactCommonService;
 	
 	private String updateComponent;
     private String selectionMode;

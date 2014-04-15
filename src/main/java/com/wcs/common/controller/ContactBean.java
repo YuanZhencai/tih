@@ -5,9 +5,11 @@
 package com.wcs.common.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -26,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.wcs.base.util.JSFUtils;
 import com.wcs.common.controller.vo.ContactVo;
+import com.wcs.common.service.ContactCommonService;
 import com.wcs.common.service.ContactService;
 import com.wcs.tih.util.ValidateUtil;
 
@@ -40,11 +43,14 @@ public class ContactBean implements Serializable {
 
 	@EJB
 	private ContactService contactService;
+	@EJB
+	private ContactCommonService contactCommonService;
 	private Map<String, Object> filter = new HashMap<String, Object>();
 	private LazyDataModel<ContactVo> contactVos = null;
 
 	private ContactVo contactVo = new ContactVo();
 	private ContactVo selectedContactVo = null;
+	private static final ResourceBundle REGEX_BUNDLE = ResourceBundle.getBundle("regex");
 
 	public ContactBean() {
 		logger.info("ContactBean.ContactBean()");
@@ -56,14 +62,14 @@ public class ContactBean implements Serializable {
 	}
 
 	public void searchContact() {
-		contactVos = findEmailHistory(filter);
+		contactVos = findContactsBy(filter);
 	}
 
 	public void searchAllContact() {
-		contactVos = findEmailHistory(new HashMap<String, Object>());
+		contactVos = findContactsBy(new HashMap<String, Object>());
 	}
 
-	public LazyDataModel<ContactVo> findEmailHistory(final Map<String, Object> filter) {
+	public LazyDataModel<ContactVo> findContactsBy(final Map<String, Object> filter) {
 		LazyDataModel<ContactVo> contactVos = new LazyDataModel<ContactVo>() {
 			@Override
 			public List<ContactVo> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
@@ -76,8 +82,43 @@ public class ContactBean implements Serializable {
 		return contactVos;
 	}
 
+	public void searchContactsAndUsers() {
+		contactVos = findContactsAndUsersBy(filter);
+	}
+
+	public LazyDataModel<ContactVo> findContactsAndUsersBy(final Map<String, Object> filter) {
+		LazyDataModel<ContactVo> contactVos = new LazyDataModel<ContactVo>() {
+			@Override
+			public List<ContactVo> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
+				Integer rowCount = 0;
+				List<ContactVo> contactVos = new ArrayList<ContactVo>();
+				Integer contactCount = contactService.findContactsCountBy(filter);
+				Integer usersCount = contactCommonService.findUsersCountBy(filter);
+				rowCount = contactCount + usersCount;
+				System.out.println("[contactCount]" + contactCount + "[usersCount]" + usersCount);
+				List<ContactVo> contacts = contactService.findContactsBy(filter, first, pageSize);
+				contactVos.addAll(contacts);
+				if (contactCount > first) {
+					int last = first + pageSize;
+					if(last > contactCount){
+						List<ContactVo> users = contactCommonService.findUsersBy(filter, 0, last - contactCount);
+						contactVos.addAll(users);
+					}
+				} else {
+					List<ContactVo> users = contactCommonService.findUsersBy(filter, first - contactCount, pageSize);
+					contactVos.addAll(users);
+				}
+				setRowCount(rowCount);
+				return contactVos;
+			}
+		};
+
+		return contactVos;
+	}
+
 	public void initAddContact() {
 		contactVo = new ContactVo();
+		contactVo.setDefunctInd("N");
 	}
 
 	public void saveContact() {
@@ -108,6 +149,12 @@ public class ContactBean implements Serializable {
 		boolean validate = true;
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (!ValidateUtil.validateRequired(context, contactVo.getUsername(), "人员姓名：")) {
+			validate = false;
+		}
+		if (!ValidateUtil.validateRegex(context, contactVo.getMobile(), "手机号码：",  REGEX_BUNDLE.getString("PHONE"), "格式错误，请重新填写。")) {
+			validate = false;
+		}
+		if (!ValidateUtil.validateRegex(context, contactVo.getEmail(), "电子邮箱：",  REGEX_BUNDLE.getString("EMAIL"), "格式错误，请重新填写。")) {
 			validate = false;
 		}
 		return validate;

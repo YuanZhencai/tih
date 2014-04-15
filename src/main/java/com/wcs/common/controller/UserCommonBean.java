@@ -134,6 +134,10 @@ public class UserCommonBean {
         usermstrVoList = this.userCommonService.queryCommomUser(this.userCommonFormItemsVo);
         this.lazyUsermstrVoModel = new PageModel<UsermstrVo>(usermstrVoList, false);
     }
+    
+    public String getUserName(String adcount){
+    	return userCommonService.getUserName(adcount);
+    }
 
     public List<UsermstrVo> getUsermstrVoList() {
 		return usermstrVoList;

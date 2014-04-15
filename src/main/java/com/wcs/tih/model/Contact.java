@@ -30,6 +30,8 @@ public class Contact extends com.wcs.base.model.IdEntity implements Serializable
 	private String defunctInd;
 
 	private String email;
+	
+	private String account;
 
 	private String mobile;
 
@@ -155,5 +157,17 @@ public class Contact extends com.wcs.base.model.IdEntity implements Serializable
 	public void setUsername(String username) {
 		this.username = username;
 	}
+
+
+	public String getAccount() {
+		return account;
+	}
+
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+	
+	
 
 }

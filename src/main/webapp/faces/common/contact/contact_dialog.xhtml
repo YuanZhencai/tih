@@ -4,13 +4,12 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog id="contactDialog" widgetVar="contactDialogVar" minWidth="900" header="通讯录" resizable="false" minimizable="true">
 
-	<h:form id="contactForm" prependId="false">
-		<p:growl id="contactMsg" autoUpdate="false" showDetail="true"
-			life="10000" />
-		<div class="style1">
-			<h:panelGrid id="contactSearchPanel" columns="8"
-				columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+		<h:form id="contactDialogForm" prependId="false">
+			<div class="style1">
+			<h:panelGrid id="contactDialogSearchPanel" columns="4"
+				columnClasses="column1,column2,column1,column2">
 				<h:outputText value="人员姓名：" />
 				<p:inputText value="#{contactBean.filter['LIKES_username']}" />
 				<h:outputText value="岗位描述：" />
@@ -26,15 +25,15 @@
 			</h:panelGrid>
 			<div>
 				<p:commandButton value="查询" icon="ui-icon ui-icon-search"
-					action="#{contactBean.searchContact()}"
-					update=":contactForm:contactDataTable" style="margin-right: 5px;" />
+					action="#{contactBean.searchContactsAndUsers()}"
+					update=":contactDialogForm:contactDialogDataTable" style="margin-right: 5px;" />
 				<p:commandButton value="重置" icon="ui-icon ui-icon-search"
 					action="#{contactBean.reset()}"
-					update=":contactForm:contactSearchPanel" style="margin-right: 5px;" />
+					update=":contactDialogForm:contactDialogSearchPanel" style="margin-right: 5px;" />
 			</div>
 		</div>
 		<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
-			id="contactDataTable" value="#{contactBean.contactVos}"
+			id="contactDialogDataTable" value="#{contactBean.contactVos}"
 			paginator="true" rows="5" paginatorPosition="bottom"
 			paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
 			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
@@ -43,9 +42,6 @@
 			<f:facet name="header">
 				<div class="header">
 					<h:outputText value="通讯录列表" />
-					<p:commandButton styleClass="header_button" value="添加"
-						oncomplete="contactSaveDialogVar.show();"
-						update=":contactSaveForm" action="#{contactBean.initAddContact()}" />
 				</div>
 			</f:facet>
 			<p:column headerText="公司名称">
@@ -75,16 +71,8 @@
 			<p:column headerText="有效">
 				<h:outputText value="#{contact.defunctInd == 'N' ? '是' : '否'}" />
 			</p:column>
-			<p:column headerText="操作" style="text-align: center;width:20px">
-				<p:commandButton icon="ui-icon ui-icon-zoomin"
-					action="#{contactBean.editContact()}"
-					oncomplete="contactSaveDialogVar.show();" update=":contactSaveForm"
-					style="width: 18px;height: 18px;">
-					<f:setPropertyActionListener value="#{contact}"
-						target="#{contactBean.selectedContactVo}" />
-				</p:commandButton>
-			</p:column>
 		</p:dataTable>
 	</h:form>
+	</p:dialog>
 
 </ui:composition>

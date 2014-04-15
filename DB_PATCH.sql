@@ -3223,3 +3223,7 @@ alter table COMPANY_INVESTMENT add column INVEST_ADDRESS VARCHAR(500);
 alter table COMPANY_INVESTMENT add column INVESTMENT_RATIO VARCHAR(500);
 CALL sysproc.admin_cmd('reorg table COMPANY_INVESTMENT');
 
+-- ADD POSITION_REMARK
+alter table USERMSTR add column POSITION_REMARK VARCHAR(500);
+CALL sysproc.admin_cmd('reorg table USERMSTR');
+

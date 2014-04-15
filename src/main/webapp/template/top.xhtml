@@ -23,7 +23,7 @@
 			<ul>
 				<li>
 					<img src="#{request.contextPath}/images/icons/tongxunlu.png" />
-					<p:commandLink id="contactLink" action="#{contactCommonBean.initMode(':up_center:contactLink','nomal','','')}" oncomplete="contactCommonDialogVar.show()" update=":contactCommonForm" value="通讯录">
+					<p:commandLink id="contactLink" action="#{contactBean.searchContactsAndUsers()}" oncomplete="contactDialogVar.show()" update=":contactDialogForm" value="通讯录">
 					</p:commandLink>
 				</li>
 				<li>

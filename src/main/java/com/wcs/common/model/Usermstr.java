@@ -53,6 +53,9 @@ public class Usermstr extends com.wcs.base.model.IdEntity implements Serializabl
     @Temporal( TemporalType.TIMESTAMP)
 	@Column(name="UPDATED_DATETIME")
 	private Date updatedDatetime;
+    
+    @Column(name="POSITION_REMARK")
+	private String positionRemark;
 
 	//bi-directional many-to-one association to Usercompany
 	@OneToMany(mappedBy="usermstr", fetch=FetchType.EAGER)
@@ -187,6 +190,14 @@ public class Usermstr extends com.wcs.base.model.IdEntity implements Serializabl
 
 	public void setUserroles(List<Userrole> userroles) {
 		this.userroles = userroles;
+	}
+
+	public String getPositionRemark() {
+		return positionRemark;
+	}
+
+	public void setPositionRemark(String positionRemark) {
+		this.positionRemark = positionRemark;
 	}
 	
 }

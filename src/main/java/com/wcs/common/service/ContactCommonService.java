@@ -38,7 +38,7 @@ public class ContactCommonService {
 	}
 	
 	public List<ContactVo> findUsersBy(Map<String, Object> filter, int first, int pageSize) {
-		Query query = entityService.createNativeQuery(buildSql(false), filter);
+		Query query = entityService.createNativeQueryByMap(buildSql(false), filter);
 		if(first > 0){
 			query = query.setFirstResult(first);
 		}
@@ -56,9 +56,14 @@ public class ContactCommonService {
 		ContactVo contactVo = null;
 		for (Object[] coulums : rows) {
 			contactVo = new ContactVo();
-			//.....
-			//.....
-			//.....
+			contactVo.setCompany(coulums[31] == null ? "":(coulums[31].toString()));
+			contactVo.setDefunctInd(coulums[8] == null ? "":(coulums[8].toString()));
+			contactVo.setEmail(coulums[17] == null? "":(coulums[17].toString()));
+			contactVo.setMobile(coulums[19] == null? "":(coulums[19].toString()));
+			contactVo.setPosition(coulums[28] == null? "":(coulums[28].toString()));
+			contactVo.setTelephone(coulums[20] == null? "":(coulums[20].toString()));
+			contactVo.setAccount(coulums[1] == null? "":(coulums[1].toString()));
+			contactVo.setUsername(coulums[14] == null? "":(coulums[14].toString()));
 			contactVos.add(contactVo);
 		}
 		
@@ -67,31 +72,50 @@ public class ContactCommonService {
 	}
 	
 	public Integer findUsersCountBy(Map<String, Object> filter) {
-		Long count = (Long) entityService.createNativeQuery(buildSql(true), filter).getSingleResult();
-		return Integer.valueOf(String.valueOf(count));
+		Integer count = (Integer) entityService.createNativeQueryByMap(buildSql(true), filter).getSingleResult();
+		return count;
 	}
 	
 	public String buildSql(boolean isCount){
 		StringBuffer xsql = new StringBuffer();
 		xsql.append(" select");
 		if(isCount){
-			xsql.append(" count(u.id)");
+			xsql.append(" count(distinct(u.id))");
 		} else {
-			xsql.append(" distinct u.*,p.*,lower(u.ad_account),c.*");
+			xsql.append(" distinct");
+			xsql.append(" u.ID,");
+			xsql.append(" u.AD_ACCOUNT,");
+		    xsql.append(" u.PERNR,");
+		    xsql.append(" u.ONBOARD_DATE,");
+		    xsql.append(" u.BIRTHDAY,");
+		    xsql.append(" u.IDENTITY_TYPE,");
+		    xsql.append(" u.IDTENTITY_ID,");
+		    xsql.append(" u.BACKGROUND_INFO,");
+		    xsql.append(" u.DEFUNCT_IND,");
+		    xsql.append(" u.CREATED_BY,");
+		    xsql.append(" u.CREATED_DATETIME,");
+		    xsql.append(" u.UPDATED_BY,");
+		    xsql.append(" u.UPDATED_DATETIME,");
+			xsql.append(" p.*,lower(u.ad_account) as account,u.POSITION_REMARK,o.*");
 		}
 		xsql.append(" from Usermstr u");
 	    xsql.append(" left join cas_usr_p cup on u.ad_account = cup.id");
 	    xsql.append(" left join P p on cup.pernr=p.id");
 	    xsql.append(" left join vw_org_and_com c on p.orgeh = c.oid");
+	    xsql.append(" left join O o on o.id = c.id");
 	    xsql.append(" left join Userpositionorg upo on u.id=upo.usermstr_id and upo.defunct_ind='N'");
 	    xsql.append(" left join Positionorg po on po.id=upo.positionorg_id and upo.defunct_ind='N'");
 	    xsql.append(" left join Position ps on ps.id=po.position_id and ps.defunct_ind='N'");
 	    xsql.append(" left join Userrole ur on u.id=ur.usermstr_id and ur.defunct_ind='N'");
 	    xsql.append(" where 1 = 1 ");
 	    
-	    xsql.append(" /~ and p.nachn like '[username]' ~/ ");
-	    xsql.append(" /~ and ps.position like '[position]' ~/ ");
-	    xsql.append(" /~ and c.stext like '[company]' ~/ ");
+	    xsql.append(" /~ and u.ad_account like {username} ~/ ");
+	    xsql.append(" /~ and ps.position like {position} ~/ ");
+	    xsql.append(" /~ and c.stext like {company} ~/ ");
+	    xsql.append(" /~ and u.defunct_ind = {defunctInd} ~/ ");
+	    if(!isCount){
+	    	xsql.append(" order by account");
+	    }
 		
 		return xsql.toString();
 		

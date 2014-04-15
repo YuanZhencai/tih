@@ -737,11 +737,14 @@ public class ApplyQuestionBean implements Serializable {
 		for (WfInstancemstrProperty wp : wfInsProList) {
 			wfInsProAndStepProMap.put(wp.getName(), wp.getValue());
 		}
+		// fix Bug #15027
 		List<WfStepmstrProperty> wpList = null;
-		if (this.wfIns.getWfStepmstrs() != null) {
-			wpList = wfIns.getWfStepmstrs().get(0).getWfStepmstrProperties();
+		List<WfStepmstr> wfStepmstrs = wfIns.getWfStepmstrs();
+		if (wfStepmstrs != null && wfStepmstrs.size() > 0) {
+			wpList = wfStepmstrs.get(wfStepmstrs.size() - 1).getWfStepmstrProperties();
 		} else {
-			wpList = this.applyQuestionService.getwfstepmatrs(this.wfIns.getId()).get(0).getWfStepmstrProperties();
+			wfStepmstrs = this.applyQuestionService.getwfstepmatrs(this.wfIns.getId());
+			wpList = wfStepmstrs.get(wfStepmstrs.size() - 1).getWfStepmstrProperties();
 		}
 		for (WfStepmstrProperty wp : wpList) {
 			wfInsProAndStepProMap.put(wp.getName(), wp.getValue());

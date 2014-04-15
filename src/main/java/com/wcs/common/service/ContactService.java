@@ -68,6 +68,7 @@ public class ContactService implements Serializable {
 		contact.setRemark(contactVo.getRemark());
 		contact.setTelephone(contactVo.getTelephone());
 		contact.setUsername(contactVo.getUsername());
+		contact.setAccount(contactVo.getAccount());
 
 		return contact;
 	}
@@ -108,6 +109,7 @@ public class ContactService implements Serializable {
 		contactVo.setRemark(contact.getRemark());
 		contactVo.setTelephone(contact.getTelephone());
 		contactVo.setUsername(contact.getUsername());
+		contactVo.setAccount(contact.getAccount());
 		return contactVo;
 	}
 

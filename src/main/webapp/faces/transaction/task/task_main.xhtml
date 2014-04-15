@@ -257,7 +257,7 @@
 					<!-- 提问申请单 -->
 					<p:commandButton
 						action="#{applyQuestionBean.showWorkflowProcessData}"
-						update=":createDlgFirstId,:createDlgFirstId:sumbitAccId:supervisorAs"
+						update=":createDlgFirstId,:questionMsgIdX,:createDlgFirstId:sumbitAccId:supervisorAs"
 						oncomplete="applyQuestionDlgVar.show()" title="详细"
 						icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;"
 						rendered="#{wfiv.type eq commonBean.tihTaxRequestform3 and wfiv.status != commonBean.tihTaxWorkflowstatus1 ? true : false}">

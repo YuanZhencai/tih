@@ -47,6 +47,8 @@ public class ContactVo {
 
 	private String username;
 
+	private String account;
+	
 	public Contact getContact() {
 		return contact;
 	}
@@ -157,6 +159,14 @@ public class ContactVo {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
 	}
 	
 	
