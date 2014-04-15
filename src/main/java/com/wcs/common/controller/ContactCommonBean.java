@@ -49,19 +49,15 @@ public class ContactCommonBean implements Serializable {
 	private List<ContactVo> contactVos;
 
 	public ContactCommonBean() {
-		logger.info("ContactCommonBean.ContactCommonBean()");
 	}
 
 	@PostConstruct
 	public void init() {
-		logger.info("ContactCommonBean.init()");
-		updateComponent = ":up_center:contactLink";
-		selectionMode = "nomal";
-		searchContact();
+		updateComponent = ":contactCommonForm";
+		selectionMode = "single";
 	}
 	
 	public void initMode(String component, String mode, String bean, String method) {
-		logger.info("ContactCommonBean.initMode()");
 		this.updateComponent = component;
 		this.selectionMode = mode;
 		this.bean = bean;
@@ -69,7 +65,7 @@ public class ContactCommonBean implements Serializable {
 	}
 
 	public void searchContact() {
-		contactVos = contactService.findContactsBy(filter, 0, 0);
+		contactVos = contactCommonService.findContactsAndUsersBy(filter);
 	}
 	
 	public void reset() {

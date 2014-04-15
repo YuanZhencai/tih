@@ -17,8 +17,10 @@ import com.wcs.tih.model.Contact;
  * @author <a href="mailto:yuanzhencai@wcs-global.com">Yuan</a>
  */
 
-public class ContactVo {
+public class ContactVo{
 
+	private Long id;
+	
 	private Contact contact;
 	
 	private String address;
@@ -167,6 +169,14 @@ public class ContactVo {
 
 	public void setAccount(String account) {
 		this.account = account;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	

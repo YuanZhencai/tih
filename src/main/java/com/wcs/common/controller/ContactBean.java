@@ -57,12 +57,10 @@ public class ContactBean implements Serializable {
 	private static final ResourceBundle REGEX_BUNDLE = ResourceBundle.getBundle("regex");
 
 	public ContactBean() {
-		logger.info("ContactBean.ContactBean()");
 	}
 
 	@PostConstruct
 	public void init() {
-		logger.info("ContactBean.init()");
 	}
 
 	public void searchContact() {

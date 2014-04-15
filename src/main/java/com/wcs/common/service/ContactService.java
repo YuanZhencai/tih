@@ -93,6 +93,7 @@ public class ContactService implements Serializable {
 
 	public ContactVo getContactVoByContact(Contact contact) {
 		ContactVo contactVo = new ContactVo();
+		contactVo.setId(contact.getId());
 		contactVo.setContact(contact);
 
 		contact.setCreatedBy(contact.getCreatedBy());

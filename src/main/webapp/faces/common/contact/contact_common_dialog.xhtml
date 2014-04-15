@@ -4,14 +4,18 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
-	<p:dialog id="contactCommonDialog" widgetVar="contactCommonDialogVar"
-		resizable="false" header="通讯录" modal="true">
+	<ui:define name="styleAndScript">
+		<style type="text/css">
+		#contactCommonForm th {
+			width: 200px
+		}
+		</style>
+	</ui:define>
+	<p:dialog id="contactCommonDialog" widgetVar="contactCommonDialogVar" header="通讯录" modal="true" resizable="false">
 
 		<h:form id="contactCommonForm" prependId="false">
-			<p:growl id="contactCommonMsg" autoUpdate="false" showDetail="true"
-				life="10000" />
 			<div class="style1">
-				<h:panelGrid id="contactCommonSearchPanel" columns="8"
+				<h:panelGrid id="contactCommonSearchPanel" columns="4"
 					columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
 					<h:outputText value="人员姓名：" />
 					<p:inputText value="#{contactCommonBean.filter['LIKES_username']}" />
@@ -30,8 +34,7 @@
 				<div>
 					<p:commandButton value="查询" icon="ui-icon ui-icon-search"
 						action="#{contactCommonBean.searchContact()}"
-						update=":contactCommonForm:contactCommonDataTable"
-						style="margin-right: 5px;" />
+						update=":contactCommonForm" style="margin-right: 5px;" />
 					<p:commandButton value="重置" icon="ui-icon ui-icon-search"
 						action="#{contactCommonBean.reset()}"
 						update=":contactCommonForm:contactCommonSearchPanel"
@@ -39,47 +42,12 @@
 				</div>
 			</div>
 			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
-				rendered="#{contactCommonBean.selectionMode == 'nomal' ? true : false}"
-				id="contactCommonDataTable" value="#{contactCommonBean.contactVos}"
-				scrollable="true" scrollHeight="150" scrollWidth="600"
-				var="contact" rowIndexVar="index" style="margin-top:5px;"
-				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
-				<f:facet name="header">
-					<div class="header">
-						<h:outputText value="通讯录列表1" />
-					</div>
-				</f:facet>
-				<p:column headerText="公司名称">
-					<h:outputText value="#{contact.company}" />
-				</p:column>
-				<p:column headerText="人员姓名">
-						<h:outputText value="#{userCommonBean.getUserName(contact.username)}" />
-				</p:column>
-				<p:column headerText="岗位描述">
-					<h:outputText value="#{contact.position}" />
-				</p:column>
-				<p:column headerText="手机号码">
-					<h:outputText value="#{contact.mobile}" />
-				</p:column>
-				<p:column headerText="办公电话">
-					<h:outputText value="#{contact.telephone}" />
-				</p:column>
-				<p:column headerText="电子邮箱">
-					<h:outputText value="#{contact.email}" />
-				</p:column>
-				<p:column headerText="联系地址">
-					<h:outputText value="#{contact.address}" />
-				</p:column>
-				<p:column headerText="有效">
-					<h:outputText value="#{contact.defunctInd == 'N' ? '是' : '否'}" />
-				</p:column>
-			</p:dataTable>
-			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
-				rowKey="#{contact.contact}"
+				rowKey="#{contact.id}"
 				rendered="#{contactCommonBean.selectionMode == 'single' ? true : false}"
 				id="contactSingleDataTable" value="#{contactCommonBean.contactVos}"
-				selection="#{contactCommonBean.selectedContactVo}" scrollable="true" scrollHeight="150" scrollWidth="600"
-				var="contact" rowIndexVar="index" style="margin-top:5px;"
+				selection="#{contactCommonBean.selectedContactVo}" scrollable="true"
+				scrollHeight="300" scrollWidth="640" var="contact"
+				rowIndexVar="index" style="margin-top:5px;"
 				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
 				<f:facet name="header">
 					<div class="header">
@@ -88,11 +56,12 @@
 				</f:facet>
 				<p:column selectionMode="#{contactCommonBean.selectionMode}"
 					style="text-align: center;width: 50px;" />
-				<p:column headerText="公司名称">
+				<p:column headerText="公司名称" resizable="true">
 					<h:outputText value="#{contact.company}" />
 				</p:column>
 				<p:column headerText="人员姓名">
-					<h:outputText value="#{userCommonBean.getUserName(contact.username)}" />
+					<h:outputText
+						value="#{userCommonBean.getUserName(contact.username)}" />
 				</p:column>
 				<p:column headerText="岗位描述">
 					<h:outputText value="#{contact.position}" />
@@ -114,13 +83,13 @@
 				</p:column>
 			</p:dataTable>
 			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
-				rowKey="#{contact.contact}"
+				rowKey="#{contact.id}"
 				rendered="#{contactCommonBean.selectionMode == 'multiple' ? true : false}"
 				id="contactMultipleDataTable"
 				value="#{contactCommonBean.contactVos}"
-				selection="#{contactCommonBean.selectedContactVos}" 
-				scrollable="true" scrollHeight="150" scrollWidth="600"
-				var="contact" rowIndexVar="index" style="margin-top:5px;"
+				selection="#{contactCommonBean.selectedContactVos}"
+				scrollable="true" scrollHeight="300" scrollWidth="640" var="contact"
+				rowIndexVar="index" style="margin-top:5px;"
 				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
 				<f:facet name="header">
 					<div class="header">
@@ -156,8 +125,12 @@
 			</p:dataTable>
 
 			<div style="text-align: center; margin-top: 5px;">
-			<p:commandButton update="#{contactCommonBean.updateComponent}" oncomplete="contactCommonDialogVar.hide()" action="#{contactCommonBean.excuteControllerBeanMethod()}" value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check" style="margin-right: 5px;" />
-				
+				<p:commandButton update="#{contactCommonBean.updateComponent}"
+					oncomplete="contactCommonDialogVar.hide()"
+					action="#{contactCommonBean.excuteControllerBeanMethod()}"
+					value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+					style="margin-right: 5px;" />
+
 				<p:commandButton icon="ui-icon ui-icon-cancel"
 					value="#{msgs.btn_cancel}" type="button"
 					onclick="contactCommonDialogVar.hide()" />
