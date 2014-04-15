@@ -71,6 +71,7 @@ public class UserService {
         }
         um.setBirthday(userVo.getBirthday());
         um.setBackgroundInfo(userVo.getRemark());
+        um.setPositionRemark(userVo.getPositionRemark());
         um.setDefunctInd(userVo.getEffective());
         um.setCreatedDatetime(new Date());
         um.setCreatedBy(this.loginService.getCurrentUserName());
@@ -101,6 +102,7 @@ public class UserService {
         }
         um.setBirthday(userVo.getBirthday());
         um.setBackgroundInfo(userVo.getRemark());
+        um.setPositionRemark(userVo.getPositionRemark());
         um.setDefunctInd(userVo.getEffective());
         um.setUpdatedDatetime(new Date());
         um.setUpdatedBy(this.loginService.getCurrentUserName());

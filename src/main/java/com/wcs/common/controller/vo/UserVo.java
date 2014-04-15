@@ -23,6 +23,7 @@ public class UserVo extends IdModel implements Serializable {
     private Date birthday;
     private String effective;
     private String remark;
+    private String positionRemark;
 
     public String getUserName() {
         return userName;
@@ -136,4 +137,13 @@ public class UserVo extends IdModel implements Serializable {
         this.remark = remark;
     }
 
+	public String getPositionRemark() {
+		return positionRemark;
+	}
+
+	public void setPositionRemark(String positionRemark) {
+		this.positionRemark = positionRemark;
+	}
+
+    
 }

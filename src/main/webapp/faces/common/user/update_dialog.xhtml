@@ -59,6 +59,8 @@
 				<h:outputText value="出生日期：" />
 				<p:calendar value="#{userBean.userVo.birthday}" pattern="yyyy-MM-dd"
 					locale="cn" navigator="true" readOnlyInputText="true" />
+				<h:outputText value="岗位描述：" />
+				<p:inputText value="#{userBean.userVo.positionRemark}" />
 			</h:panelGrid>
 			<h:panelGrid columns="2" columnClasses="column1,column2">
 				<h:outputText value="背景说明：" />

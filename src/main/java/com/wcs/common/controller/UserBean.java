@@ -194,6 +194,7 @@ public class UserBean {
             userVo.setBirthday(usermstr.getBirthday());
             userVo.setEffective(usermstr.getDefunctInd());
             userVo.setRemark(usermstr.getBackgroundInfo());
+            userVo.setPositionRemark(usermstr.getPositionRemark());
         }
         if (p != null) {
             userVo.setRealName(p.getNachn());
@@ -216,8 +217,8 @@ public class UserBean {
         int num = 0;
         if (null != userVo.getBirthday()) {
             num = DateUtil.daysOfTwo(userVo.getBirthday(), new Date());
-            if (num < 0) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "失败", "出生日期不能小于当前日期，请重新选择出生日期"));
+            if (num > 0) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "失败", "出生日期不能大于当前日期，请重新选择出生日期"));
                 return;
             }
             if (null != userVo.getWorkDateTime()) {
