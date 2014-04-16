@@ -5,11 +5,6 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 	<ui:define name="styleAndScript">
-		<style type="text/css">
-		#contactCommonForm th {
-			width: 200px
-		}
-		</style>
 	</ui:define>
 	<p:dialog id="contactCommonDialog" widgetVar="contactCommonDialogVar" header="通讯录" modal="true" resizable="false">
 
@@ -51,7 +46,7 @@
 				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
 				<f:facet name="header">
 					<div class="header">
-						<h:outputText value="通讯录列表2" />
+						<h:outputText value="通讯录列表" />
 					</div>
 				</f:facet>
 				<p:column selectionMode="#{contactCommonBean.selectionMode}"
@@ -93,7 +88,7 @@
 				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
 				<f:facet name="header">
 					<div class="header">
-						<h:outputText value="通讯录列表3" />
+						<h:outputText value="通讯录列表" />
 					</div>
 				</f:facet>
 				<p:column selectionMode="#{contactCommonBean.selectionMode}"
