@@ -22,8 +22,7 @@ public class MimeTypeMap {
 		Assert.notEmpty(extension, "extension is null");
 		String mimetype = (String) mimetypeMap.get(extension.toLowerCase());
 		if (mimetype == null) {
-			throw new NullPointerException("Extension '" + extension + "' does not have a mime type specified. Please add"
-					+ " its mime type in MimeTypes.properties");
+			mimetype = "application/octet-stream";
 		}
 		return mimetype;
 	}

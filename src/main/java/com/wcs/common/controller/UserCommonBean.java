@@ -79,8 +79,7 @@ public class UserCommonBean {
      * @param adAccount 用户帐号
      */
     public String getUserRealName(String adAccount){
-        P p = userCommonService.getUsermstrVo(adAccount).getP();
-        return p == null ? adAccount:p.getNachn();
+        return getUserName(adAccount);
     }
 
     /**
@@ -135,8 +134,8 @@ public class UserCommonBean {
         this.lazyUsermstrVoModel = new PageModel<UsermstrVo>(usermstrVoList, false);
     }
     
-    public String getUserName(String adcount){
-    	return userCommonService.getUserName(adcount);
+    public String getUserName(String adAccount){
+    	return userCommonService.getUserName(adAccount);
     }
 
     public List<UsermstrVo> getUsermstrVoList() {

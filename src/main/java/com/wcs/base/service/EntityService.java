@@ -693,7 +693,10 @@ public class EntityService implements Serializable {
 		Query query = entityManager.createQuery(queryString);
 		if (values != null) {
 			for (int i = 1; i <= values.length; i++) {
-				query.setParameter(i, values[i - 1]);
+				Object value = values[i - 1];
+				if(value != null) {
+					query.setParameter(i, value);
+				}
 			}
 		}
 		return query;
@@ -714,7 +717,10 @@ public class EntityService implements Serializable {
 		Query query = entityManager.createNativeQuery(queryString);
 		if (values != null) {
 			for (int i = 1; i <= values.length; i++) {
-				query.setParameter(i, values[i - 1]);
+				Object value = values[i - 1];
+				if(value != null) {
+					query.setParameter(i, value);
+				}
 			}
 		}
 		return query;

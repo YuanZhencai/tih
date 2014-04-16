@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Financial Annual" language="groovy" pageWidth="1119" pageHeight="20" columnWidth="1119" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="bb00e5ca-f40d-44ea-8d5e-b99d7ad10b56">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="createdDatetime" class="java.util.Date">
+		<fieldDescription><![CDATA[createdDatetime]]></fieldDescription>
+	</field>
+	<field name="paymentDatetime" class="java.util.Date">
+		<fieldDescription><![CDATA[paymentDatetime]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[id]]></fieldDescription>
+	</field>
+	<field name="baseReturnAccount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[baseReturnAccount]]></fieldDescription>
+	</field>
+	<field name="returnAccount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[returnAccount]]></fieldDescription>
+	</field>
+	<field name="shouldReturnAccount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[shouldReturnAccount]]></fieldDescription>
+	</field>
+	<field name="updatedBy" class="java.lang.String">
+		<fieldDescription><![CDATA[updatedBy]]></fieldDescription>
+	</field>
+	<field name="companyFinancialReturn" class="com.wcs.tih.model.CompanyFinancialReturn">
+		<fieldDescription><![CDATA[companyFinancialReturn]]></fieldDescription>
+	</field>
+	<field name="returnYear" class="java.util.Date">
+		<fieldDescription><![CDATA[returnYear]]></fieldDescription>
+	</field>
+	<field name="returnPurpose" class="java.lang.String">
+		<fieldDescription><![CDATA[returnPurpose]]></fieldDescription>
+	</field>
+	<field name="defunctInd" class="java.lang.String">
+		<fieldDescription><![CDATA[defunctInd]]></fieldDescription>
+	</field>
+	<field name="remark" class="java.lang.String">
+		<fieldDescription><![CDATA[remark]]></fieldDescription>
+	</field>
+	<field name="createdBy" class="java.lang.String">
+		<fieldDescription><![CDATA[createdBy]]></fieldDescription>
+	</field>
+	<field name="updatedDatetime" class="java.util.Date">
+		<fieldDescription><![CDATA[updatedDatetime]]></fieldDescription>
+	</field>
+	<field name="actualReturnAccount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[actualReturnAccount]]></fieldDescription>
+	</field>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1d158717-1b76-4119-9a17-068f58395aa0" stretchType="RelativeToBandHeight" x="300" y="0" width="140" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{returnAccount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3faf59cf-6a25-461a-b2a7-f640e3dc73ad" stretchType="RelativeToBandHeight" x="100" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{baseReturnAccount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5c560e01-6a1a-452c-8f6b-d12bf00c5db7" stretchType="RelativeToBandHeight" x="200" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{returnYear}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="34fbf823-57c0-4dfc-a67c-c93c719e7ccc" stretchType="RelativeToBandHeight" x="0" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{actualReturnAccount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="c5924898-3f5c-460d-b820-02e76a35212b" stretchType="RelativeToBandHeight" x="440" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{returnYear}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="f523e984-f276-4bb2-8e8f-ffaee8b00198" stretchType="RelativeToBandHeight" x="540" y="0" width="325" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{returnPurpose}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="48e15697-d6e6-453c-8d82-aeca5da44df7" stretchType="RelativeToBandHeight" x="865" y="0" width="254" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

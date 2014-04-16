@@ -6,11 +6,8 @@ package com.wcs.common.controller.vo;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import com.wcs.common.model.Companymstr;
+import com.wcs.common.model.O;
 
 /** 
  * <p>Project: tih</p> 
@@ -24,8 +21,10 @@ import com.wcs.common.model.Companymstr;
 public class CompanyVo {
 
 	
-	private Companymstr company;
+	private Companymstr company = new Companymstr();
+	private O o = new O();
 	
+	// Companymstr
 	private String address;
 
     private Date startDatetime;
@@ -56,7 +55,33 @@ public class CompanyVo {
     private String province;
     
     private String code;
+    
+    // O
+	private String bukrs;
 
+	private String kostl;
+
+	private String parent;
+
+	private String stext;
+
+	private String zhrtxxlid;
+
+	private String zhrtxxlms;
+
+	private String zhrzzcjid;
+
+	private String zhrzzdwid;
+	
+	public CompanyVo() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public CompanyVo(Companymstr company, O o) {
+		this.company = company;
+		this.o = o;
+	}
+	
 	public Companymstr getCompany() {
 		return company;
 	}
@@ -191,6 +216,78 @@ public class CompanyVo {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public O getO() {
+		return o;
+	}
+
+	public void setO(O o) {
+		this.o = o;
+	}
+
+	public String getBukrs() {
+		return bukrs;
+	}
+
+	public void setBukrs(String bukrs) {
+		this.bukrs = bukrs;
+	}
+
+	public String getKostl() {
+		return kostl;
+	}
+
+	public void setKostl(String kostl) {
+		this.kostl = kostl;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
+
+	public String getStext() {
+		return stext;
+	}
+
+	public void setStext(String stext) {
+		this.stext = stext;
+	}
+
+	public String getZhrtxxlid() {
+		return zhrtxxlid;
+	}
+
+	public void setZhrtxxlid(String zhrtxxlid) {
+		this.zhrtxxlid = zhrtxxlid;
+	}
+
+	public String getZhrtxxlms() {
+		return zhrtxxlms;
+	}
+
+	public void setZhrtxxlms(String zhrtxxlms) {
+		this.zhrtxxlms = zhrtxxlms;
+	}
+
+	public String getZhrzzcjid() {
+		return zhrzzcjid;
+	}
+
+	public void setZhrzzcjid(String zhrzzcjid) {
+		this.zhrzzcjid = zhrzzcjid;
+	}
+
+	public String getZhrzzdwid() {
+		return zhrzzdwid;
+	}
+
+	public void setZhrzzdwid(String zhrzzdwid) {
+		this.zhrzzdwid = zhrzzdwid;
 	}
     
     

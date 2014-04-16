@@ -5,13 +5,11 @@ import java.util.Date;
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
-import javax.ejb.Stateless;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wcs.tih.homepage.service.RssService;
-import com.wcs.tih.system.service.NewsManagerService;
 
 /**
  * <p>Project: tih</p>
@@ -20,7 +18,6 @@ import com.wcs.tih.system.service.NewsManagerService;
  * <p>All Rights Reserved.</p>
  * @author <a href="mailto:yubinfeng@wcs-global.com">喻彬峰</a>
  */
-@Stateless
 @Singleton
 public class TimingLoadRssManager {
     private Logger logger = LoggerFactory.getLogger(getClass());

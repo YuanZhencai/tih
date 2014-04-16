@@ -245,18 +245,33 @@ public class CompanyService {
     }
     
     public List<CompanyVo> findCompanysBy(Map<String, Object> filter, int first, int pageSize) {
-    	StringBuilder xsql = new StringBuilder();
+    	StringBuilder jpql = new StringBuilder();
     	//xsql
+    	jpql.append(" select new com.wcs.common.controller.vo.CompanyVo(c,o)");
+    	jpql.append(" from Companymstr c ,O o");
+    	jpql.append(" where 1=1");
+    	jpql.append(" and c.oid = o.id");
+    	jpql.append(" and c.defunctInd = 'N'");
+    	jpql.append(" and o.defunctInd = 'N'");
     	
-    	Query query = entityService.createNativeQueryByMap(xsql.toString(), filter);
+    	// filter ...
+    	Object companyIds = null;
+    	if(filter != null) {
+			companyIds = filter.get("companyIds");
+    		if(companyIds != null){
+    			jpql.append(" and c.id in ?1");
+    		}
+    	}
+    	jpql.append( " order by c.code");
+		Query query = entityService.createQuery(jpql.toString(), companyIds);
     	if(first > 0){
 			query = query.setFirstResult(first);
 		}
 		if(pageSize > 0){
 			query = query.setMaxResults(pageSize);
 		}
-		List resultList = query.getResultList();
-		return getCompanyVosBy(resultList);
+		List<CompanyVo> companyVos = query.getResultList();
+		return companyVos;
 	}
     
     private List<CompanyVo> getCompanyVosBy(List<Object[]> rows){
@@ -264,11 +279,8 @@ public class CompanyService {
     	CompanyVo companyVo = null;
     	for (Object[] coloums : rows) {
     		companyVo = new CompanyVo();
-    		//....
-    		//....
-    		//....
-    		//....
-    		//....
+    		companyVo.setO(coloums[0] == null ? null : (O)coloums[0]);
+    		companyVo.setCompany(coloums[1] == null ? null : (Companymstr)coloums[1]);
     		companyVos.add(companyVo);
 		}
 		return companyVos;
