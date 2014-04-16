@@ -26,25 +26,14 @@ import com.wcs.common.controller.vo.CompanyVo;
 import com.wcs.tih.model.ReportSummaryHistory;
 import com.wcs.tih.report.service.FinancialReportService;
 
-/**
- * <p>
- * Project: tih
- * </p>
- * <p>
- * Title: FinancialReportBean.java
- * </p>
- * <p>
- * Description:
- * </p>
- * <p>
- * Copyright (c) 2014 Wilmar Consultancy Services
- * </p>
- * <p>
- * All Rights Reserved.
- * </p>
- * 
- * @author <a href="mailto:yuanzhencai@wcs-global.com">Yuan</a>
- */
+/** 
+* <p>Project: tih</p> 
+* <p>Title: FinancialReportBean.java</p> 
+* <p>Description: </p> 
+* <p>Copyright (c) 2014 Wilmar Consultancy Services</p>
+* <p>All Rights Reserved.</p>
+* @author <a href="mailto:yuanzhencai@wcs-global.com">Yuan</a> 
+*/
 @ManagedBean
 @ViewScoped
 public class FinancialReportBean implements Serializable {
@@ -71,12 +60,10 @@ public class FinancialReportBean implements Serializable {
 	private int activeIndex;
 
 	public FinancialReportBean() {
-		logger.info("FinancialReportBean.FinancialReportBean()");
 	}
 
 	@PostConstruct
 	public void init() {
-		logger.info("FinancialReportBean.init()");
 		searchFinancialSummaryHistory();
 	}
 
