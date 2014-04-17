@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import com.wcs.base.util.JSFUtils;
 import com.wcs.common.consts.DictConsts;
+import com.wcs.common.controller.vo.CompanyManagerModel;
+import com.wcs.common.controller.vo.ContactVo;
 import com.wcs.common.controller.vo.NotificationVo;
 import com.wcs.tih.homepage.contronller.vo.LearningGardenAndCommonDataVo;
 import com.wcs.tih.homepage.contronller.vo.NewschannelmstrVo;
@@ -75,7 +77,9 @@ public class HomePageBean {
 	private LazyDataModel<NoticeVo> notReadLazyModel;
 	private LazyDataModel<NoticeVo> readedLazyModel;
 	
-	private NotificationVo sysNoticeVo = null;
+	private NotificationVo sysNoticeVo = new NotificationVo();
+	
+	private List<ContactVo> selectedNoticeReceivers = null;
 
 	/**
 	 * <p>
@@ -123,6 +127,8 @@ public class HomePageBean {
 			logger.error(e.getMessage(), e);
 		}
 	}
+	
+	
 
 	// ======================================Yuan======================================//
 
@@ -142,6 +148,8 @@ public class HomePageBean {
 
 	
 	public void sendSysNotice() {
+		System.out.println("HomePageBean.sendSysNotice()");
+		
 		if(validateSysNotice(sysNoticeVo)) {
 			try {
 				sysNoticeService.sendSysNotice(sysNoticeVo);
@@ -157,7 +165,7 @@ public class HomePageBean {
 	private boolean validateSysNotice(NotificationVo sysNoticeVo) {
 		boolean validate = true;
 		FacesContext context = FacesContext.getCurrentInstance();
-		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getTitle(), "消息标题：")) {
+		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getTitle(), "通知主题：")) {
 			validate = false;
 		}
 		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getContent(), "消息内容：")) {
@@ -169,6 +177,19 @@ public class HomePageBean {
 		}
 		return validate;
 	}
+	
+	public void selectContacts(ContactVo[] contactVos) {
+		List<String> receivers = sysNoticeVo.getReceiverList();
+		selectedNoticeReceivers = new ArrayList<ContactVo>();
+		for (ContactVo contactVo : contactVos) {
+			if (contactVo.getContact() != null) {
+				contactVo.setAccount(contactVo.getEmail());
+			} 
+			receivers.add(contactVo.getAccount());
+			selectedNoticeReceivers.add(contactVo);
+		}
+	}
+	
 	// ======================================Yuan======================================//
 
 	/**
@@ -364,13 +385,22 @@ public class HomePageBean {
 		this.readedLazyModel = readedLazyModel;
 	}
 
-	public NoticeVo getSysNoticeVo() {
+	public NotificationVo getSysNoticeVo() {
 		return sysNoticeVo;
 	}
 
-	public void setSysNoticeVo(NoticeVo sysNoticeVo) {
+	public void setSysNoticeVo(NotificationVo sysNoticeVo) {
 		this.sysNoticeVo = sysNoticeVo;
 	}
+
+	public List<ContactVo> getSelectedNoticeReceivers() {
+		return selectedNoticeReceivers;
+	}
+
+	public void setSelectedNoticeReceivers(List<ContactVo> selectedNoticeReceivers) {
+		this.selectedNoticeReceivers = selectedNoticeReceivers;
+	}
+
 
 	class NoticeVoLazyModel<T extends NoticeVo> extends LazyDataModel<T> {
 		private static final long serialVersionUID = 1L;

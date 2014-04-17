@@ -72,40 +72,37 @@ public class ContactCommonBean implements Serializable {
 		filter.clear();
 	}
 	
-	public void excuteControllerBeanMethod() {
+	private void invokeMethodBySingle() {
         if (!StringUtils.isBlankOrNull(bean)) {
-            try {
+        	try {
                 FacesContext fc = FacesContext.getCurrentInstance();
                 Object o = fc.getApplication().getELResolver().getValue(fc.getELContext(), null, this.bean);
-                o.getClass().getDeclaredMethod(method).invoke(o);
+                o.getClass().getDeclaredMethod(method, ContactVo.class).invoke(o, new Object[] { selectedContactVo });
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
         }
     }
 	
-//	public void excuteControllerBeanMethodByParams() {
-//        if (this.bean != null && !"".equals(this.bean)) {
-//            try {
-//                FacesContext fc = FacesContext.getCurrentInstance();
-//                Object o = fc.getApplication().getELResolver().getValue(fc.getELContext(), null, this.bean);
-//                // 设置参数类型
-//                Class[] parameterTypes = new Class[2];
-//                parameterTypes[0] = ContactVo.class;
-//                parameterTypes[1] = ContactVo[].class;
-//                // 给参数设值
-//                Object[] args = new Object[2];
-//                args[0] = selectedContactVo;
-//                args[1] = selectedContactVos;
-//                // 两种执行方式
-//                Method method = o.getClass().getMethod(this.method, parameterTypes);
-//                method.invoke(o, args);
-//            } catch (Exception e) {
-//                logger.error(e.getMessage(), e);
-//            }
-//        }
-//    }
+	private void invokeMethodByMultiple() {
+        if (this.bean != null && !"".equals(this.bean)) {
+        	try {
+                FacesContext fc = FacesContext.getCurrentInstance();
+                Object o = fc.getApplication().getELResolver().getValue(fc.getELContext(), null, bean);
+                o.getClass().getDeclaredMethod(method, ContactVo[].class).invoke(o, new Object[] { selectedContactVos });
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
 
+	public void invoke() {
+        if (selectionMode.equals("single")) {
+            this.invokeMethodBySingle();
+        } else {
+            this.invokeMethodByMultiple();
+        }
+    }
 
 	// ==========================================================GET && SET ===========================================================//
 	

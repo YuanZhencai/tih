@@ -43,6 +43,10 @@ public class NotificationVo {
 
 	private String sysNoticeInd; // 发送消息表示
 
+	private String cc; //抄送人
+	
+	private boolean isMail = true;
+	
 	public String getTitle() {
 		return title;
 	}
@@ -177,6 +181,22 @@ public class NotificationVo {
 
 	public void setSysNoticeInd(String sysNoticeInd) {
 		this.sysNoticeInd = sysNoticeInd;
+	}
+
+	public String getCc() {
+		return cc;
+	}
+
+	public void setCc(String cc) {
+		this.cc = cc;
+	}
+
+	public boolean isMail() {
+		return isMail;
+	}
+
+	public void setMail(boolean isMail) {
+		this.isMail = isMail;
 	}
 	
 }

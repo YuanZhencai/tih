@@ -416,6 +416,9 @@ public class NotificationService {
 		    } else if (DictConsts.TIH_TAX_MSG_REFTYPE_3.equals(n.getType())) {
 		        noticeVo = getNoticeVoByAuthoriz(n, locale);
 		        logger.info("授权");
+		    } else if (DictConsts.TIH_TAX_MSG_REFTYPE_4.equals(n.getType())) {
+		        noticeVo = getNoticeVoBySysNotice(n, locale);
+		        logger.info("通知");
 		    }
 		}
 		noticeVos.add(noticeVo);
@@ -528,6 +531,16 @@ public class NotificationService {
         subjectVo.setSubject(formatDateFime(aut.getCreatedDatetime())+" "+commonService.getValueByDictCatKey(aut.getType(),locale));
         noticeVo.setSubjectVo(subjectVo);
         return noticeVo;
+    }
+    
+    public NotificationVo getNoticeVoBySysNotice(Notificationmstr n, String locale){
+    	NotificationVo noticeVo = new NotificationVo();
+    	noticeVo.setNotice(n);
+    	SubjectVo subjectVo = new SubjectVo();
+    	subjectVo.setLink("#");
+    	subjectVo.setSubject(formatDateFime(n.getCreatedDatetime())+" "+ n.getTitle());
+    	noticeVo.setSubjectVo(subjectVo);
+    	return noticeVo;
     }
     
     /**

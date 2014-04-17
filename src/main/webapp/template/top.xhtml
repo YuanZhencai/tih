@@ -21,11 +21,7 @@
 	<div id="top_up_center">
 		<h:form prependId="false" id="up_center">
 			<ul>
-				<li>
-					<img src="#{request.contextPath}/images/icons/tongxunlu.png" />
-					<p:commandLink id="contactLink" action="#{contactBean.searchContactsAndUsers()}" oncomplete="contactDialogVar.show()" update=":contactDialogForm" value="通讯录">
-					</p:commandLink>
-				</li>
+				
 				<li>
 					<img src="#{request.contextPath}/images/icons/exit.gif" />
 					<p:commandLink ajax="false" action="#{currentUser.doLogout()}" value="注销">
@@ -33,9 +29,17 @@
 						<f:param name="appUrl" value="${app.url}"/>
 					</p:commandLink>
 				</li>
+				<li>
+					<img src="#{request.contextPath}/images/icons/tongxunlu.png" />
+					<p:commandLink id="contactLink" action="#{contactBean.searchContactsAndUsers()}" oncomplete="contactDialogVar.show()" update=":contactDialogForm" value="通讯录">
+					</p:commandLink>
+				</li>
+				<li><img src="#{request.contextPath}/images/icons/mytable.gif" />
+					<p:commandLink action="#{homePageBean.addSysNotice()}" update=":sysNoticeDialogForm" value="系统通知" oncomplete="sysNoticeDialogVar.show();">
+					</p:commandLink>
+					</li>
 			<!-- 
 				<li><img src="#{request.contextPath}/images/icons/help.gif" />帮助</li>
-				<li><img src="#{request.contextPath}/images/icons/mytable.gif" />桌面</li>
 			 -->
 			</ul>
 		</h:form>

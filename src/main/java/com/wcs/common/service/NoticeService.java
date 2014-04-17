@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -387,12 +388,35 @@ public class NoticeService {
 	@Asynchronous
 	public void sendSysNotice(NotificationVo noticeVo) {
 		noticeVo.setRefType(DictConsts.TIH_TAX_MSG_REFTYPE_4);
-		if ("Y".equals(noticeVo.getMailInd())) {
+		
+		String cc = noticeVo.getCc();
+		List<String> receiverList = noticeVo.getReceiverList();
+		
+		List<String> users = new ArrayList<String>();
+		List<String> contacts = new ArrayList<String>();
+		
+		for (String receiver : receiverList) {
+			if(receiver.contains("@")) {
+				contacts.add(receiver);
+			} else {
+				users.add(receiver);
+			}
+		}
+		
+		if(cc != null && !"".equals(cc.trim())){
+			contacts.addAll(Arrays.asList(cc.split(";")));
+		}
+		
+		// 发送系统用通知
+		noticeVo.setReceiverList(users);
+		if (noticeVo.isMail()) {
 			sendEmail(true, noticeVo);
 		}
-		if ("Y".equals(noticeVo.getSysNoticeInd())) {
-			sendNotification(noticeVo);
-		}
+		sendNotification(noticeVo);
+		
+		// 发送非系统用通知
+		noticeVo.setReceiverList(contacts);
+		sendEmail(true, noticeVo);
 
 	}
 }

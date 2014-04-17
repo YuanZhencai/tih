@@ -47,7 +47,7 @@
 					<p:commandButton styleClass="header_button" value="导出" update=":contactDialogForm:contactDialogMsg" ajax="false" action="#{contactBean.exportContacts()}" />
 				</div>
 			</f:facet>
-			<p:column headerText="公司名称" style="width: 300px;">
+			<p:column headerText="公司名称">
 				<h:outputText value="#{contact.company}" />
 			</p:column>
 			<p:column headerText="人员姓名">

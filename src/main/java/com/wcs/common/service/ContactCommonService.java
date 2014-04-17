@@ -47,6 +47,7 @@ public class ContactCommonService {
 		List<ContactVo> contacts = contactService.findContactsBy(filter, 0, 0);
 		List<ContactVo> users = findUsersBy(filter, 0, 0);
 		contacts.addAll(users);
+		
 		return contacts;
 	}
 
