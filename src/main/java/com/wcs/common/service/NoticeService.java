@@ -384,9 +384,15 @@ public class NoticeService {
 		return emailVo;
 	}
 
-	public void getReceiverById() throws Exception {
-		JobInfo jobInfo = notificationService.getJobInfoByJobId("20130729161227");
-		logger.info("jobInfo:" + jobInfo.getJobId());
-		timingEmail(jobInfo);
+	@Asynchronous
+	public void sendSysNotice(NotificationVo noticeVo) {
+		noticeVo.setRefType(DictConsts.TIH_TAX_MSG_REFTYPE_4);
+		if ("Y".equals(noticeVo.getMailInd())) {
+			sendEmail(true, noticeVo);
+		}
+		if ("Y".equals(noticeVo.getSysNoticeInd())) {
+			sendNotification(noticeVo);
+		}
+
 	}
 }

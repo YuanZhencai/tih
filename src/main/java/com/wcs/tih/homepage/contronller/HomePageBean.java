@@ -22,14 +22,17 @@ import org.slf4j.LoggerFactory;
 
 import com.wcs.base.util.JSFUtils;
 import com.wcs.common.consts.DictConsts;
+import com.wcs.common.controller.vo.NotificationVo;
 import com.wcs.tih.homepage.contronller.vo.LearningGardenAndCommonDataVo;
 import com.wcs.tih.homepage.contronller.vo.NewschannelmstrVo;
 import com.wcs.tih.homepage.contronller.vo.NoticeVo;
 import com.wcs.tih.homepage.service.HomePageService;
+import com.wcs.tih.homepage.service.SysNoticeService;
 import com.wcs.tih.model.Notificationmstr;
 import com.wcs.tih.system.controller.vo.CommonFunctionVO;
 import com.wcs.tih.system.controller.vo.CommonLinkVO;
 import com.wcs.tih.transaction.controller.vo.WfInstancemstrVo;
+import com.wcs.tih.util.ValidateUtil;
 
 /**
  * <p>
@@ -54,6 +57,9 @@ public class HomePageBean {
 
 	@EJB
 	private HomePageService homePageService;
+	@EJB
+	private SysNoticeService sysNoticeService;
+	
 	private List<NewschannelmstrVo> newsChannelList;
 	private List<CommonLinkVO> commonLinkList = null;
 	private List<CommonFunctionVO> commonFunctionList = null;
@@ -68,6 +74,8 @@ public class HomePageBean {
 	private List<Notificationmstr> readedNotices;
 	private LazyDataModel<NoticeVo> notReadLazyModel;
 	private LazyDataModel<NoticeVo> readedLazyModel;
+	
+	private NotificationVo sysNoticeVo = null;
 
 	/**
 	 * <p>
@@ -127,7 +135,40 @@ public class HomePageBean {
 			JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "全部置成已读失败：", "请刷新重试"));
 		}
 	}
+	
+	public void addSysNotice() {
+		sysNoticeVo = new NotificationVo();
+	}
 
+	
+	public void sendSysNotice() {
+		if(validateSysNotice(sysNoticeVo)) {
+			try {
+				sysNoticeService.sendSysNotice(sysNoticeVo);
+				JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_INFO, "操作成功", ""));
+				JSFUtils.handleDialogByWidgetVar("sysNoticeDialogVar", "close");
+			} catch (Exception e) {
+				JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "操作失败：", "请重新操作。"));
+				logger.error(e.getMessage(), e);
+			}
+		}
+	}
+	
+	private boolean validateSysNotice(NotificationVo sysNoticeVo) {
+		boolean validate = true;
+		FacesContext context = FacesContext.getCurrentInstance();
+		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getTitle(), "消息标题：")) {
+			validate = false;
+		}
+		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getContent(), "消息内容：")) {
+			validate = false;
+		}
+		List<String> receivers = sysNoticeVo.getReceiverList();
+		if (receivers == null || receivers.size() == 0) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "接收人：", "不能为空。"));
+		}
+		return validate;
+	}
 	// ======================================Yuan======================================//
 
 	/**
@@ -321,6 +362,14 @@ public class HomePageBean {
 
 	public void setReadedLazyModel(LazyDataModel<NoticeVo> readedLazyModel) {
 		this.readedLazyModel = readedLazyModel;
+	}
+
+	public NoticeVo getSysNoticeVo() {
+		return sysNoticeVo;
+	}
+
+	public void setSysNoticeVo(NoticeVo sysNoticeVo) {
+		this.sysNoticeVo = sysNoticeVo;
 	}
 
 	class NoticeVoLazyModel<T extends NoticeVo> extends LazyDataModel<T> {

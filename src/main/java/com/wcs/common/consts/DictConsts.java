@@ -143,6 +143,7 @@ public interface DictConsts {
 	public String TIH_TAX_MSG_REFTYPE_1 = "TIH.TAX.MSG.REFTYPE.1";// 任务
 	public String TIH_TAX_MSG_REFTYPE_2 = "TIH.TAX.MSG.REFTYPE.2";// 项目
 	public String TIH_TAX_MSG_REFTYPE_3 = "TIH.TAX.MSG.REFTYPE.3";// 授权
+	public String TIH_TAX_MSG_REFTYPE_4 = "TIH.TAX.MSG.REFTYPE.4";// 系统通知
 	public String TIH_DOC_STATUS = "TIH.DOC.STATUS";// 文档审核状态
 	public String TIH_DOC_STATUS_1 = "TIH.DOC.STATUS.1";// 新建
 	public String TIH_DOC_STATUS_2 = "TIH.DOC.STATUS.2";// 审核未通过
