@@ -538,35 +538,10 @@ public class NotificationService {
     	noticeVo.setNotice(n);
     	SubjectVo subjectVo = new SubjectVo();
     	subjectVo.setLink("#");
-    	subjectVo.setSubject(formatDateFime(n.getCreatedDatetime())+" "+ n.getTitle());
+    	subjectVo.setSubject(formatDateFime(n.getCreatedDatetime())+" "+ n.getTypeId());
     	noticeVo.setSubjectVo(subjectVo);
     	
-    	List<NoticeDetailVo> details = findNoticeExtBySysNotice(n);
-        if(details != null && details.size() > 0){
-            noticeVo.setDetailsDisplay(true);
-            noticeVo.setNoticeDetails(details);
-        }
     	return noticeVo;
-    }
-    
-    public List<NoticeDetailVo> findNoticeExtBySysNotice(Notificationmstr n){
-        List<NoticeDetailVo> details = new ArrayList<NoticeDetailVo>();
-        StringBuffer jpql = new StringBuffer();
-        jpql.append(" select ne from NotificationExt ne" );
-        jpql.append(" where ne.notificationmstrId = " + n.getId());
-        try {
-            List<NotificationExt> nes = em.createQuery(jpql.toString()).getResultList();
-            if(nes != null && nes.size() > 0){
-            	NotificationExt ext = nes.get(0);
-            	NoticeDetailVo detail = new NoticeDetailVo();
-                detail.setDetailType("");
-                detail.setValue(ext.getTableName());
-                details.add(detail);
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        return details;
     }
     
     

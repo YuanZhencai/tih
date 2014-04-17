@@ -164,7 +164,7 @@ public class HomePageBean {
 	private boolean validateSysNotice(NotificationVo sysNoticeVo) {
 		boolean validate = true;
 		FacesContext context = FacesContext.getCurrentInstance();
-		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getTitle(), "通知主题：")) {
+		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getTypeId(), "通知主题：")) {
 			validate = false;
 		}
 		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getContent(), "消息内容：")) {
