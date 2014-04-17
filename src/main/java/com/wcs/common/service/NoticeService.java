@@ -388,7 +388,6 @@ public class NoticeService {
 	@Asynchronous
 	public void sendSysNotice(NotificationVo noticeVo) {
 		noticeVo.setRefType(DictConsts.TIH_TAX_MSG_REFTYPE_4);
-		
 		String cc = noticeVo.getCc();
 		List<String> receiverList = noticeVo.getReceiverList();
 		

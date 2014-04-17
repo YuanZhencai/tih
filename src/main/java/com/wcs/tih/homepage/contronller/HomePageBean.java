@@ -148,7 +148,6 @@ public class HomePageBean {
 
 	
 	public void sendSysNotice() {
-		System.out.println("HomePageBean.sendSysNotice()");
 		
 		if(validateSysNotice(sysNoticeVo)) {
 			try {
