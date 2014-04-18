@@ -168,7 +168,7 @@ function removeHtml(){
 								<ul>
 									<ui:repeat value="#{homePageBean.notReadNotices}" var="notice" varStatus="status">
 										<li>
-										<h:outputText value="#{status.index}、" />
+										<h:outputText value="#{status.index + 1}、" />
 										<p:graphicImage url="/images/news.gif" /> <p:commandLink
 												id="notReadNews" oncomplete="myNewsDialogWidgetVar.show()"
 												update=":myNewsDialogId"
