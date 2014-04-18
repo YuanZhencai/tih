@@ -72,7 +72,7 @@ public class HomePageBean {
 	private final static String ERROR_PAGE = "/pageauthority.xhtml";
 	private final static String TASK_PAGE = "/faces/transaction/task/index.xhtml";
 	private final static String PROJECT_PAGE = "/faces/transaction/project/index.xhtml";
-	private List<Notificationmstr> notReadnotices;
+	private List<NoticeVo> notReadNotices;
 	private List<Notificationmstr> readedNotices;
 	private LazyDataModel<NoticeVo> notReadLazyModel;
 	private LazyDataModel<NoticeVo> readedLazyModel;
@@ -210,7 +210,7 @@ public class HomePageBean {
 	 * </p>
 	 */
 	private void queryNotice() {
-		notReadLazyModel = new NoticeVoLazyModel<NoticeVo>("Y");
+		notReadNotices = homePageService.loadNotices("Y");
 		readedLazyModel = new NoticeVoLazyModel<NoticeVo>("N");
 	}
 
@@ -270,6 +270,8 @@ public class HomePageBean {
 					url = PROJECT_PAGE + "?proNumber=" + notice.getTypeId();
 				} else if (DictConsts.TIH_TAX_MSG_REFTYPE_3.equals(type)) {
 					url = TASK_PAGE;
+				} if (DictConsts.TIH_TAX_MSG_REFTYPE_4.equals(type)) {
+					return "";
 				}
 			}
 			HttpServletResponse response = (HttpServletResponse) (FacesContext.getCurrentInstance().getExternalContext().getResponse());
@@ -352,13 +354,18 @@ public class HomePageBean {
 		this.noticeVo = noticeVo;
 	}
 
-	public List<Notificationmstr> getNotReadnotices() {
-		return notReadnotices;
+
+	public List<NoticeVo> getNotReadNotices() {
+		return notReadNotices;
 	}
 
-	public void setNotReadnotices(List<Notificationmstr> notReadnotices) {
-		this.notReadnotices = notReadnotices;
+
+
+	public void setNotReadNotices(List<NoticeVo> notReadNotices) {
+		this.notReadNotices = notReadNotices;
 	}
+
+
 
 	public List<Notificationmstr> getReadedNotices() {
 		return readedNotices;

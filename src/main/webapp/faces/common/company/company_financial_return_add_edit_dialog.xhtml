@@ -10,14 +10,16 @@
 		id="financialReturnAddEditDialogId" resizable="false" modal="true">
 		<h:form id="financialReturnAddEditDialogForm" prependId="false">
 			<p:messages id="financialReturnMessages" showDetail="true" />
-			<h:panelGrid columns="8"
-				columnClasses="column41,column2,column1,column2,column1,column2">
+			<h:panelGrid columns="2" columnClasses="column41,column2">
 				<h:outputText value="公司注册地：" />
 				<h:column>
-					<p:inputText
+					<p:inputText style="width: 517px;"
 						value="#{financialReturnBean.financialReturnVo.registration}" />
 					<h:outputText value="*" style="color:red;" />
 				</h:column>
+			</h:panelGrid>
+			<h:panelGrid columns="4"
+				columnClasses="column41,column2,column1,column2">
 				<h:outputText value="税种：" />
 				<h:column>
 					<h:selectOneMenu
@@ -37,9 +39,7 @@
 						value="#{financialReturnBean.financialReturnVo.returnStartDatetime}"
 						pattern="yyyy-MM-dd" locale="cn" showButtonPanel="true"
 						navigator="true" readOnlyInputText="true" />
-				</h:column>
-				<h:outputText value="到" />
-				<h:column>
+					<h:outputText value="到" />
 					<p:calendar
 						value="#{financialReturnBean.financialReturnVo.returnEndDatetime}"
 						pattern="yyyy-MM-dd" locale="cn" showButtonPanel="true"
@@ -50,19 +50,19 @@
 				<h:outputText value="返还计算基数：" />
 				<p:inputTextarea
 					value="#{financialReturnBean.financialReturnVo.returnBase}"
-					style="width:755px;height:40px;" autoResize="false"
+					style="width:517px;height:40px;" autoResize="false"
 					effectDuration="400" maxlength="198" />
 				<h:outputText value="*" style="color:red;" />
 				<h:outputText value="返还比例：" />
 				<p:inputTextarea
 					value="#{financialReturnBean.financialReturnVo.returnRatio}"
-					style="width:755px;height:40px;" autoResize="false"
+					style="width:517px;height:40px;" autoResize="false"
 					effectDuration="400" maxlength="198" />
 				<h:outputText value="*" style="color:red;" />
 				<h:outputText value="备注：" />
 				<p:inputTextarea
 					value="#{financialReturnBean.financialReturnVo.returnAccording}"
-					style="width:755px;height:40px;" autoResize="false"
+					style="width:517px;height:40px;" autoResize="false"
 					effectDuration="400" maxlength="198" />
 			</h:panelGrid>
 			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"

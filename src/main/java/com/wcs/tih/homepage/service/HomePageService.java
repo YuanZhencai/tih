@@ -83,7 +83,7 @@ public class HomePageService {
      */
     public List<NoticeVo> loadNotices(String readFlag) {
         String sql = "select nr from NotificationReceiver nr where nr.readInd='" + readFlag + "' and nr.notificationSender.sendOption = '" + DictConsts.TIH_TAX_MSG_TYPE_2 + "' and nr.receivedBy ='" + this.loginService.getCurrentUserName() + "' order by nr.notificationSender.sendDatetime desc";
-        List<NotificationReceiver> notificationReceivers = this.em.createQuery(sql).getResultList();
+        List<NotificationReceiver> notificationReceivers = this.em.createQuery(sql).setMaxResults(20).getResultList();
         List<NoticeVo> noticeVos = new ArrayList<NoticeVo>();
         if (notificationReceivers != null && notificationReceivers.size() != 0) {
             NoticeVo noticeVo = null;

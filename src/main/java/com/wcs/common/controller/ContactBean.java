@@ -61,6 +61,7 @@ public class ContactBean implements Serializable {
 
 	@PostConstruct
 	public void init() {
+		searchAllContact();
 	}
 
 	public void searchContact() {

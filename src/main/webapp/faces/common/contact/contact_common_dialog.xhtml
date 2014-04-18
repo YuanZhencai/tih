@@ -43,41 +43,38 @@
 				rendered="#{contactCommonBean.selectionMode == 'single' ? true : false}"
 				id="contactSingleDataTable" value="#{contactCommonBean.contactVos}"
 				selection="#{contactCommonBean.selectedContactVo}" scrollable="true"
-				scrollHeight="300" scrollWidth="710" var="contact"
-				rowIndexVar="index" style="margin-top:5px;"
+				scrollHeight="300" var="contact" rowIndexVar="index"
+				style="margin-top:5px;" scrollWidth="1215"
 				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
 				<f:facet name="header">
-					<div class="header">
-						<h:outputText value="通讯录列表1" />
-					</div>
+					<h:outputText value="通讯录列表1" style="text-align: center" />
 				</f:facet>
-				<p:column selectionMode="single"
-					style="text-align: center;width: 50px;" />
-				<p:column headerText="公司名称" resizable="true">
+				<p:column selectionMode="single" />
+				<p:column headerText="公司名称" style="width:125px">
 					<h:outputText value="#{contact.company}" />
 				</p:column>
-				<p:column headerText="人员姓名">
+				<p:column headerText="人员姓名" style="width:50px">
 					<h:outputText value="#{contact.username}" />
 				</p:column>
-				<p:column headerText="人员帐号">
+				<p:column headerText="人员帐号" style="width:100px">
 					<h:outputText value="#{contact.account}" />
 				</p:column>
-				<p:column headerText="岗位描述">
+				<p:column headerText="岗位描述" style="width:125px">
 					<h:outputText value="#{contact.position}" />
 				</p:column>
-				<p:column headerText="手机号码">
+				<p:column headerText="手机号码" style="width:100px">
 					<h:outputText value="#{contact.mobile}" />
 				</p:column>
-				<p:column headerText="办公电话">
+				<p:column headerText="办公电话" style="width:100px">
 					<h:outputText value="#{contact.telephone}" />
 				</p:column>
-				<p:column headerText="电子邮箱">
+				<p:column headerText="电子邮箱" style="width:200px">
 					<h:outputText value="#{contact.email}" />
 				</p:column>
-				<p:column headerText="联系地址">
+				<p:column headerText="联系地址" style="width:125px">
 					<h:outputText value="#{contact.address}" />
 				</p:column>
-				<p:column headerText="有效">
+				<p:column headerText="有效" style="width:25px">
 					<h:outputText value="#{contact.defunctInd == 'N' ? '是' : '否'}" />
 				</p:column>
 			</p:dataTable>
@@ -87,41 +84,38 @@
 				id="contactMultipleDataTable"
 				value="#{contactCommonBean.contactVos}"
 				selection="#{contactCommonBean.selectedContactVos}"
-				scrollable="true" scrollHeight="300" scrollWidth="710" var="contact"
+				scrollable="true" scrollHeight="300" var="contact" scrollWidth="1215"
 				rowIndexVar="index" style="margin-top:5px;"
 				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
 				<f:facet name="header">
-					<div class="header">
-						<h:outputText value="通讯录列表2" />
-					</div>
+					<h:outputText value="通讯录列表" />
 				</f:facet>
-				<p:column selectionMode="multiple"
-					style="text-align: center;width: 50px;" />
-				<p:column headerText="公司名称">
+				<p:column selectionMode="multiple" style="text-align: center" />
+				<p:column headerText="公司名称" style="width:125px">
 					<h:outputText value="#{contact.company}" />
 				</p:column>
-				<p:column headerText="人员姓名">
+				<p:column headerText="人员姓名" style="width:50px">
 					<h:outputText value="#{contact.username}" />
 				</p:column>
-				<p:column headerText="人员帐号">
+				<p:column headerText="人员帐号" style="width:100px">
 					<h:outputText value="#{contact.account}" />
 				</p:column>
-				<p:column headerText="岗位描述">
+				<p:column headerText="岗位描述" style="width:125px">
 					<h:outputText value="#{contact.position}" />
 				</p:column>
-				<p:column headerText="手机号码">
+				<p:column headerText="手机号码" style="width:100px">
 					<h:outputText value="#{contact.mobile}" />
 				</p:column>
-				<p:column headerText="办公电话">
+				<p:column headerText="办公电话" style="width:100px">
 					<h:outputText value="#{contact.telephone}" />
 				</p:column>
-				<p:column headerText="电子邮箱">
+				<p:column headerText="电子邮箱" style="width:200px">
 					<h:outputText value="#{contact.email}" />
 				</p:column>
-				<p:column headerText="联系地址">
+				<p:column headerText="联系地址" style="width:125px">
 					<h:outputText value="#{contact.address}" />
 				</p:column>
-				<p:column headerText="有效">
+				<p:column headerText="有效" style="width:25px">
 					<h:outputText value="#{contact.defunctInd == 'N' ? '是' : '否'}" />
 				</p:column>
 			</p:dataTable>

@@ -5,46 +5,106 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
-
 	<style>
-.ui-carousel-header {
-	height: 40px;
+#homePageForm .ui-datatable-data tr {
+	border-width: 0px;
+	background: #f2f5f7;
 }
 
-.main {
-	overflow-y: auto;
+#homePageForm .ui-datatable-data-empty tr {
+	border-width: 0px;
+	background: #f2f5f7;
 }
 
-#carousel>a {
-	font-weight: bold;
+#homePageForm .ui-datatable .ui-datatable-data-empty {
+	border-width: 0px;
 }
 
-.ui-datatable .ui-datatable-data td,.ui-datatable .ui-datatable-data-empty td
-	{
-	border-color: inherit;
-	border-style: hidden;
-	border-width: 1px;
-	margin: 0;
-	overflow: hidden;
-	padding: 0;
+#homePageForm .ui-datatable .ui-datatable-data {
+	border-width: 0px;
 }
 
-.ui-datatable th div.ui-dt-c,.ui-datatable .ui-datatable-data td div.ui-dt-c,.ui-datatable .ui-datatable-data-empty td div.ui-dt-c,.ui-datatable tfoot td div.ui-dt-c
-	{
-	overflow: hidden;
-	padding: 4px 10px;
+#homePageForm .ui-datatable .ui-datatable-data-empty td {
+	border-width: 0px;
 }
 
-.ui-datatable th div.ui-dt-c {
+#homePageForm .ui-datatable .ui-datatable-data td {
+	border-width: 0px;
+}
+
+#homePageForm div.ui-datatable table thead th:nth-child(1) {
+	text-align: right;
+	background: #f2f5f7;
+	border-width: 0px;
+}
+
+#homePageForm div.ui-datatable table thead tr:nth-child(2) {
 	display: none;
 }
 
-.ui-datatable-data-empty td {
-	background-color: #F2F5F7;
+.scrollbox {
+	border: #ccc 0px solid;
+}
+
+#scrollDiv {
+	height: 125px;
+	overflow: hidden;
+} /*这里的高度和超出隐藏是必须的*/
+#scrollDiv li {
+	height: 25px;
+	line-height: 25px;
+	vertical-align: bottom;
+	zoom: 1;
+	border-bottom: #CCC dashed 1px;
+}
+
+#scrollDiv li a {
+	color: #333;
+	text-decoration: none;
+}
+
+#scrollDiv li a:hover {
+	color: #FF0000;
+	text-decoration: underline;
+}
+
+.scroltit {
+	height: 26px;
+	line-height: 26px;
+	border-bottom: #CCC dashed 1px;
+	padding-bottom: 4px;
+	margin-bottom: 4px;
+}
+
+.scroltit h3 {
+	width: 100px;
+	float: left;
+}
+
+.scroltit small {
+	float: right;
+	font-size: 13px;
 }
 </style>
+	<script type="text/javascript">
+$(document).ready(
+		function (){
+			load();
+		}
+	);
+function load() {
+	removeHtml();
+	scoll();
+}
+function removeHtml(){
+	var prevs = $("span.ui-icon-seek-prev");
+    prevs.html("&amp;nbsp;");
+	var nexts = $("span.ui-icon-seek-next");
+	nexts.html("&amp;nbsp;");
+} 
+</script>
 	<h:form id="homePageForm" prependId="false">
-	<p:growl id="growl" showDetail="true" life="3000" />
+		<p:growl id="growl" showDetail="true" life="3000" />
 		<p:layout
 			style="min-width:99%;min-height:230px;max-width:99%;max-height:230px;margin-top:5px;margin-left:5px;margin-right:5px;">
 			<p:layoutUnit position="west" size="40%">
@@ -94,35 +154,34 @@
 			<p:layoutUnit position="center" size="40%">
 				<p:tabView style="border : none;" id="myNewsTabView">
 					<p:tab id="myNotReadNews" title="未读消息">
-						<p:contextMenu for="myNotReadNewsDataTable">
-							<p:menuitem value="全部置成已读" action="#{homePageBean.setAllReaded()}" oncomplete="removeClass(0)"
-								update="myNotReadNewsDataTable,myReadedNewsDataTable,:homePageForm:growl" />
+						<p:contextMenu for="myNotReadNews">
+							<p:menuitem value="全部置成已读"
+								action="#{homePageBean.setAllReaded()}"
+								oncomplete="load()"
+								update="myNotReadNews,myReadedNewsDataTable,:homePageForm:growl" />
 						</p:contextMenu>
-						<p:dataTable id="myNotReadNewsDataTable"
-							value="#{homePageBean.notReadLazyModel}" var="notice"
-							paginator="true" rows="5" effectSpeed="fast"
-							paginatorPosition="top"
-							paginatorTemplate=" {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown} "
-							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
-							emptyMessage="#{msgs.dataTable_empty}" rowIndexVar="var">
-							<p:column style="text-align:left;background-color: #F2F5F7;">
-								<h:outputText value="#{var + 1}、" />
-								<p:graphicImage url="/images/news.gif" />
-								<p:commandLink id="notReadNews"
-									oncomplete="myNewsDialogWidgetVar.show()"
-									update=":myNewsDialogId"
-									actionListener="#{homePageBean.lookMyNews(notice.receiverId)}"
-									value="#{notice.title}">
-									<f:setPropertyActionListener value="#{notice}"
-										target="#{homePageBean.noticeVo}" />
-								</p:commandLink>
-								<!-- <p:tooltip for="notReadNews" value="#{notice.content}" showEffect="fade" hideEffect="fade" /> -->
-							</p:column>
-							<p:column style="text-align:right;background-color: #F2F5F7;">
-								<h:outputText
-									value="#{commonBean.formatDate(notice.sendDatetime)}" />
-							</p:column>
-						</p:dataTable>
+						<div class="scrollbox">
+							<div class="scroltit">
+								<small id="but_up">↑向上</small><small id="but_down">↓向下</small>
+							</div>
+							<div id="scrollDiv">
+								<ul>
+									<ui:repeat value="#{homePageBean.notReadNotices}" var="notice" varStatus="status">
+										<li>
+										<h:outputText value="#{status.index}、" />
+										<p:graphicImage url="/images/news.gif" /> <p:commandLink
+												id="notReadNews" oncomplete="myNewsDialogWidgetVar.show()"
+												update=":myNewsDialogId"
+												actionListener="#{homePageBean.lookMyNews(notice.receiverId)}"
+												value="#{notice.title}">
+												<f:setPropertyActionListener value="#{notice}"
+													target="#{homePageBean.noticeVo}" />
+											</p:commandLink></li>
+
+									</ui:repeat>
+								</ul>
+							</div>
+						</div>
 					</p:tab>
 					<p:tab id="myReadedNews" title="已读消息">
 						<p:dataTable id="myReadedNewsDataTable"
@@ -246,78 +305,4 @@
 		</p:layout>
 	</h:form>
 	<ui:include src="news_dialog.xhtml" />
-	<script type="text/javascript">
-		document.getElementsByClassName=function(className,elementName) {
-		    var elements=new Array();
-		    $(elementName).each(function(){
-			    if($(this).attr("class")==className){
-			    	elements.push($(this));
-			    }
-		    });
-			return elements;
-	    }
-		$(document).ready(
-			function (){
-				removeClass(0);
-			}
-		);
-		function removeClass(index){
-			this.removeClassAndHtml("ui-icon ui-icon-seek-prev","span","&lt;&lt;");
- 			this.removeClassAndHtml("ui-icon ui-icon-seek-next","span","&gt;&gt;");
- 			var componts =$("#homePageForm").find("*");
- 			//ui-tabs-panel ui-widget-content ui-corner-bottom ui-helper-hidden
-			//ui-tabs-panel ui-widget-content ui-corner-bottom
-			//ui-panel-content ui-widget-content
- 			if(componts.length!=0){
- 				for(var i=0;i &lt; componts.length;i++){
- 					if(componts[i].className=="ui-tabs-panel ui-widget-content ui-corner-bottom" || componts[i].className=="ui-tabs-panel ui-widget-content ui-corner-bottom" || componts[i].className=="ui-panel-content ui-widget-content"){
- 						componts[i].style.cssText="background-color:#F2F5F7;";
- 	 				}
-				}
- 	 		}
-			//设置所有的dataTable分页样式
-			var dataTable_paginator_top=$("[id*='DataTable_paginator_top']");
-			if(dataTable_paginator_top.length!=0){
-				for(var i=0;i &lt; dataTable_paginator_top.length;i++){
-					dataTable_paginator_top[i].className="ui-paginator";
-					dataTable_paginator_top[i].style.cssText="text-align:right;";
-				}
-			}
-			//我的未读消息
-			var myNotReadNews=$("[id*='myNewsTabView:myNotReadNewsDataTable:']");
-			if(myNotReadNews.length!=0){
-				for(var i=0;i &lt; myNotReadNews.length;i++){
-					myNotReadNews[i].className="";
-				}
-			}
-			//我的已读消息
-			var myReadedNews=$("[id*='myNewsTabView:myReadedNewsDataTable:']");
-			if(myReadedNews.length!=0){
-				for(var i=0;i &lt; myReadedNews.length;i++){
-					myReadedNews[i].className="";
-				}
-			}
-			//待办任务
-        	document.getElementById("waitTaskDataTable").childNodes.item(0).rows[1].cells[0].className="";
-        	document.getElementById("waitTaskDataTable").childNodes.item(0).rows[1].cells[1].className="";
-        	//常用功能
-        	document.getElementById("commonFunctionDataTable").childNodes.item(0).rows[1].cells[0].className="";
-        	//新闻频道
-        	document.getElementById("newsChanneTabView:"+index+":newsChanneDataTable").childNodes.item(0).rows[1].cells[0].className="";
-        	document.getElementById("newsChanneTabView:"+index+":newsChanneDataTable").childNodes.item(0).rows[1].cells[1].className="";
-        	//学习园地
-        	document.getElementById("learningGardenDataTable").childNodes.item(0).rows[1].cells[0].className="";
-			//常用资料
-        	document.getElementById("commonDataDataTable").childNodes.item(0).rows[1].cells[0].className="";
-        	//常用链接
-        	document.getElementById("linkDataTable").childNodes.item(0).rows[1].cells[0].className="";
-		}
-		function removeClassAndHtml(className,elementName,htmlText){
-			var element=document.getElementsByClassName(className,elementName);
-        	for(var i=0;i&lt; element.length;i++){
- 				element[i].attr("class","ui-icon-seek-prev");
- 				element[i].html(htmlText);
- 			}
-		} 
-	</script>
 </ui:composition>
