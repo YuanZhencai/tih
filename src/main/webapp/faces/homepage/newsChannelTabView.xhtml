@@ -7,8 +7,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<p:tabView style="border:none;" id="newsChanneTabView" widgetVar="nctv"
-		var="newsChanneVo" value="#{homePageBean.newsChannelList}"
-		onTabChange="removeClass(index);">
+		var="newsChanneVo" value="#{homePageBean.newsChannelList}">
 		<p:tab title="#{newsChanneVo.newschannelmstr.name}">
 			<p:dataTable id="newsChanneDataTable" value="#{newsChanneVo.rssList}"
 				var="rss" paginator="true" rows="5" effectSpeed="fast"
