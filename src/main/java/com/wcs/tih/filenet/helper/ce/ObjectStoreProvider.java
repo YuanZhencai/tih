@@ -513,10 +513,24 @@ public class ObjectStoreProvider {
 	public String creatingDocument(String symbolicClassName, String documentTitle, String mimeType, Map<String, Object> propertyMap,
 			InputStream inputStream, Folder folder) {
 		Document doc = Factory.Document.createInstance(this.os, symbolicClassName);
+		
+		if (inputStream != null) {
+			ContentElementList contentList = Factory.ContentElement.createList();
+			ContentTransfer ctObject = Factory.ContentTransfer.createInstance();
+
+			ctObject.setCaptureSource(inputStream);
+			ctObject.set_RetrievalName(documentTitle + "." + mimeType);
+
+			contentList.add(ctObject);
+
+			doc.set_ContentElements(contentList);
+
+			doc.save(RefreshMode.NO_REFRESH);
+			
+			doc.checkin(AutoClassify.DO_NOT_AUTO_CLASSIFY, CheckinType.MAJOR_VERSION);
+		}
 
 		doc.getProperties().putValue("DocumentTitle", documentTitle);
-
-		doc.set_MimeType(MimeTypeMap.getMimetype(mimeType));
 
 		if (propertyMap != null) {
 			Iterator<String> iterator = propertyMap.keySet().iterator();
@@ -530,25 +544,10 @@ public class ObjectStoreProvider {
 
 		}
 
-		doc.save(RefreshMode.NO_REFRESH);
-
-		if (inputStream != null) {
-			ContentElementList contentList = Factory.ContentTransfer.createList();
-			ContentTransfer ctObject = Factory.ContentTransfer.createInstance();
-
-			ctObject.setCaptureSource(inputStream);
-			ctObject.set_RetrievalName(documentTitle + "." + mimeType);
-
-			contentList.add(ctObject);
-
-			doc.set_ContentElements(contentList);
-
-			doc.save(RefreshMode.NO_REFRESH);
-		}
-
+		doc.set_MimeType(MimeTypeMap.getMimetype(mimeType));
+		
 		doc.save(RefreshMode.REFRESH);
-		doc.checkin(AutoClassify.DO_NOT_AUTO_CLASSIFY, CheckinType.MAJOR_VERSION);
-
+		
 		ReferentialContainmentRelationship rcr = folder.file(doc, AutoUniqueName.AUTO_UNIQUE, documentTitle,
 				DefineSecurityParentage.DO_NOT_DEFINE_SECURITY_PARENTAGE);
 
