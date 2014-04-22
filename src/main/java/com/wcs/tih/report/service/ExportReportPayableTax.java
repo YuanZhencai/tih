@@ -279,7 +279,8 @@ public class ExportReportPayableTax {
     private void generateExcelReportTail(Workbook wb, Sheet sheet, int rowIndex, Double[] totals) {
         addMergedRegion(sheet, rowIndex, rowIndex, 0, 1);
         Row row = createRowWithStyle(wb, sheet, rowIndex);
-        createTitleCell(wb, row, 0, "合计");
+        Cell cell = createCell(row, 0, "合计");
+        cell.setCellStyle(getStyleAlignCenter(wb));
         int cellIndex = 2;
         for(Double tol : totals) {
             createTailNumberCell(wb, row, cellIndex ++, tol);
@@ -482,7 +483,7 @@ public class ExportReportPayableTax {
         	return cellTitleStyle;
         }
         cellTitleStyle = wb.createCellStyle();
-        cellTitleStyle.setFillForegroundColor(HSSFColor.YELLOW.index);
+        cellTitleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
         cellTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         packageStyleBorder(cellTitleStyle);
         packageStyleCenter(cellTitleStyle);
@@ -543,7 +544,7 @@ public class ExportReportPayableTax {
         tailStyleAlignRight = wb.createCellStyle();
         packageStyleBorder(tailStyleAlignRight);
         packageStyleRight(tailStyleAlignRight);
-        tailStyleAlignRight.setFillForegroundColor(HSSFColor.YELLOW.index);
+        tailStyleAlignRight.setFillForegroundColor(HSSFColor.WHITE.index);
         tailStyleAlignRight.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         return tailStyleAlignRight;
     }

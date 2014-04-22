@@ -3227,3 +3227,7 @@ CALL sysproc.admin_cmd('reorg table COMPANY_INVESTMENT');
 alter table USERMSTR add column POSITION_REMARK VARCHAR(500);
 CALL sysproc.admin_cmd('reorg table USERMSTR');
 
+-- ADD REPRESENTATIVE
+alter table COMPANYMSTR add column REPRESENTATIVE VARCHAR(200);;
+CALL sysproc.admin_cmd('reorg table COMPANYMSTR');
+

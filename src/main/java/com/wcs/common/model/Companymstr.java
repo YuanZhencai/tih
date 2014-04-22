@@ -70,6 +70,8 @@ public class Companymstr extends com.wcs.base.model.IdEntity implements Serializ
     
     private String code;
     
+    private String  representative;
+    
     // bi-directional many-to-one association to Usercompany
     @OneToMany(mappedBy = "companymstr", fetch = FetchType.EAGER)
     private List<Usercompany> usercompanies;
@@ -331,4 +333,12 @@ public class Companymstr extends com.wcs.base.model.IdEntity implements Serializ
 		this.province = province;
 	}
 
+	public String getRepresentative() {
+		return representative;
+	}
+
+	public void setRepresentative(String representative) {
+		this.representative = representative;
+	}
+	
 }

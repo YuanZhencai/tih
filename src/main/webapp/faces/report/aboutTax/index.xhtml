@@ -23,35 +23,61 @@
 					<h:panelGrid id="companyAboutTaxSummaryTableFormItems" columns="3"
 						columnClasses="column1,column2">
 						<h:outputText value="公司名称：" />
-						<p:selectCheckboxMenu id="companys" value="#{companyAboutTaxSummaryTableBean.companys}" style="width: 142px;">
-							<f:selectItems value="#{companyAboutTaxSummaryTableBean.companyItems}" var="c" itemLabel="#{c.stext}" itemValue="#{c.id}" />
+						<p:selectCheckboxMenu id="companys"
+							value="#{companyAboutTaxSummaryTableBean.companys}"
+							style="width: 142px;">
+							<f:selectItems
+								value="#{companyAboutTaxSummaryTableBean.companyItems}" var="c"
+								itemLabel="#{c.stext}" itemValue="#{c.id}" />
 						</p:selectCheckboxMenu>
- 						<p:commandButton icon="ui-icon ui-icon-search" style="width: 27px; height: 27px;" title="请选择" update=":commonCompany,:datatableform" actionListener="#{companyCommonBean.init(':companyAboutTaxSummaryTableFrom:companys','companyAboutTaxSummaryTableBean','multiple','selectCompanys')}" oncomplete="commoncompanyvar.show();" />
+						<p:commandButton icon="ui-icon ui-icon-search"
+							style="width: 27px; height: 27px;" title="请选择"
+							update=":commonCompany,:datatableform"
+							actionListener="#{companyCommonBean.init(':companyAboutTaxSummaryTableFrom:companys','companyAboutTaxSummaryTableBean','multiple','selectCompanys')}"
+							oncomplete="commoncompanyvar.show();" />
 					</h:panelGrid>
 					<div>
 						<p:commandButton value="#{msgs.btn_query}"
 							actionListener="#{companyAboutTaxSummaryTableBean.queryCompany()}"
 							update=":companyAboutTaxSummaryTableFrom:taxTabView:companyAboutTaxSummaryTableDataTable"
 							icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
-						<p:commandButton value="#{msgs.btn_reset}" action="#{companyAboutTaxSummaryTableBean.reset()}"
+						<p:commandButton value="#{msgs.btn_reset}"
+							action="#{companyAboutTaxSummaryTableBean.reset()}"
 							update=":companyAboutTaxSummaryTableFrom:companyAboutTaxSummaryTableFormItems"
 							icon="ui-icon ui-icon-cancel" style="margin-right: 5px;" />
 					</div>
 				</div>
-				<p:tabView id="taxTabView" activeIndex="#{companyAboutTaxSummaryTableBean.activeIndex}">
+				<p:tabView id="taxTabView"
+					activeIndex="#{companyAboutTaxSummaryTableBean.activeIndex}">
 					<p:tab title="公司涉税信息">
 						<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
 							id="companyAboutTaxSummaryTableDataTable" var="company"
 							value="#{companyAboutTaxSummaryTableBean.taxCompanys}"
-							rowIndexVar="index" style="margin-top:5px;" rowKey="#{company.id}"
+							rowIndexVar="index" style="margin-top:5px;"
+							rowKey="#{company.id}"
 							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
 							selection="#{companyAboutTaxSummaryTableBean.selectedCompanyManagerModels}">
 							<f:facet name="header">
-								<div class="header">
+								<div>
 									<h:outputLabel value="公司列表" />
-									<p:commandButton value="汇总" styleClass="header_button"
-										oncomplete="companyAboutTaxSummaryTableConfirmationWidgetVar.show()"
-										update=":companyAboutTaxSummaryTableGrowl"></p:commandButton>
+									<div style="float: right">
+										<h:outputText value="年度：" />
+										<h:selectOneMenu id="annual"
+											value="#{companyAboutTaxSummaryTableBean.annual}"
+											converter="annualConverter">
+											<p:ajax event="change" update="annual" />
+											<f:selectItem itemLabel="请选择" />
+											<f:selectItems
+												value="#{commonBean.getAnnuals(companyAboutTaxSummaryTableBean.annual)}"
+												var="annual" itemLabel="#{annual.itemLabel}"
+												itemValue="#{annual.itemValue}" />
+										</h:selectOneMenu>
+										<p:commandButton value="汇总"
+											oncomplete="companyAboutTaxSummaryTableConfirmationWidgetVar.show()"
+											update=":companyAboutTaxSummaryTableGrowl"></p:commandButton>
+
+
+									</div>
 								</div>
 							</f:facet>
 							<p:column selectionMode="multiple"
@@ -61,6 +87,9 @@
 							</p:column>
 							<p:column headerText="公司代码">
 								<h:outputText value="#{company.code}" />
+							</p:column>
+							<p:column headerText="法人代表">
+								<h:outputText value="#{company.representative}" />
 							</p:column>
 							<p:column headerText="地址">
 								<h:outputText value="#{company.address}" />
@@ -93,7 +122,8 @@
 									value="#{commonBean.formatDate(reportSummaryHistory.summaryDatetime)}" />
 							</p:column>
 							<p:column headerText="创建人">
-								<h:outputText value="#{userCommonBean.getUserRealName(reportSummaryHistory.createdBy)}" />
+								<h:outputText
+									value="#{userCommonBean.getUserRealName(reportSummaryHistory.createdBy)}" />
 							</p:column>
 							<p:column headerText="操作" style="text-align: center;width:18px;">
 								<p:commandButton ajax="false" title="下载"
@@ -119,6 +149,6 @@
 					onclick="companyAboutTaxSummaryTableConfirmationWidgetVar.hide()" />
 			</p:confirmDialog>
 		</h:form>
-		<ui:include src="/faces/common/company/common_company_dialog.xhtml"/>
+		<ui:include src="/faces/common/company/common_company_dialog.xhtml" />
 	</ui:define>
 </ui:composition>

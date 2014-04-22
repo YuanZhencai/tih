@@ -6,7 +6,6 @@ package com.wcs.tih.report.service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -27,13 +26,11 @@ import com.wcs.base.service.LoginService;
 import com.wcs.base.util.JSFUtils;
 import com.wcs.common.consts.DictConsts;
 import com.wcs.common.controller.vo.CompanyVo;
-import com.wcs.common.controller.vo.ContactVo;
 import com.wcs.common.model.Companymstr;
 import com.wcs.common.service.CommonService;
 import com.wcs.common.service.CompanyService;
 import com.wcs.common.service.TDSLocal;
 import com.wcs.common.util.JasperUtil;
-import com.wcs.scheduler.util.DateUtils;
 import com.wcs.tih.filenet.helper.ce.ObjectStoreProvider;
 import com.wcs.tih.filenet.helper.ce.util.CeConfigOptions;
 import com.wcs.tih.model.CompanyAnnualReturn;
@@ -41,25 +38,14 @@ import com.wcs.tih.model.CompanyFinancialReturn;
 import com.wcs.tih.model.ReportSummaryHistory;
 import com.wcs.tih.report.service.summary.SummaryService;
 
-/**
- * <p>
- * Project: tih
- * </p>
- * <p>
- * Title: FinancialReportService.java
- * </p>
- * <p>
- * Description:
- * </p>
- * <p>
- * Copyright (c) 2014 Wilmar Consultancy Services
- * </p>
- * <p>
- * All Rights Reserved.
- * </p>
- * 
- * @author <a href="mailto:yuanzhencai@wcs-global.com">Yuan</a>
- */
+/** 
+* <p>Project: tih</p> 
+* <p>Title: FinancialReportService.java</p> 
+* <p>Description: </p> 
+* <p>Copyright (c) 2014 Wilmar Consultancy Services</p>
+* <p>All Rights Reserved.</p>
+* @author <a href="mailto:yuanzhencai@wcs-global.com">Yuan</a> 
+*/
 @Stateless
 public class FinancialReportService implements Serializable {
 	/**

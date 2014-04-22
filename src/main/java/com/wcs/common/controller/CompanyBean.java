@@ -179,6 +179,7 @@ public class CompanyBean {
         companymstr.setRegion(this.companySaveModel.getRegion());
         companymstr.setProvince(this.companySaveModel.getProvince());
         companymstr.setCode(this.companySaveModel.getCode());
+        companymstr.setRepresentative(this.companySaveModel.getRepresentative());
         companymstr.setUpdatedDatetime(new Date());
         this.companyManagerService.saveOrUpdate(companymstr, this.flag);
         search();

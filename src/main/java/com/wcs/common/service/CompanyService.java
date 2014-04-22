@@ -41,7 +41,7 @@ public class CompanyService {
             join = " inner join POSITIONORG on o.id = POSITIONORG.oid inner join Userpositionorg on POSITIONORG.id = Userpositionorg.POSITIONORG_id inner join Position on Position.id=POSITIONORG.POSITION_ID ";
             joinContion = " and COMPANYMSTR.DEFUNCT_IND <> 'Y' and (POSITIONORG.DEFUNCT_IND <> 'Y' and Userpositionorg.DEFUNCT_IND <> 'Y' and Userpositionorg.usermstr_id = " + this.loginService.getCurrentUsermstr().getId() + ")   and Position.code='"+ResourceBundle.getBundle("positons").getString("CMPADMIN")+"'";
         }
-        sb.append("select " + distinct + "o.STEXT,COMPANYMSTR.ADDRESS,COMPANYMSTR.ZIPCODE,COMPANYMSTR.TELPHONE,COMPANYMSTR.DEFUNCT_IND,COMPANYMSTR.id,o.BUKRS,COMPANYMSTR.type,COMPANYMSTR.desc,o.id as oid ,COMPANYMSTR.START_DATETIME,COMPANYMSTR.SETUP_DATETIME,COMPANYMSTR.id,COMPANYMSTR.REGION,COMPANYMSTR.PROVINCE,COMPANYMSTR.CODE,lower(COMPANYMSTR.CODE) from COMPANYMSTR INNER JOIN O on O.id=COMPANYMSTR.oid " + join + " where 1=1").append(joinContion);
+        sb.append("select " + distinct + "o.STEXT,COMPANYMSTR.ADDRESS,COMPANYMSTR.ZIPCODE,COMPANYMSTR.TELPHONE,COMPANYMSTR.DEFUNCT_IND,COMPANYMSTR.id,o.BUKRS,COMPANYMSTR.type,COMPANYMSTR.desc,o.id as oid ,COMPANYMSTR.START_DATETIME,COMPANYMSTR.SETUP_DATETIME,COMPANYMSTR.id,COMPANYMSTR.REGION,COMPANYMSTR.PROVINCE,COMPANYMSTR.CODE,lower(COMPANYMSTR.CODE),COMPANYMSTR.REPRESENTATIVE from COMPANYMSTR INNER JOIN O on O.id=COMPANYMSTR.oid " + join + " where 1=1").append(joinContion);
        
         
         if (queryCondition != null) {
@@ -94,6 +94,7 @@ public class CompanyService {
             model.setProvince(result[14] == null ? "" : (String) result[14]);
             model.setCode(result[15] == null ? "" : (String) result[15]);
             model.setLowererCode(result[16] == null ? "" : (String) result[16]);
+            model.setRepresentative(result[17] == null ? "" : (String) result[17]);
             list.add(model);
         }
         return list;
@@ -129,6 +130,7 @@ public class CompanyService {
             cm.setRegion(companymstr.getRegion());
             cm.setProvince(companymstr.getProvince());
             cm.setCode(companymstr.getCode());
+            cm.setRepresentative(companymstr.getRepresentative());
             cm.setUpdatedBy(loginService.getCurrentUsermstr().getAdAccount());
             cm.setUpdatedDatetime(new Date());
             cm.setStartDatetime(companymstr.getStartDatetime());
@@ -188,7 +190,7 @@ public class CompanyService {
             position = " (Position.code='"+TRANSADM+"' or Position.code = '"+TRANSOBSV+"')";
         }
         joinContion = " and COMPANYMSTR.DEFUNCT_IND <> 'Y' and (POSITIONORG.DEFUNCT_IND <> 'Y' and Userpositionorg.DEFUNCT_IND <> 'Y' and Userpositionorg.usermstr_id = " + this.loginService.getCurrentUsermstr().getId() + ")   and "+position;
-        sb.append("select " + distinct + "o.STEXT,COMPANYMSTR.ADDRESS,COMPANYMSTR.ZIPCODE,COMPANYMSTR.TELPHONE,COMPANYMSTR.DEFUNCT_IND,COMPANYMSTR.id,o.BUKRS,COMPANYMSTR.type,COMPANYMSTR.desc,o.id as oid ,COMPANYMSTR.START_DATETIME,COMPANYMSTR.SETUP_DATETIME,COMPANYMSTR.id,COMPANYMSTR.REGION,COMPANYMSTR.PROVINCE,COMPANYMSTR.CODE,lower(COMPANYMSTR.CODE) from COMPANYMSTR INNER JOIN O on O.id=COMPANYMSTR.oid " + join + " where 1=1").append(joinContion);
+        sb.append("select " + distinct + "o.STEXT,COMPANYMSTR.ADDRESS,COMPANYMSTR.ZIPCODE,COMPANYMSTR.TELPHONE,COMPANYMSTR.DEFUNCT_IND,COMPANYMSTR.id,o.BUKRS,COMPANYMSTR.type,COMPANYMSTR.desc,o.id as oid ,COMPANYMSTR.START_DATETIME,COMPANYMSTR.SETUP_DATETIME,COMPANYMSTR.id,COMPANYMSTR.REGION,COMPANYMSTR.PROVINCE,COMPANYMSTR.CODE,lower(COMPANYMSTR.CODE,COMPANYMSTR.REPRESENTATIVE from COMPANYMSTR INNER JOIN O on O.id=COMPANYMSTR.oid " + join + " where 1=1").append(joinContion);
         
         if (queryCondition != null) {
             if (queryCondition.getStext() != null && !queryCondition.getStext().trim().equals("")) {
@@ -239,6 +241,7 @@ public class CompanyService {
             model.setProvince(result[14] == null ? "" : (String) result[14]);
             model.setCode(result[15] == null ? "" : (String) result[15]);
             model.setLowererCode(result[16] == null ? "" : (String) result[16]);
+            model.setRepresentative(result[17] == null ? "" : (String) result[17]);
             list.add(model);
         }
         return list;

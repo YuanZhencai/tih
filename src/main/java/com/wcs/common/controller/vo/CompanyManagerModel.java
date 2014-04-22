@@ -20,6 +20,8 @@ public class CompanyManagerModel extends IdEntity {
 	private String province = " ";
 	private String code;
 	private String lowererCode;
+	private String representative;
+	
 	
 	private Date startDatetime;
 	public Date getStartDatetime() {
@@ -168,5 +170,13 @@ public class CompanyManagerModel extends IdEntity {
     public void setHanYuAddress(String hanYuAddress) {
         this.hanYuAddress = hanYuAddress;
     }
+
+	public String getRepresentative() {
+		return representative;
+	}
+
+	public void setRepresentative(String representative) {
+		this.representative = representative;
+	}
 	
 }

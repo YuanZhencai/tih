@@ -68,7 +68,7 @@ public class CompanyAboutTaxSummaryTableService {
         String join = "";
         List<CompanyManagerModel> list = new ArrayList<CompanyManagerModel>();
         StringBuilder sb = new StringBuilder();
-        sb.append("select o.STEXT,COMPANYMSTR.ADDRESS,COMPANYMSTR.ZIPCODE,COMPANYMSTR.TELPHONE,COMPANYMSTR.DEFUNCT_IND,COMPANYMSTR.id,o.BUKRS,COMPANYMSTR.type,COMPANYMSTR.desc,o.id as oid ,COMPANYMSTR.START_DATETIME,COMPANYMSTR.SETUP_DATETIME,COMPANYMSTR.id,COMPANYMSTR.REGION,COMPANYMSTR.PROVINCE,COMPANYMSTR.CODE,lower(COMPANYMSTR.CODE) from COMPANYMSTR INNER JOIN O on O.id=COMPANYMSTR.oid " + join + " where 1=1");
+        sb.append("select o.STEXT,COMPANYMSTR.ADDRESS,COMPANYMSTR.ZIPCODE,COMPANYMSTR.TELPHONE,COMPANYMSTR.DEFUNCT_IND,COMPANYMSTR.id,o.BUKRS,COMPANYMSTR.type,COMPANYMSTR.desc,o.id as oid ,COMPANYMSTR.START_DATETIME,COMPANYMSTR.SETUP_DATETIME,COMPANYMSTR.id,COMPANYMSTR.REGION,COMPANYMSTR.PROVINCE,COMPANYMSTR.CODE,lower(COMPANYMSTR.CODE),COMPANYMSTR.REPRESENTATIVE from COMPANYMSTR INNER JOIN O on O.id=COMPANYMSTR.oid " + join + " where 1=1");
         if(queryCompanys !=null && queryCompanys.size() > 0){
             String companyIds = "";
             for (int i = 0; i < queryCompanys.size(); i++) {
@@ -99,6 +99,7 @@ public class CompanyAboutTaxSummaryTableService {
             model.setProvince(result[14] == null ? "" : (String) result[14]);
             model.setCode(result[15] == null ? "" : (String) result[15]);
             model.setLowererCode(result[16] == null ? "" : (String) result[16]);
+            model.setRepresentative(result[17] == null ? "" : (String) result[17]);
             list.add(model);
         }
         return list;

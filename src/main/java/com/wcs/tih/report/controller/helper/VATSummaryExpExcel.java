@@ -38,7 +38,7 @@ public class VATSummaryExpExcel {
 			
 			// 创建样式对象,Create a new Cell style and add it to the workbook's style,table. You can define up to 4000 unique styles in a .xls
 			HSSFCellStyle titleStyle = wb.createCellStyle();
-			titleStyle.setFillForegroundColor(HSSFColor.PALE_BLUE.index);
+			titleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
 			titleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			titleStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			titleStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -49,7 +49,7 @@ public class VATSummaryExpExcel {
 			
 			//样式一,
 			HSSFCellStyle lightBuleTitleStyle = wb.createCellStyle();
-			lightBuleTitleStyle.setFillForegroundColor(HSSFColor.TAN.index);
+			lightBuleTitleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
 			lightBuleTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			lightBuleTitleStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			lightBuleTitleStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -59,7 +59,7 @@ public class VATSummaryExpExcel {
 			lightBuleTitleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 			//样式二
 			HSSFCellStyle royalBuleTitleStyle = wb.createCellStyle();
-			royalBuleTitleStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
+			royalBuleTitleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
 			royalBuleTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			royalBuleTitleStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			royalBuleTitleStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -69,7 +69,7 @@ public class VATSummaryExpExcel {
 			royalBuleTitleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 			//样式三 
 			HSSFCellStyle darkYellowTitle = wb.createCellStyle();
-			darkYellowTitle.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
+			darkYellowTitle.setFillForegroundColor(HSSFColor.GREEN.index);
 			darkYellowTitle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			darkYellowTitle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			darkYellowTitle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -79,7 +79,7 @@ public class VATSummaryExpExcel {
 			darkYellowTitle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 			//样式四
 			HSSFCellStyle coralTitleStyle = wb.createCellStyle();
-			coralTitleStyle.setFillForegroundColor(HSSFColor.CORAL.index);
+			coralTitleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
 			coralTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			coralTitleStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			coralTitleStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -107,7 +107,7 @@ public class VATSummaryExpExcel {
 
 			// 奇数行样式
 			HSSFCellStyle oddNumberRowStyle = wb.createCellStyle();
-			oddNumberRowStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+			oddNumberRowStyle.setFillForegroundColor(HSSFColor.WHITE.index);
 			oddNumberRowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			oddNumberRowStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			oddNumberRowStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -128,7 +128,7 @@ public class VATSummaryExpExcel {
 			//TODO
 			// 数字奇数行样式
             HSSFCellStyle numberOddNumberRowStyle = setBorder(wb.createCellStyle());
-            numberOddNumberRowStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+            numberOddNumberRowStyle.setFillForegroundColor(HSSFColor.WHITE.index);
             numberOddNumberRowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
             numberOddNumberRowStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 垂直
             numberOddNumberRowStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);// 水平
@@ -139,7 +139,7 @@ public class VATSummaryExpExcel {
             
 			// 序号奇数行样式
 			HSSFCellStyle orderOddNumberRowStyle = wb.createCellStyle();
-			orderOddNumberRowStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+			orderOddNumberRowStyle.setFillForegroundColor(HSSFColor.WHITE.index);
 			orderOddNumberRowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			orderOddNumberRowStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			orderOddNumberRowStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
