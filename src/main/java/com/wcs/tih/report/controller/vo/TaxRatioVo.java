@@ -15,6 +15,8 @@ public class TaxRatioVo extends IdModel implements Serializable {
 
     private static final long serialVersionUID = -6475061347039097748L;
     private String taxType;// 税种
+    private String taxPayAccount;//金额
+    
     private String taxBasis;// 计税基础
     private String taxRate;// 税率
     private String reportFrequency;// 申报频率
@@ -50,5 +52,13 @@ public class TaxRatioVo extends IdModel implements Serializable {
     public void setReportFrequency(String reportFrequency) {
         this.reportFrequency = reportFrequency;
     }
+
+	public String getTaxPayAccount() {
+		return taxPayAccount;
+	}
+
+	public void setTaxPayAccount(String taxPayAccount) {
+		this.taxPayAccount = taxPayAccount;
+	}
 
 }

@@ -20,6 +20,8 @@ public class CompanyBasicInfoVo extends IdModel implements Serializable {
 
     private String companyName;
     private String companyAddress;
+    //法人代表
+    private String representative;
     private String setUpDatetime;
     private String startDatetime;
     private String nationalTax;
@@ -273,5 +275,13 @@ public class CompanyBasicInfoVo extends IdModel implements Serializable {
     public void setProcessAbilitys(List<String> processAbilitys) {
         this.processAbilitys = processAbilitys;
     }
+
+	public String getRepresentative() {
+		return representative;
+	}
+
+	public void setRepresentative(String representative) {
+		this.representative = representative;
+	}
 
 }

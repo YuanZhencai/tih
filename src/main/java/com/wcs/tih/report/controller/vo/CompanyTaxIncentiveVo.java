@@ -18,6 +18,8 @@ public class CompanyTaxIncentiveVo extends IdModel implements Serializable {
     private static final long serialVersionUID = -7919661907892749656L;
     private String companyName;
     private List<TaxIncentiveVo> ttvs;
+    //法人代表
+    private String representative;
 
     public String getCompanyName() {
         return companyName;
@@ -35,4 +37,12 @@ public class CompanyTaxIncentiveVo extends IdModel implements Serializable {
         this.ttvs = ttvs;
     }
 
+	public String getRepresentative() {
+		return representative;
+	}
+
+	public void setRepresentative(String representative) {
+		this.representative = representative;
+	}
+    
 }

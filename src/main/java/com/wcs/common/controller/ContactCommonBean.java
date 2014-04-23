@@ -85,7 +85,7 @@ public class ContactCommonBean implements Serializable {
     }
 	
 	private void invokeMethodByMultiple() {
-        if (this.bean != null && !"".equals(this.bean)) {
+        if (!StringUtils.isBlankOrNull(bean)) {
         	try {
                 FacesContext fc = FacesContext.getCurrentInstance();
                 Object o = fc.getApplication().getELResolver().getValue(fc.getELContext(), null, bean);

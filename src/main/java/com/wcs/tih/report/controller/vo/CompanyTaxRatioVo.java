@@ -17,6 +17,8 @@ public class CompanyTaxRatioVo extends IdModel implements Serializable {
     private static final long serialVersionUID = -3261381846154027655L;
     private String companyName;
     private List<TaxRatioVo> trvs;
+    //法人代表
+    private String representative;
 
     public String getCompanyName() {
         return companyName;
@@ -33,5 +35,13 @@ public class CompanyTaxRatioVo extends IdModel implements Serializable {
     public void setTrvs(List<TaxRatioVo> trvs) {
         this.trvs = trvs;
     }
+
+	public String getRepresentative() {
+		return representative;
+	}
+
+	public void setRepresentative(String representative) {
+		this.representative = representative;
+	}
 
 }

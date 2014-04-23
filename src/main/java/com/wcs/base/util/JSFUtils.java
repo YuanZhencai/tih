@@ -1,6 +1,7 @@
 package com.wcs.base.util;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.application.FacesMessage;
@@ -130,5 +131,16 @@ public final class JSFUtils {
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.addCallbackParam("widgetVar", widgetVar);
 		context.addCallbackParam("option", option);
+	}
+	
+	public static String getLanguage() {
+		String language = "zh_CN";
+		try {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			language = locale.toString();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return language;
 	}
 }

@@ -3,7 +3,6 @@ package com.wcs.tih.report.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -96,7 +95,6 @@ public class CompanyAboutTaxSummaryTableBean {
 	 * </p>
 	 */
 	public void aboutTaxSummary() {
-		Locale browserLang = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		FacesContext context = FacesContext.getCurrentInstance();
 		boolean validated = true;
 		if (selectedCompanyManagerModels == null || selectedCompanyManagerModels.length == 0) {
@@ -109,7 +107,7 @@ public class CompanyAboutTaxSummaryTableBean {
 		}
 		try {
 			if (validated) {
-				companyAboutTaxSummaryTableService.companyAboutTaxSummary(selectedCompanyManagerModels, browserLang.toString());
+				companyAboutTaxSummaryTableService.companyAboutTaxSummary(selectedCompanyManagerModels, annual);
 				queryTaxSummary();
 				activeIndex = 1;
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "汇总成功，请下载查看！"));

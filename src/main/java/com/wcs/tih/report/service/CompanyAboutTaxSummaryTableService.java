@@ -19,7 +19,9 @@ import org.primefaces.model.StreamedContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.wcs.base.service.EntityService;
 import com.wcs.base.service.LoginService;
+import com.wcs.base.util.JSFUtils;
 import com.wcs.common.consts.DictConsts;
 import com.wcs.common.controller.vo.CompanyManagerModel;
 import com.wcs.common.model.Dict;
@@ -54,6 +56,9 @@ public class CompanyAboutTaxSummaryTableService {
     private CommonService commonService;
     @EJB
     private FileNetUploadDownload fileUpService;
+    @EJB
+    private EntityService entityService;
+    
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
     private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     private static ResourceBundle filenetProperties = ResourceBundle.getBundle("filenet");
@@ -112,13 +117,13 @@ public class CompanyAboutTaxSummaryTableService {
      * @param lang 浏览器语言
      * @throws Exception
      */
-    public void companyAboutTaxSummary(CompanyManagerModel[] selectedCompanyManagerModels, String lang) throws Exception {
+    public void companyAboutTaxSummary(CompanyManagerModel[] selectedCompanyManagerModels, Date annual) throws Exception {
         if (null != selectedCompanyManagerModels && selectedCompanyManagerModels.length != 0) {
-            List<CompanyBasicInfoVo> cbvs = getCompanyBasicInfo(selectedCompanyManagerModels, lang);
-            List<CompanyTaxRatioVo> ctrvs = getCompanyTaxRatioInfo(selectedCompanyManagerModels, lang);
+            List<CompanyBasicInfoVo> cbvs = getCompanyBasicInfo(selectedCompanyManagerModels);
+            List<CompanyTaxRatioVo> ctrvs = getCompanyTaxRatioInfo(selectedCompanyManagerModels, annual);
             List<CompanyTaxIncentiveVo> cttvs = getCompanyTaxIncentiveInfo(selectedCompanyManagerModels);
             try {
-                String reportName = this.commonService.getValueByDictCatKey(DictConsts.TIH_TAX_REPORT_1, lang);
+                String reportName = this.commonService.getValueByDictCatKey(DictConsts.TIH_TAX_REPORT_1, JSFUtils.getLanguage());
                 String fileName = (reportName != null ? reportName : "公司涉税信息汇总") + "-" + sdf.format(new Date());
                 InputStream inputStream = CompanyAbouttaxExpExcel.taxSummary(cbvs, ctrvs, cttvs);
                 com.filenet.api.core.Document document = fileUpService.upLoadDocumentCheckIn(inputStream, new HashMap<String, Object>(), fileName + ".xls", filenetProperties.getString("ce.document.classid"), filenetProperties.getString("ce.folder.reportSummary.aboutTax"));
@@ -147,7 +152,8 @@ public class CompanyAboutTaxSummaryTableService {
      * @param lang
      * @return
      */
-    private List<CompanyBasicInfoVo> getCompanyBasicInfo(CompanyManagerModel[] selectedCompanyManagerModels, String lang) {
+    private List<CompanyBasicInfoVo> getCompanyBasicInfo(CompanyManagerModel[] selectedCompanyManagerModels) {
+    	String lang = JSFUtils.getLanguage();
         if (null != selectedCompanyManagerModels && selectedCompanyManagerModels.length != 0) {
             HashMap<String, Integer> processDictMap = new HashMap<String, Integer>();
             List<Dict> processDicts = commonService.getDictByCat(DictConsts.TIH_TAX_PROCESSING, lang);
@@ -167,6 +173,7 @@ public class CompanyAboutTaxSummaryTableService {
                 cbv = new CompanyBasicInfoVo();
                 cbv.setCompanyName(cmm.getStext());
                 cbv.setCompanyAddress(cmm.getAddress());
+                cbv.setRepresentative(cmm.getRepresentative());
                 cbv.setSetUpDatetime(null != cmm.getStepDatetime() ? df.format(cmm.getStepDatetime()) : "");
                 cbv.setStartDatetime(null != cmm.getStartDatetime() ? df.format(cmm.getStartDatetime()) : "");
                 cbv.setManageArea(cmm.getDesc());
@@ -258,7 +265,9 @@ public class CompanyAboutTaxSummaryTableService {
      * @param lang
      * @return
      */
-    private List<CompanyTaxRatioVo> getCompanyTaxRatioInfo(CompanyManagerModel[] selectedCompanyManagerModels, String lang) {
+    private List<CompanyTaxRatioVo> getCompanyTaxRatioInfo(CompanyManagerModel[] selectedCompanyManagerModels, Date annual) {
+    	
+    	String lang =JSFUtils.getLanguage();
         if (null != selectedCompanyManagerModels && selectedCompanyManagerModels.length != 0) {
             List<CompanyTaxRatioVo> ctrvs = new ArrayList<CompanyTaxRatioVo>();
             CompanyTaxRatioVo ctrv;
@@ -268,6 +277,7 @@ public class CompanyAboutTaxSummaryTableService {
                 ctrv = new CompanyTaxRatioVo();
                 ctrv.setId(cmm.getId());
                 ctrv.setCompanyName(cmm.getStext());
+                ctrv.setRepresentative(cmm.getRepresentative());
                 cttrs = this.getCompanyTaxTypeRatio(cmm.getId());
                 if (null != cttrs && cttrs.size() != 0) {
                     List<TaxRatioVo> trvs = new ArrayList<TaxRatioVo>();
@@ -282,15 +292,18 @@ public class CompanyAboutTaxSummaryTableService {
                         if (null != catps && catps.size() != 0) {
                             for (CompanyAnnualTaxPay catp : catps) {
                                 if (!"Y".equals(catp.getDefunctInd())) {
-                                    // 取得当权年度
+                                	// 取得当权年度
                                     Calendar cal = Calendar.getInstance();
-                                    cal.setTime(new Date());
+                                    cal.setTime(annual);
                                     int currentYear = cal.get(Calendar.YEAR);
-                                    cal.setTime(null != catp.getTaxPayYear() ? catp.getTaxPayYear() : new Date());
-                                    int taxPayYear = cal.get(Calendar.YEAR);
-                                    if (taxPayYear == (currentYear - 1)) {
-                                    	trv.setTaxRate(catp.getNewTaxRate());
-                                        break;
+                                    if(catp.getTaxPayYear() != null) {
+                                    	cal.setTime(catp.getTaxPayYear());
+                                    	int taxPayYear = cal.get(Calendar.YEAR);
+                                    	if (taxPayYear == (currentYear - 1)) {
+                                    		trv.setTaxRate(catp.getNewTaxRate());
+                                    		trv.setTaxPayAccount(catp.getTaxPayAccount() + "");
+                                    		break;
+                                    	}
                                     }
                                 }
                             }
@@ -323,6 +336,7 @@ public class CompanyAboutTaxSummaryTableService {
                 cttv = new CompanyTaxIncentiveVo();
                 cttv.setId(cmm.getId());
                 cttv.setCompanyName(cmm.getStext());
+                cttv.setRepresentative(cmm.getRepresentative());
                 ctis = getCompanyTaxIncentive(cmm.getId());
                 if (null != ctis && ctis.size() != 0) {
                     List<TaxIncentiveVo> tivs = new ArrayList<TaxIncentiveVo>();
