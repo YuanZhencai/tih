@@ -60,11 +60,6 @@ public class HomePageBean {
 
 	@EJB
 	private HomePageService homePageService;
-	@EJB
-	private SysNoticeService sysNoticeService;
-	@EJB
-	private SupportService supportService;
-
 	private List<NewschannelmstrVo> newsChannelList;
 	private List<CommonLinkVO> commonLinkList = null;
 	private List<CommonFunctionVO> commonFunctionList = null;
@@ -79,12 +74,6 @@ public class HomePageBean {
 	private List<Notificationmstr> readedNotices;
 	private LazyDataModel<NoticeVo> notReadLazyModel;
 	private LazyDataModel<NoticeVo> readedLazyModel;
-
-	private NotificationVo sysNoticeVo = new NotificationVo();
-
-	private List<ContactVo> selectedNoticeReceivers = null;
-
-	private List<Usermstr> supportUsers;
 
 	/**
 	 * <p>
@@ -131,14 +120,10 @@ public class HomePageBean {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		findSupportUsers();
 	}
 
 	// ======================================Yuan======================================//
 
-	public void findSupportUsers() {
-		supportUsers = supportService.findSupportUsers();
-	}
 
 	public void setAllReaded() {
 		try {
@@ -147,52 +132,6 @@ public class HomePageBean {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "全部置成已读失败：", "请刷新重试"));
-		}
-	}
-
-	public void addSysNotice() {
-		sysNoticeVo = new NotificationVo();
-	}
-
-	public void sendSysNotice() {
-
-		if (validateSysNotice(sysNoticeVo)) {
-			try {
-				sysNoticeService.sendSysNotice(sysNoticeVo);
-				JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_INFO, "操作成功", ""));
-				JSFUtils.handleDialogByWidgetVar("sysNoticeDialogVar", "close");
-			} catch (Exception e) {
-				JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "操作失败：", "请重新操作。"));
-				logger.error(e.getMessage(), e);
-			}
-		}
-	}
-
-	private boolean validateSysNotice(NotificationVo sysNoticeVo) {
-		boolean validate = true;
-		FacesContext context = FacesContext.getCurrentInstance();
-		if (!ValidateUtil.validateRequired(context, sysNoticeVo.getTypeId(), "通知主题：")) {
-			validate = false;
-		}
-		if (!ValidateUtil.validateRequired(context, sysNoticeVo.getContent(), "消息内容：")) {
-			validate = false;
-		}
-		List<String> receivers = sysNoticeVo.getReceiverList();
-		if (receivers == null || receivers.size() == 0) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "接收人：", "不能为空。"));
-		}
-		return validate;
-	}
-
-	public void selectContacts(ContactVo[] contactVos) {
-		List<String> receivers = sysNoticeVo.getReceiverList();
-		selectedNoticeReceivers = new ArrayList<ContactVo>();
-		for (ContactVo contactVo : contactVos) {
-			if (contactVo.getContact() != null) {
-				contactVo.setAccount(contactVo.getEmail());
-			}
-			receivers.add(contactVo.getAccount());
-			selectedNoticeReceivers.add(contactVo);
 		}
 	}
 
@@ -392,30 +331,6 @@ public class HomePageBean {
 
 	public void setReadedLazyModel(LazyDataModel<NoticeVo> readedLazyModel) {
 		this.readedLazyModel = readedLazyModel;
-	}
-
-	public NotificationVo getSysNoticeVo() {
-		return sysNoticeVo;
-	}
-
-	public void setSysNoticeVo(NotificationVo sysNoticeVo) {
-		this.sysNoticeVo = sysNoticeVo;
-	}
-
-	public List<ContactVo> getSelectedNoticeReceivers() {
-		return selectedNoticeReceivers;
-	}
-
-	public void setSelectedNoticeReceivers(List<ContactVo> selectedNoticeReceivers) {
-		this.selectedNoticeReceivers = selectedNoticeReceivers;
-	}
-
-	public List<Usermstr> getSupportUsers() {
-		return supportUsers;
-	}
-
-	public void setSupportUsers(List<Usermstr> supportUsers) {
-		this.supportUsers = supportUsers;
 	}
 
 	class NoticeVoLazyModel<T extends NoticeVo> extends LazyDataModel<T> {

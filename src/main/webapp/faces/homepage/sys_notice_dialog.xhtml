@@ -15,7 +15,7 @@
 			<h:panelGrid columns="2" columnClasses="column1,column2">
 				<h:outputText value="通知主题：" />
 				<h:column>
-					<p:inputText value="#{homePageBean.sysNoticeVo.typeId}" style="width:356px" />
+					<p:inputText value="#{sysNoticeBean.sysNoticeVo.typeId}" style="width:356px" />
 					<h:outputText value="*" style="color: red;" />
 				</h:column>
 			</h:panelGrid>
@@ -24,31 +24,31 @@
 				<h:outputText value="收件人：" />
 				<h:column>
 					<p:selectCheckboxMenu id="receivers"
-						value="#{homePageBean.sysNoticeVo.receiverList}"
+						value="#{sysNoticeBean.sysNoticeVo.receiverList}"
 						style="width: 150px;">
-						<f:selectItems value="#{homePageBean.selectedNoticeReceivers}"
+						<f:selectItems value="#{sysNoticeBean.selectedNoticeReceivers}"
 							var="r" itemLabel="#{r.username}" itemValue="#{r.account}" />
 					</p:selectCheckboxMenu>
 					<p:commandButton icon="ui-icon ui-icon-search"
 						style="width: 27px; height: 27px; vertical-align:top;margin-left:5px;"
 						title="请选择" update=":contactCommonForm"
-						actionListener="#{contactCommonBean.initMode(':sysNoticeDialogForm:receivers','multiple','homePageBean','selectContacts')}"
+						actionListener="#{contactCommonBean.initMode(':sysNoticeDialogForm:receivers','multiple','sysNoticeBean','selectContacts')}"
 						oncomplete="contactCommonDialogVar.show();" />
 				</h:column>
 				<h:outputText value="发送邮件：" />
-				<p:selectBooleanCheckbox value="#{homePageBean.sysNoticeVo.mail}" />
+				<p:selectBooleanCheckbox value="#{sysNoticeBean.sysNoticeVo.mail}" />
 			</h:panelGrid>
 			<h:panelGrid columns="2" columnClasses="column1,column2">
 				<h:outputText value="抄送人：" />
 				<h:column>
-					<p:inputText id="cc" value="#{homePageBean.sysNoticeVo.cc}"
+					<p:inputText id="cc" value="#{sysNoticeBean.sysNoticeVo.cc}"
 						style="width:356px" />
 					<p:watermark value="邮箱，多个以 ; 隔开" for="cc" />
 				</h:column>
 			</h:panelGrid>
 			<h:panelGrid columns="3" columnClasses="column1,column2">
 				<h:outputText value="通知内容：" />
-				<p:inputTextarea value="#{homePageBean.sysNoticeVo.content}"
+				<p:inputTextarea value="#{sysNoticeBean.sysNoticeVo.content}"
 					style="width: 356px;" />
 				<h:outputText value="*" style="color: red;" />
 			</h:panelGrid>
@@ -56,7 +56,7 @@
 				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
 					oncomplete="handleDialog(xhr, status, args);"
 					update=":sysNoticeDialogForm"
-					action="#{homePageBean.sendSysNotice()}" style="margin-right: 5px;" />
+					action="#{sysNoticeBean.sendSysNotice()}" style="margin-right: 5px;" />
 				<p:commandButton icon="ui-icon ui-icon-cancel"
 					value="#{msgs.btn_cancel}" type="button"
 					onclick="sysNoticeDialogVar.hide()" />
