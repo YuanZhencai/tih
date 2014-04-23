@@ -483,7 +483,7 @@ public class ExportReportPayableTax {
         	return cellTitleStyle;
         }
         cellTitleStyle = wb.createCellStyle();
-        cellTitleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+        cellTitleStyle.setFillForegroundColor(HSSFColor.LIME.index);
         cellTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         packageStyleBorder(cellTitleStyle);
         packageStyleCenter(cellTitleStyle);

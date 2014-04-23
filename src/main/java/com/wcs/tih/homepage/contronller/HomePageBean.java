@@ -22,13 +22,14 @@ import org.slf4j.LoggerFactory;
 
 import com.wcs.base.util.JSFUtils;
 import com.wcs.common.consts.DictConsts;
-import com.wcs.common.controller.vo.CompanyManagerModel;
 import com.wcs.common.controller.vo.ContactVo;
 import com.wcs.common.controller.vo.NotificationVo;
+import com.wcs.common.model.Usermstr;
 import com.wcs.tih.homepage.contronller.vo.LearningGardenAndCommonDataVo;
 import com.wcs.tih.homepage.contronller.vo.NewschannelmstrVo;
 import com.wcs.tih.homepage.contronller.vo.NoticeVo;
 import com.wcs.tih.homepage.service.HomePageService;
+import com.wcs.tih.homepage.service.SupportService;
 import com.wcs.tih.homepage.service.SysNoticeService;
 import com.wcs.tih.model.Notificationmstr;
 import com.wcs.tih.system.controller.vo.CommonFunctionVO;
@@ -61,7 +62,9 @@ public class HomePageBean {
 	private HomePageService homePageService;
 	@EJB
 	private SysNoticeService sysNoticeService;
-	
+	@EJB
+	private SupportService supportService;
+
 	private List<NewschannelmstrVo> newsChannelList;
 	private List<CommonLinkVO> commonLinkList = null;
 	private List<CommonFunctionVO> commonFunctionList = null;
@@ -76,10 +79,12 @@ public class HomePageBean {
 	private List<Notificationmstr> readedNotices;
 	private LazyDataModel<NoticeVo> notReadLazyModel;
 	private LazyDataModel<NoticeVo> readedLazyModel;
-	
+
 	private NotificationVo sysNoticeVo = new NotificationVo();
-	
+
 	private List<ContactVo> selectedNoticeReceivers = null;
+
+	private List<Usermstr> supportUsers;
 
 	/**
 	 * <p>
@@ -126,11 +131,14 @@ public class HomePageBean {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
+		findSupportUsers();
 	}
-	
-	
 
 	// ======================================Yuan======================================//
+
+	public void findSupportUsers() {
+		supportUsers = supportService.findSupportUsers();
+	}
 
 	public void setAllReaded() {
 		try {
@@ -141,15 +149,14 @@ public class HomePageBean {
 			JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "全部置成已读失败：", "请刷新重试"));
 		}
 	}
-	
+
 	public void addSysNotice() {
 		sysNoticeVo = new NotificationVo();
 	}
 
-	
 	public void sendSysNotice() {
-		
-		if(validateSysNotice(sysNoticeVo)) {
+
+		if (validateSysNotice(sysNoticeVo)) {
 			try {
 				sysNoticeService.sendSysNotice(sysNoticeVo);
 				JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_INFO, "操作成功", ""));
@@ -160,14 +167,14 @@ public class HomePageBean {
 			}
 		}
 	}
-	
+
 	private boolean validateSysNotice(NotificationVo sysNoticeVo) {
 		boolean validate = true;
 		FacesContext context = FacesContext.getCurrentInstance();
-		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getTypeId(), "通知主题：")) {
+		if (!ValidateUtil.validateRequired(context, sysNoticeVo.getTypeId(), "通知主题：")) {
 			validate = false;
 		}
-		if(!ValidateUtil.validateRequired(context , sysNoticeVo.getContent(), "消息内容：")) {
+		if (!ValidateUtil.validateRequired(context, sysNoticeVo.getContent(), "消息内容：")) {
 			validate = false;
 		}
 		List<String> receivers = sysNoticeVo.getReceiverList();
@@ -176,19 +183,19 @@ public class HomePageBean {
 		}
 		return validate;
 	}
-	
+
 	public void selectContacts(ContactVo[] contactVos) {
 		List<String> receivers = sysNoticeVo.getReceiverList();
 		selectedNoticeReceivers = new ArrayList<ContactVo>();
 		for (ContactVo contactVo : contactVos) {
 			if (contactVo.getContact() != null) {
 				contactVo.setAccount(contactVo.getEmail());
-			} 
+			}
 			receivers.add(contactVo.getAccount());
 			selectedNoticeReceivers.add(contactVo);
 		}
 	}
-	
+
 	// ======================================Yuan======================================//
 
 	/**
@@ -270,7 +277,8 @@ public class HomePageBean {
 					url = PROJECT_PAGE + "?proNumber=" + notice.getTypeId();
 				} else if (DictConsts.TIH_TAX_MSG_REFTYPE_3.equals(type)) {
 					url = TASK_PAGE;
-				} if (DictConsts.TIH_TAX_MSG_REFTYPE_4.equals(type)) {
+				}
+				if (DictConsts.TIH_TAX_MSG_REFTYPE_4.equals(type)) {
 					return "";
 				}
 			}
@@ -354,18 +362,13 @@ public class HomePageBean {
 		this.noticeVo = noticeVo;
 	}
 
-
 	public List<NoticeVo> getNotReadNotices() {
 		return notReadNotices;
 	}
 
-
-
 	public void setNotReadNotices(List<NoticeVo> notReadNotices) {
 		this.notReadNotices = notReadNotices;
 	}
-
-
 
 	public List<Notificationmstr> getReadedNotices() {
 		return readedNotices;
@@ -407,6 +410,13 @@ public class HomePageBean {
 		this.selectedNoticeReceivers = selectedNoticeReceivers;
 	}
 
+	public List<Usermstr> getSupportUsers() {
+		return supportUsers;
+	}
+
+	public void setSupportUsers(List<Usermstr> supportUsers) {
+		this.supportUsers = supportUsers;
+	}
 
 	class NoticeVoLazyModel<T extends NoticeVo> extends LazyDataModel<T> {
 		private static final long serialVersionUID = 1L;

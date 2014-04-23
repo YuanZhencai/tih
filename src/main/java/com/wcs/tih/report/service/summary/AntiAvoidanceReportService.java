@@ -26,18 +26,18 @@ public class AntiAvoidanceReportService extends AReportSummary {
     public String summary(String oldPath, String filename, List aaVos) throws Exception {
         String newFileName = copyTemplate(oldPath, oldPath + TEMPORARY_PATH, filename);
         Workbook workbook = getWorkbook(newFileName);
+        CellStyle cellStyle = createCellStyle();
         getSheet("反避税统计汇总表");
         setDisplayGridlines(false);
 
         int rownum = 4;
-        ;
 
         for (int i = 0; i < aaVos.size(); i++) {
             AntiAvoidanceVo aaVo = (AntiAvoidanceVo) aaVos.get(i);
             Row newRow = createRow(rownum);
             for (int k = 0; k < 22; k++) {
                 Cell newCell = newRow.createCell(k);
-                setBorder(newCell, null);
+                setBorder(newCell, cellStyle);
             }
             float height = 0;
             float height1 = getExcelCellAutoHeight(aaVo.getCause(), 9f);
@@ -137,7 +137,7 @@ public class AntiAvoidanceReportService extends AReportSummary {
         Row lastRow = createRow(rownum);// 创建行
         for (int j = 0; j < 22; j++) {
             Cell lastRowCell = lastRow.createCell(j);// 创建单元格
-            setBorder(lastRowCell, null);// 加边框
+            setBorder(lastRowCell, cellStyle);// 加边框
         }
         mergedCell(rownum, rownum, 0, 1);// 合并单元格
         lastRow.getCell(0).setCellValue("合计");

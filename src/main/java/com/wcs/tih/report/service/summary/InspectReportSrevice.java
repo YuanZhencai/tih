@@ -35,6 +35,7 @@ public class InspectReportSrevice extends AReportSummary {
         int dataSize = taxDicts.size();
         String newFileName = copyTemplate(oldPath ,filename, taxDicts);
         Workbook workbook = getWorkbook(newFileName);
+        CellStyle cellStyle = createCellStyle();
         getSheet("汇总");
         setDisplayGridlines(false);
         int rownum = 4;;
@@ -43,7 +44,7 @@ public class InspectReportSrevice extends AReportSummary {
             Row createRow = createRow(rownum);
             for (int k = 0; k < 15 + dataSize; k++) {
                 Cell createCell = createRow.createCell(k);
-                setBorder(createCell, null);
+                setBorder(createCell, cellStyle);
             }
             float height = 0;
             //设置行高

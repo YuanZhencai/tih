@@ -38,7 +38,7 @@ public class VATSummaryExpExcel {
 			
 			// 创建样式对象,Create a new Cell style and add it to the workbook's style,table. You can define up to 4000 unique styles in a .xls
 			HSSFCellStyle titleStyle = wb.createCellStyle();
-			titleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+			titleStyle.setFillForegroundColor(HSSFColor.LIME.index);
 			titleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			titleStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			titleStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -49,7 +49,7 @@ public class VATSummaryExpExcel {
 			
 			//样式一,
 			HSSFCellStyle lightBuleTitleStyle = wb.createCellStyle();
-			lightBuleTitleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+			lightBuleTitleStyle.setFillForegroundColor(HSSFColor.LIME.index);
 			lightBuleTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			lightBuleTitleStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			lightBuleTitleStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -59,7 +59,7 @@ public class VATSummaryExpExcel {
 			lightBuleTitleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 			//样式二
 			HSSFCellStyle royalBuleTitleStyle = wb.createCellStyle();
-			royalBuleTitleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+			royalBuleTitleStyle.setFillForegroundColor(HSSFColor.LIME.index);
 			royalBuleTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			royalBuleTitleStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			royalBuleTitleStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -69,7 +69,7 @@ public class VATSummaryExpExcel {
 			royalBuleTitleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 			//样式三 
 			HSSFCellStyle darkYellowTitle = wb.createCellStyle();
-			darkYellowTitle.setFillForegroundColor(HSSFColor.GREEN.index);
+			darkYellowTitle.setFillForegroundColor(HSSFColor.LIME.index);
 			darkYellowTitle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			darkYellowTitle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			darkYellowTitle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -79,7 +79,7 @@ public class VATSummaryExpExcel {
 			darkYellowTitle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 			//样式四
 			HSSFCellStyle coralTitleStyle = wb.createCellStyle();
-			coralTitleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+			coralTitleStyle.setFillForegroundColor(HSSFColor.LIME.index);
 			coralTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			coralTitleStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 			coralTitleStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);

@@ -206,6 +206,9 @@ public abstract class AReportSummary {
     public static float getExcelCellAutoHeight(String str, float fontCountInline) {
         float defaultRowHeight = 270.00f;//每一行的高度指定
         float defaultCount = 0.00f;
+        if (str == null) {
+        	return defaultRowHeight;
+        }
         for (int i = 0; i < str.length(); i++) {
             float ff = getregex(str.substring(i, i + 1));
             defaultCount = defaultCount + ff;

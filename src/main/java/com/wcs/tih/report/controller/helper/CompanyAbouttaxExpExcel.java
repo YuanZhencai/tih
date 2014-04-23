@@ -56,12 +56,12 @@ public final class CompanyAbouttaxExpExcel {
     public static InputStream taxSummary(List<CompanyBasicInfoVo> cbvs, List<CompanyTaxRatioVo> ctrvs, List<CompanyTaxIncentiveVo> cttvs) throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFCellStyle titleStyle = setBorder(wb.createCellStyle());
-        titleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+        titleStyle.setFillForegroundColor(HSSFColor.LIME.index);
         titleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         titleStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 垂直
         titleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 水平
         HSSFCellStyle greenTitleStyle = setBorder(wb.createCellStyle());
-        greenTitleStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+        greenTitleStyle.setFillForegroundColor(HSSFColor.LIME.index);
         greenTitleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         greenTitleStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 垂直
         greenTitleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 水平
@@ -79,7 +79,7 @@ public final class CompanyAbouttaxExpExcel {
         rowStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 水平
         // 奇数行样式
         HSSFCellStyle oddNumberRowStyle = setBorder(wb.createCellStyle());
-        oddNumberRowStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+        oddNumberRowStyle.setFillForegroundColor(HSSFColor.WHITE.index);
         oddNumberRowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         oddNumberRowStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 垂直
         oddNumberRowStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);// 水平
@@ -89,7 +89,7 @@ public final class CompanyAbouttaxExpExcel {
         evenRowStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);// 水平
         // 数字奇数行样式
         HSSFCellStyle numberOddNumberRowStyle = setBorder(wb.createCellStyle());
-        numberOddNumberRowStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+        numberOddNumberRowStyle.setFillForegroundColor(HSSFColor.WHITE.index);
         numberOddNumberRowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         numberOddNumberRowStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 垂直
         numberOddNumberRowStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);// 水平
@@ -99,7 +99,7 @@ public final class CompanyAbouttaxExpExcel {
         numberEvenRowStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);// 水平
         // 序号奇数行样式
         HSSFCellStyle orderOddNumberRowStyle = setBorder(wb.createCellStyle());
-        orderOddNumberRowStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+        orderOddNumberRowStyle.setFillForegroundColor(HSSFColor.WHITE.index);
         orderOddNumberRowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         orderOddNumberRowStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 垂直
         orderOddNumberRowStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 水平

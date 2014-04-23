@@ -37,6 +37,7 @@ public class TransferPriceReportService extends AReportSummary {
         DateFormat df = new SimpleDateFormat("yyyy");
         String newFileName = copyTemplate(oldPath, oldPath + TEMPORARY_PATH, filename);
         Workbook workbook = getWorkbook(newFileName);
+        CellStyle cellStyle = createCellStyle();
         getSheet("同期资料管理汇总");
         setDisplayGridlines(false);
 
@@ -55,7 +56,7 @@ public class TransferPriceReportService extends AReportSummary {
                 for (int k = 0; k < 12; k++) {
                     // 每行有12列
                     Cell newCell = newRow.createCell(k);
-                    setBorder(newCell, null);
+                    setBorder(newCell, cellStyle);
                 }
                 rownum++;
                 float height = 0;

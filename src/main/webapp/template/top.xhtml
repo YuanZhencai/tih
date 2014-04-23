@@ -38,6 +38,20 @@
 					<p:commandLink action="#{homePageBean.addSysNotice()}" update=":sysNoticeDialogForm" value="系统通知" oncomplete="sysNoticeDialogVar.show();">
 					</p:commandLink>
 					</li>
+				<li><img src="#{request.contextPath}/images/icons/help.gif" />
+					<p:commandLink id="supportLink" value="运维支持" type="button">
+					</p:commandLink>
+					<p:overlayPanel id="supportPanel" for="supportLink" widgetVar="supportPanelVar" showEvent="#{homePageBean.findSupportUsers()}">
+						<p:dataTable value="#{homePageBean.supportUsers}" var="supportUser">
+							<p:column headerText="运维人员">
+								<h:outputText value="#{supportUser.adAccount}" />
+							</p:column>
+							<p:column headerText="联系方式">
+								<h:outputText value="#{supportUser.backgroundInfo}" />
+							</p:column>
+						</p:dataTable>
+					</p:overlayPanel>
+					</li>
 			<!-- 
 				<li><img src="#{request.contextPath}/images/icons/help.gif" />帮助</li>
 			 -->
