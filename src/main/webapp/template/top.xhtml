@@ -43,11 +43,11 @@
 					</p:commandLink>
 					<p:overlayPanel id="supportPanel" for="supportLink" widgetVar="supportPanelVar">
 						<p:dataTable value="#{supportBean.supportUsers}" var="supportUser">
-							<p:column headerText="运维人员" style="width: 100px">
-								<h:outputText value="#{supportUser.adAccount}" />
+							<p:column headerText="运维人员" style="width: 50px">
+								<h:outputText value="#{userCommonBean.getUserRealName(supportUser.adAccount)}" />
 							</p:column>
 							<p:column headerText="联系方式" style="width: 220px">
-								<h:outputText value="#{supportUser.backgroundInfo}" />
+								<h:outputText value="#{supportUser.backgroundInfo == null ? '' : (supportUser.backgroundInfo.trim().replaceAll(' {2,}',' ').replaceAll(' {1,}', '&lt;/br&gt;'))}" escape="false"/>
 							</p:column>
 						</p:dataTable>
 					</p:overlayPanel>

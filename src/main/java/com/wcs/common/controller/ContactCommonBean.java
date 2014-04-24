@@ -5,6 +5,7 @@
 package com.wcs.common.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,14 @@ import com.wcs.common.controller.vo.ContactVo;
 import com.wcs.common.service.ContactCommonService;
 import com.wcs.common.service.ContactService;
 
+/** 
+* <p>Project: tih</p> 
+* <p>Title: ContactCommonBean.java</p> 
+* <p>Description: </p> 
+* <p>Copyright (c) 2014 Wilmar Consultancy Services</p>
+* <p>All Rights Reserved.</p>
+* @author <a href="mailto:yuanzhencai@wcs-global.com">Yuan</a> 
+*/
 @ManagedBean
 @ViewScoped
 public class ContactCommonBean implements Serializable {
@@ -62,6 +71,9 @@ public class ContactCommonBean implements Serializable {
 		this.selectionMode = mode;
 		this.bean = bean;
 		this.method = method;
+		selectedContactVo = null;
+		selectedContactVos = null;
+		contactVos = new ArrayList<ContactVo>();
 	}
 
 	public void searchContact() {

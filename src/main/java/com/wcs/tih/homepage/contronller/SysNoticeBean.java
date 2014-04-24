@@ -49,6 +49,7 @@ public class SysNoticeBean implements Serializable {
 	
 	public void addSysNotice() {
 		sysNoticeVo  = new NotificationVo();
+		selectedNoticeReceivers = new ArrayList<ContactVo>();
 	}
 
 	public void sendSysNotice() {
