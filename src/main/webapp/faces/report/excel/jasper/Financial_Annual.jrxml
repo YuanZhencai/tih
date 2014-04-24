@@ -126,7 +126,7 @@
 				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement uuid="32fc6772-f350-4d0a-abf7-8e1a3f8e54ab" x="440" y="0" width="100" height="20"/>
+				<reportElement uuid="32fc6772-f350-4d0a-abf7-8e1a3f8e54ab" stretchType="RelativeToBandHeight" x="440" y="0" width="100" height="20"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
