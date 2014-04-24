@@ -36,7 +36,7 @@ public class SupportBean implements Serializable {
 	
 	@PostConstruct
 	public void init() {
-		logger.info("SupportBean.init()");
+		logger.debug("SupportBean.init()");
 		findSupportUsers();
 	}
 	

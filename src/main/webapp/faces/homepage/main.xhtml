@@ -56,6 +56,8 @@
 	vertical-align: bottom;
 	zoom: 1;
 	border-bottom: #CCC dashed 1px;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 #scrollDiv li a {
@@ -156,8 +158,7 @@ function removeHtml(){
 					<p:tab id="myNotReadNews" title="未读消息">
 						<p:contextMenu for="myNotReadNews">
 							<p:menuitem value="全部置成已读"
-								action="#{homePageBean.setAllReaded()}"
-								oncomplete="load()"
+								action="#{homePageBean.setAllReaded()}" oncomplete="load()"
 								update="myNewsTabView" />
 						</p:contextMenu>
 						<div class="scrollbox">
@@ -166,11 +167,11 @@ function removeHtml(){
 							</div>
 							<div id="scrollDiv">
 								<ul>
-									<ui:repeat value="#{homePageBean.notReadNotices}" var="notice" varStatus="status">
-										<li>
-										<h:outputText value="#{status.index + 1}、" />
-										<p:graphicImage url="/images/news.gif" /> <p:commandLink
-												id="notReadNews" oncomplete="myNewsDialogWidgetVar.show()"
+									<ui:repeat value="#{homePageBean.notReadNotices}" var="notice"
+										varStatus="status">
+										<li><h:outputText value="#{status.index + 1}、" /> <p:graphicImage
+												url="/images/news.gif" /> <p:commandLink id="notReadNews"
+												oncomplete="myNewsDialogWidgetVar.show()"
 												update=":myNewsDialogId"
 												actionListener="#{homePageBean.lookMyNews(notice.receiverId)}"
 												value="#{notice.title}">

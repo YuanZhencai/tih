@@ -45,7 +45,6 @@ public class SysNoticeBean implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		logger.info("SysNoticeBean.init()");
 	}
 	
 	public void addSysNotice() {

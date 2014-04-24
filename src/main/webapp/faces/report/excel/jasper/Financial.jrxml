@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Financial" language="groovy" pageWidth="2650" pageHeight="99999" columnWidth="2610" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="82edc0d6-9101-4647-a8b0-ff583d03ffe7">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="423"/>
+	<property name="ireport.x" value="605"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["C:\\Users\\Yuan\\Documents\\"]]></defaultValueExpression>
@@ -244,7 +244,7 @@
 					<textElement textAlignment="Center">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[返还时间]]></text>
+					<text><![CDATA[收款时间]]></text>
 				</staticText>
 				<staticText>
 					<reportElement uuid="ba553535-43cd-4c9f-a9ac-d7ba4d58a8b0" x="2031" y="0" width="325" height="20" backcolor="#000000"/>
@@ -368,7 +368,7 @@
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{returnAccording}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement uuid="4004cb7a-f1c8-4378-bc0e-3ae7953c97e3" stretchType="RelativeToBandHeight" x="880" y="0" width="170" height="20"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
@@ -376,7 +376,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{returnStartDatetime}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement uuid="eefe8c67-887a-42ca-add2-901fe0349980" stretchType="RelativeToBandHeight" x="1066" y="0" width="170" height="20"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>

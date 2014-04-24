@@ -54,7 +54,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="1d158717-1b76-4119-9a17-068f58395aa0" stretchType="RelativeToBandHeight" x="300" y="0" width="140" height="20"/>
+				<reportElement uuid="1d158717-1b76-4119-9a17-068f58395aa0" stretchType="RelativeToBandHeight" x="340" y="0" width="100" height="20"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -66,7 +66,7 @@
 				<textFieldExpression><![CDATA[$F{returnAccount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="3faf59cf-6a25-461a-b2a7-f640e3dc73ad" stretchType="RelativeToBandHeight" x="100" y="0" width="100" height="20"/>
+				<reportElement uuid="3faf59cf-6a25-461a-b2a7-f640e3dc73ad" stretchType="RelativeToBandHeight" x="100" y="0" width="140" height="20"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -77,8 +77,8 @@
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{baseReturnAccount}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="5c560e01-6a1a-452c-8f6b-d12bf00c5db7" stretchType="RelativeToBandHeight" x="200" y="0" width="100" height="20"/>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="5c560e01-6a1a-452c-8f6b-d12bf00c5db7" stretchType="RelativeToBandHeight" x="240" y="0" width="100" height="20"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -100,18 +100,6 @@
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{actualReturnAccount}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="c5924898-3f5c-460d-b820-02e76a35212b" stretchType="RelativeToBandHeight" x="440" y="0" width="100" height="20"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{returnYear}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="f523e984-f276-4bb2-8e8f-ffaee8b00198" stretchType="RelativeToBandHeight" x="540" y="0" width="325" height="20"/>
@@ -136,6 +124,18 @@
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="32fc6772-f350-4d0a-abf7-8e1a3f8e54ab" x="440" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{paymentDatetime}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

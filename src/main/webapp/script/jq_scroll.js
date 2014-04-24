@@ -1,9 +1,3 @@
-/*
-懒人建站 http://www.51xuediannao.com/ 
-懒人建站为您提供-基于jquery特效，jquery弹出层效果，js特效代码大全，JS广告代码，导航菜单代码，下拉菜单代码和jquery焦点图片代码。
-
-jQ向上滚动带上下翻页按钮
- */
 (function($) {
 	$.fn.extend({
 		Scroll : function(opt, callback) {
@@ -22,6 +16,11 @@ jQ向上滚动带上下翻页按钮
 			if (line == 0)
 				line = 1;
 			var upHeight = 0 - line * lineH;
+
+			var lis = parseInt(_this.find("li").size());
+			var liHeight = lis * lineH;
+			var height = liHeight - this.height();
+			console.info("[height]"+height);
 			// 滚动函数
 			var scrollUp = function() {
 				_btnUp.unbind("click", scrollUp); // Shawphy:取消向上按钮的函数绑定
@@ -55,8 +54,13 @@ jQ向上滚动带上下翻页按钮
 			}
 			// Shawphy:自动播放
 			var autoPlay = function() {
-				if (timer)
-					timerID = window.setInterval(scrollUp, timer);
+				if (timer) {
+					//判断是否要滚动，没有超出就不要滚动
+					if (height > 0) {
+						timerID = window.setInterval(scrollUp, timer);
+					}
+				}
+
 			};
 			var autoStop = function() {
 				if (timer)
