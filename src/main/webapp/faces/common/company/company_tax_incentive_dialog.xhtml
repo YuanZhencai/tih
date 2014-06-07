@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="税收优惠信息" widgetVar="taxIncentiveDialogWidgetVar"
+		id="taxIncentiveDialogId" resizable="false" modal="true">
+		<h:form id="taxIncentiveDialogForm" prependId="false">
+			<div class="style1">
+				<h:panelGrid id="taxIncentiveDialogPG" columns="4" columnClasses="column1,column2,column1,column2">
+					<h:outputText value="税种：" />
+					<h:selectOneMenu value="#{taxIncentiveBean.taxType}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems
+							value="#{commonBean.getDictByCat(commonBean.tihTaxType)}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputText value="有效："   />
+					<h:selectOneMenu value="#{taxIncentiveBean.effective}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+						<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+					</h:selectOneMenu>
+				</h:panelGrid>
+				<div>
+					<p:commandButton
+						actionListener="#{taxIncentiveBean.queryTaxIncentive()}"
+						style="margin-right: 5px;" update="taxIncentiveDataTable"
+						value="#{msgs.btn_query}" icon="ui-icon ui-icon-search" />
+					<p:commandButton type="reset" update="taxIncentiveDialogPG"
+						value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel"
+						style="margin-right: 5px;" />
+				</div>
+			</div>
+			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+				id="taxIncentiveDataTable" var="tiv"
+				value="#{taxIncentiveBean.lazyTaxIncentiveVoModel}" paginator="true"
+				rows="5" paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+				rowIndexVar="index"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				style="margin-top:5px;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}">
+				<f:facet name="header">
+					<div class="header">
+						<h:outputText value="税收优惠信息列表" />
+						<p:commandButton styleClass="header_button"
+							actionListener="#{taxIncentiveBean.addTaxIncentive()}"
+							value="#{msgs.btn_add}" icon="ui-icon ui-icon-plus"
+							oncomplete="taxIncentiveAddEditDialogWidgetVar.show()"
+							update=":taxIncentiveAddEditDialogId">
+							<f:setPropertyActionListener value="add"
+								target="#{taxIncentiveBean.excuteMethod}" />
+						</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column headerText="税种">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(tiv.taxType)}" />
+				</p:column>
+				<p:column headerText="项目">
+					<h:outputText value="#{tiv.preferentialItem}" />
+				</p:column>
+				<p:column headerText="审批或备案状态">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(tiv.situationStatus)}" />
+				</p:column>
+				<p:column headerText="优惠期间">
+					<h:outputText value="#{tiv.preferentialStartDatetime}">
+						<f:convertDateTime timeZone="GMT+8" pattern="yyyy-MM-dd" />
+					</h:outputText>
+					<h:outputText value="~" />
+					<h:outputText value="#{tiv.preferentialEndDatetime}">
+						<f:convertDateTime timeZone="GMT+8" pattern="yyyy-MM-dd" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="有效" style="text-align: center;">
+					<h:outputText
+						value="#{tiv.effective eq 'N' ? (msgs.txt_effective):(msgs.txt_effectiveLost)}" />
+				</p:column>
+				<p:column headerText="操作" style="text-align: center;">
+					<p:commandButton
+						oncomplete="taxIncentiveAddEditDialogWidgetVar.show()"
+						update=":taxIncentiveAddEditDialogId" title="编辑"
+						icon="ui-icon ui-icon-pencil" style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener value="update"
+							target="#{taxIncentiveBean.excuteMethod}" />
+						<f:setPropertyActionListener
+							target="#{taxIncentiveBean.taxIncentiveVo}" value="#{tiv}" />
+						<f:setPropertyActionListener
+							target="#{taxIncentiveBean.existTaxType}" value="#{tiv.taxType}" />
+						<f:setPropertyActionListener
+							target="#{taxIncentiveBean.existPreferentialItem}"
+							value="#{tiv.preferentialItem}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-attachment" title="附件" id="companyTaxIncentiveAttachment"
+						style="width: 18px;height: 18px;" oncomplete="uploadOrDownloadAttachment.show();"
+						action="#{attachmentBean.searchFilemstr()}" update=":uploadOrDownloadAttachmentID">
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.tableName}" value="COMPANY_TAX_INCENTIVES" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.entityId}" value="#{tiv.id}" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.operationType}" value="100" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog header="用户查询" widgetVar="commonUserDialogWidgetVar" id="commonUserDialog" resizable="false" modal="true">
+		<p:ajax event="close"  listener="#{userCommonBean.init()}" update=":commonUserDialogForm:commonUserFormItems"/>
+		<h:form id="commonUserDialogForm" prependId="false">
+			<div class="style1">
+				<h:panelGrid id="commonUserFormItems" columns="4" columnClasses="column1,column2,column1,column2">
+					<h:outputText value="用户名：" />
+					<p:inputText value="#{userCommonBean.userCommonFormItemsVo.adAccount}" maxlength="50" style="width:150px;" />
+					<h:outputText value="邮箱：" />
+					<p:inputText value="#{userCommonBean.userCommonFormItemsVo.email}" maxlength="100" style="width:150px;" />
+					<h:outputText value="工号：" />
+					<p:inputText value="#{userCommonBean.userCommonFormItemsVo.pernr}" maxlength="100" style="width:150px;" />
+					<h:outputText value="姓名：" />
+					<p:inputText value="#{userCommonBean.userCommonFormItemsVo.nachn}" maxlength="50" style="width:150px;" />
+				</h:panelGrid>
+				<div>
+					<p:commandButton actionListener="#{userCommonBean.queryCommonUser}" value="#{msgs.btn_query}" update="commonUserDataTable,commonUserDataTable2" icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
+					<p:commandButton type="reset" update="commonUserFormItems" value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel" style="margin-right: 5px;" />
+				</div>
+			</div>
+			<p:dataTable emptyMessage="没有记录" scrollable="true" scrollHeight="150" scrollWidth="600"
+				rendered="#{userCommonBean.selectionMode eq 'single' ? true : false}"
+				id="commonUserDataTable" widgetVar="commonUserDataTableWidgetVar"
+				var="uv" value="#{userCommonBean.usermstrVoList}" rowKey="#{uv.p}"
+				selection="#{userCommonBean.selectedUsermstrVo}">
+				<f:facet name="header">
+					<h:outputText value="用户列表" />
+				</f:facet>
+				
+				<p:column selectionMode="#{userCommonBean.selectionMode}" style="text-align: center;width: 50px;" />
+				
+				<p:column headerText="用户名" sortBy="#{uv.lowerAdAccount}" style="width: 90px;">
+					<h:outputText value="#{uv.usermstr.adAccount}" />
+				</p:column>
+				<p:column headerText="邮箱" sortBy="#{uv.p.email}" style="width: 180px;">
+					<h:outputText value="#{uv.p.email}"/>
+				</p:column>
+				<p:column headerText="工号" sortBy="#{uv.usermstr.pernr}" style="width: 100px;">
+					<h:outputText value="#{uv.usermstr.pernr}"/>
+				</p:column>
+				<p:column headerText="姓名" sortBy="#{uv.lowerAdAccount}" style="width: 60px;">
+					<h:outputText value="#{uv.p.nachn}" />
+				</p:column>
+			</p:dataTable>
+			<p:dataTable emptyMessage="没有记录" scrollable="true" scrollHeight="150" scrollWidth="600" 
+				rendered="#{userCommonBean.selectionMode eq 'multiple' ? true : false}"
+				id="commonUserDataTable2" widgetVar="commonUserDataTableWidgetVar"
+				var="uv" value="#{userCommonBean.usermstrVoList}" rowKey="#{uv.p}"
+				selection="#{userCommonBean.selectedUsermstrVos}">
+				<f:facet name="header">
+					<h:outputText value="用户列表" />
+				</f:facet>
+				
+				<p:column selectionMode="#{userCommonBean.selectionMode}" style="text-align: center;width: 50px;" />
+				
+				<p:column headerText="用户名" sortBy="#{uv.lowerAdAccount}" style="width: 90px;">
+					<h:outputText value="#{uv.usermstr.adAccount}"/>
+				</p:column>
+				<p:column headerText="邮箱" sortBy="#{uv.p.email}" style="width: 180px;">
+					<h:outputText value="#{uv.p.email}"/>
+				</p:column>
+				<p:column headerText="工号" sortBy="#{uv.usermstr.pernr}" style="width: 100px;">
+					<h:outputText value="#{uv.usermstr.pernr}"/>
+				</p:column>
+				<p:column headerText="姓名" sortBy="#{uv.lowerAdAccount}" style="width: 60px;">
+					<h:outputText value="#{uv.p.nachn}" />
+				</p:column>
+			</p:dataTable>
+			<div
+				style="text-align: center; position: relative; margin-top: 5px; margin-bottom: 5px;">
+				<p:commandButton update="#{userCommonBean.updateComponent}" oncomplete="commonUserDialogWidgetVar.hide()" action="#{userCommonBean.excuteControllerBeanMethod()}" value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check" style="margin-right: 5px;" />
+				<p:commandButton type="button" onclick="commonUserDialogWidgetVar.hide()" value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

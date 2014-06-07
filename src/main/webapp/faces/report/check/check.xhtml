@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<style type="text/css">
+		#inspectSummaryForm th.ui-state-default {
+			padding: 2px;
+		}
+	</style>
+	<h:form id="inspectSummaryForm">
+		<p:growl id="inspectMsg" showDetail="true" life="10000" />
+		<div class="style1">
+			<h:panelGrid id="searchPanel" columns="6" columnClasses="column41,column2,column40,column2,column1,column2">
+				<h:outputText value="公司名称：" />
+				<h:column>
+					<p:selectCheckboxMenu id="companys" value="#{inspectSummaryBean.companys}" style="width: 276px;">
+						<f:selectItems value="#{inspectSummaryBean.companyItems}" var="c" itemLabel="#{c.stext}" itemValue="#{c.id}" />
+					</p:selectCheckboxMenu>
+ 					<p:commandButton icon="ui-icon ui-icon-search" style="width: 27px; height: 27px; vertical-align:top;margin-left:5px;" title="请选择" update=":commonCompany,:datatableform" actionListener="#{companyCommonBean.init(':inspectSummaryForm:companys','inspectSummaryBean','multiple','selectCompanys')}" oncomplete="commoncompanyvar.show();" />
+				</h:column>
+				<h:outputText value="稽（检）查时间：" />
+				<h:column>
+					<p:calendar value="#{inspectSummaryBean.searchInspectVo.missionStartDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true">
+					</p:calendar>
+					<h:outputText value="到" style="margin: 0px 5px 0px 5px;"/>
+					<p:calendar value="#{inspectSummaryBean.searchInspectVo.missionEndDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true">
+					</p:calendar>
+				</h:column>
+				<h:outputText value="任务状态：" />
+				<h:selectOneMenu value="#{inspectSummaryBean.searchInspectVo.wfStatus}">
+					<f:selectItem itemLabel="请选择"/>
+					<f:selectItems value="#{inspectSummaryBean.workflowStatus}" var="status" itemLabel="#{status.codeVal}" itemValue="#{status.codeCat}.#{status.codeKey}" />
+				</h:selectOneMenu>
+				<h:outputText value="稽（检）查业务期间：" />
+				<h:column>
+					<p:calendar value="#{inspectSummaryBean.searchInspectVo.inspectStartDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true">
+					</p:calendar>
+					<h:outputText value="到" style="margin: 0px 5px 0px 5px;"/>
+					<p:calendar value="#{inspectSummaryBean.searchInspectVo.inspectEndDatetime}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true">
+					</p:calendar>
+				</h:column>
+				<h:outputText value="处理阶段：" />
+				<h:selectOneMenu value="#{inspectSummaryBean.searchInspectVo.stage}">
+					<f:selectItem itemLabel="请选择"/>
+					<f:selectItems value="#{inspectSummaryBean.stages}" var="stage" itemLabel="#{stage.codeVal}" itemValue="#{stage.codeCat}.#{stage.codeKey}"/>
+				</h:selectOneMenu>
+			</h:panelGrid>
+			<div>
+				<p:commandButton value="查询" action="#{inspectSummaryBean.searchInspectsBy()}" ajax="false" update=":inspectSummaryForm:inspectTabView:inspectDataTable" icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
+				<p:commandButton value="重置" action="#{inspectSummaryBean.resetSearchForm()}" update=":inspectSummaryForm:searchPanel" icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
+			</div>
+		</div>
+		<p:tabView id="inspectTabView" activeIndex="#{inspectSummaryBean.activeIndex}">
+			<p:tab title="稽查信息">
+				<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+			id="inspectDataTable" value="#{inspectSummaryBean.inspectVos}" var="inspect" selection="#{inspectSummaryBean.selectedInspectVos}" rowKey="#{inspect.id}"
+			rowIndexVar="index" style="margin-top:5px;"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+			<f:facet name="header">
+				<div class="header">
+					<h:outputText value="基本信息列表" />
+					<p:commandButton styleClass="header_button" value="汇总" action="#{inspectSummaryBean.inspectSummary()}" update=":inspectSummaryForm"></p:commandButton>
+				</div>
+			</f:facet>
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column rowspan="2" selectionMode="multiple" />
+					<p:column rowspan="2" headerText="公司名称"/>
+					<p:column rowspan="2" headerText="公司代码"/>
+					<p:column rowspan="2" headerText="检查类型"/>
+					<p:column rowspan="2" headerText="检查机关"/>
+					<p:column rowspan="2" headerText="稽（检）查业务期间"/>
+					<p:column rowspan="2" headerText="稽（检）查时间"/>
+					<p:column rowspan="2" headerText="税种"/>
+					<p:column rowspan="2" headerText="主要问题描述"/>
+					<p:column rowspan="2" headerText="任务状态"/>
+					<p:column rowspan="2" headerText="处理阶段"/>
+					<p:column colspan="7" headerText="稽查结果" />
+				</p:row>
+				<p:row>
+					<p:column headerText="补税金额" />
+					<p:column headerText="滞纳金" />
+					<p:column headerText="罚款" />
+					<p:column headerText="调减亏损" />
+					<p:column headerText="进项税转出" />
+					<p:column headerText="小计" />
+					<p:column headerText="操作" />
+				</p:row>
+			</p:columnGroup>
+			<p:column selectionMode="multiple" style="text-align: center;width:25px;"></p:column>
+			<p:column style="width:80px">
+				<h:outputText value="#{inspect.companyName}" />
+			</p:column>
+			<p:column style="width:20px">
+				<h:outputText value="#{inspect.companyCode}" />
+			</p:column>
+			<p:column style="width:50px;">
+				<h:outputText value="#{inspect.inspectType}" />
+			</p:column>
+			<p:column style="width:50px;">
+				<h:outputText value="#{inspect.inspectOrg}" />
+			</p:column>
+			<p:column style="width:85px;">
+				<div style="#{((inspect.inspectStartDatetime == null) and (inspect.inspectEndDatetime == null))?'display:none':''}">
+					<h:outputText value="#{inspect.inspectStartDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>~<br/>
+					<h:outputText value="#{inspect.inspectEndDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column style="width:85px;">
+				<div style="#{((inspect.missionStartDatetime == null) and (inspect.missionEndDatetime == null))?'display:none':''}">
+					<h:outputText value="#{inspect.missionStartDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>~<br/>
+					<h:outputText value="#{inspect.missionEndDatetime}" >
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column style="width:50px;">
+					<h:outputText value="#{inspect.taxTypes}" />
+			</p:column>
+			<p:column style="width:100px">
+				<div style="word-break:break-all;width: 100px;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;" title="#{inspect.mainProblemDesc}">
+					<h:outputText value="#{inspect.mainProblemDesc}" />
+				</div>
+			</p:column>
+			<p:column style="width:40px;">
+					<h:outputText value="#{inspect.wfStatus}" />
+			</p:column>
+			<p:column style="width:50px;">
+					<h:outputText value="#{inspect.stage}" />
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.overdueTax}" />
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.penalty}" />
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.fine}" />
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.reductionPrevLoss}" />
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.inputTaxTurnsOut}" />
+			</p:column>
+			<p:column style="width:40px;text-align: right">
+					<h:outputText value="#{inspect.sum}" />
+			</p:column>
+			<p:column style="text-align: center;width:20px">
+				<p:commandButton action="#{inspectSummaryBean.handleHistoryChange()}" icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;" oncomplete="inspectDetailDialogVar.show();" update=":inspectHistoryForm,:inspectDetailForm" >
+					<f:setPropertyActionListener target="#{inspectSummaryBean.selectedInspectVo}" value="#{inspect}" />
+					<f:setPropertyActionListener value="#{''}" target="#{inspectSummaryBean.operateInd}" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+			</p:tab>
+			<p:tab title="汇总历史">
+				<p:dataTable emptyMessage="#{msgs.dataTable_empty}" value="#{inspectSummaryBean.summaryHistories}" var="h"
+			id="inspectSummaryDataTable" paginator="true" rows="5" paginatorPosition="bottom"
+			paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+			rowIndexVar="index" style="margin-top:5px;"
+			currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+			<f:facet name="header">
+				<h:outputText value="稽查信息汇总历史列表" />
+			</f:facet>
+				<p:column headerText="名称">
+				<h:outputText value="#{h.name}" />
+			</p:column>
+			<p:column headerText="汇总时间">
+				<h:outputText value="#{h.createdDatetime}" >
+					<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8"/>
+				</h:outputText>
+			</p:column>
+			<p:column headerText="创建人">
+				<h:outputText value="#{inspectSummaryBean.getUserName(h.createdBy)}" />
+			</p:column>
+			<p:column headerText="操作" style="text-align: center;width:18px;">
+				<p:commandButton ajax="false" title="下载"
+					icon="ui-icon ui-icon-arrowthick-1-s"
+					style="width: 18px;height: 18px;">
+					<p:fileDownload value="#{inspectSummaryBean.download(h.fileId)}" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+			</p:tab>
+		</p:tabView>
+	</h:form>
+</ui:composition>

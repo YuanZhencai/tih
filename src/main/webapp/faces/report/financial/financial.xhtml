@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="financialSummaryForm" prependId="false">
+		<p:growl id="financialMsg" showDetail="true" life="10000" />
+		<div class="style1">
+			<h:panelGrid id="financialSearchPanel" columns="2"
+				columnClasses="column1,column2">
+				<h:outputText value="公司名称：" />
+				<h:column>
+					<p:selectCheckboxMenu id="companys"
+						value="#{financialReportBean.companyIds}" style="width: 276px;">
+						<f:selectItems value="#{financialReportBean.companyItems}" var="c"
+							itemLabel="#{c.stext}" itemValue="#{c.id}" />
+					</p:selectCheckboxMenu>
+					<p:commandButton icon="ui-icon ui-icon-search"
+						style="width: 27px; height: 27px; vertical-align:top;margin-left:5px;"
+						title="请选择" update=":commonCompany,:datatableform"
+						actionListener="#{companyCommonBean.init(':financialSummaryForm:companys','financialReportBean','multiple','selectCompanys')}"
+						oncomplete="commoncompanyvar.show();" />
+				</h:column>
+			</h:panelGrid>
+			<div>
+				<p:commandButton value="查询"
+					action="#{financialReportBean.searchCompanys()}"
+					update=":financialSummaryForm:financialTabView:financialDataTable"
+					icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
+				<p:commandButton value="重置"
+					action="#{financialReportBean.resetSearchForm()}"
+					update=":financialSummaryForm:financialSearchPanel"
+					icon="ui-icon ui-icon-search" style="margin-right: 5px;" />
+			</div>
+		</div>
+		<p:tabView id="financialTabView"
+			activeIndex="#{financialReportBean.activeIndex}">
+			<p:tab title="财政返还信息">
+				<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+					id="financialDataTable" value="#{financialReportBean.companys}"
+					var="company" selection="#{financialReportBean.selectedCompanys}"
+					rowKey="#{company.company}" rowIndexVar="index"
+					style="margin-top:5px;"
+					rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+					<f:facet name="header">
+						<div class="header">
+							<h:outputText value="公司列表" />
+							<p:commandButton styleClass="header_button" value="汇总"
+								action="#{financialReportBean.exportFinancials()}"
+								update=":financialSummaryForm"></p:commandButton>
+						</div>
+					</f:facet>
+					<p:column selectionMode="multiple"
+						style="text-align: center;width:25px;"></p:column>
+					<p:column headerText="公司名称">
+						<h:outputText value="#{company.o.stext}" />
+					</p:column>
+					<p:column headerText="公司代码">
+						<h:outputText value="#{company.company.code}" />
+					</p:column>
+					<p:column headerText="公司地址">
+						<h:outputText value="#{company.company.address}" />
+					</p:column>
+					<p:column headerText="邮编">
+						<h:outputText value="#{company.company.zipcode}" />
+					</p:column>
+					<p:column headerText="联系电话">
+						<h:outputText value="#{company.company.telphone}" />
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+			<p:tab title="汇总历史">
+				<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+					value="#{financialReportBean.histories}" var="h"
+					id="financialSummaryDataTable" paginator="true" rows="5"
+					paginatorPosition="bottom"
+					paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+					rowIndexVar="index" style="margin-top:5px;"
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+					rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+					<f:facet name="header">
+						<h:outputText value="稽查信息汇总历史列表" />
+					</f:facet>
+					<p:column headerText="名称">
+						<h:outputText value="#{h.name}" />
+					</p:column>
+					<p:column headerText="汇总时间">
+						<h:outputText value="#{h.createdDatetime}">
+							<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="创建人">
+						<h:outputText value="#{userCommonBean.getUserName(h.createdBy)}" />
+					</p:column>
+					<p:column headerText="操作" style="text-align: center;width:18px;">
+						<p:commandButton ajax="false" title="下载"
+							icon="ui-icon ui-icon-arrowthick-1-s"
+							style="width: 18px;height: 18px;">
+							<p:fileDownload value="#{downloadBean.download(h.fileId)}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+		</p:tabView>
+	</h:form>
+</ui:composition>

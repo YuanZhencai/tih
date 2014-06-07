@@ -1,0 +1,70 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="470" resizable="false" modal="true" id="edit_question_dialog_id"
+		widgetVar="edit_question_dialog_var" 
+		header="#{projectBean.problemModel eq 'add' ? '添加问题' : (projectBean.problemModel eq 'edit' ? '编辑问题' : '查看问题')}">
+		<h:form id="edit_question_form_id" prependId="false">
+			<p:messages showDetail="true" showSummary="true" autoUpdate="true"/>
+			
+			<h:panelGrid columns="3">
+				<h:outputText value="问题描述："/>
+				<p:inputTextarea value="#{projectBean.problem.problem.desc}" style="width: 346px; height: 50px;"
+					autoResize="true" rows="4" effectDuration="200" maxlength="200"
+					disabled="#{projectBean.problemModel == 'query' ? true : false}" />
+				<span style="color: red">*</span>
+			</h:panelGrid>
+			<h:panelGrid columns="3">
+				<h:outputText value="解决人员："/>
+				<p:inputText value="#{projectBean.chargedBy}" disabled="true" id="problemupnachn" style="width: 315px;"/>
+				<h:column>
+					<p:commandButton icon="ui-icon ui-icon-search" title="#{msgs.btn_query}" 
+						style="width: 26px; height: 26px; vertical-align: middle;"
+						update=":query_projectmembers_form_id"
+						oncomplete="query_projectmembers_dialog_var.show();"
+						disabled="#{projectBean.problemModel == 'add' ? false : true}"
+						action="#{projectBean.searchMembers}">
+						<f:setPropertyActionListener target="#{projectBean.memberflag}" value="question"/>
+					</p:commandButton>
+					<span style="color: red">*</span>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="4">
+				<h:outputText value="解决时间："/>
+				<p:calendar value="#{projectBean.problem.problem.solvedDate}" locale="cn" navigator="true"
+					disabled="#{projectBean.problemModel == 'query' ? true : false}" pattern="yyyy-MM-dd"/>
+				
+				<h:outputText value="问题状态："/>
+				<h:column>
+				<h:selectOneMenu value="#{projectBean.problem.problem.status}"
+					disabled="#{projectBean.problemModel == 'query' ? true : false}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems value="#{commonBean.getDictByCat(projectBean.questionState)}" var="dict"
+						itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>
+				</h:selectOneMenu>
+				<span style="color: red">*</span>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2">
+				<h:outputText value="解决方案："/>
+				<p:inputTextarea value="#{projectBean.problem.problem.proposal}" style="width: 346px; height: 50px;"
+					autoResize="true" rows="4" effectDuration="200" maxlength="200"
+					disabled="#{projectBean.problemModel == 'query' ? true : false}"/>
+			</h:panelGrid>
+			
+			<div style="margin-top: 5px; text-align: center;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" style="margin: 5px 5px 5px 5px;"
+					update=":edit_question_form_id,:task_question_form_id,:projectForm:pGrowl" action="#{projectBean.modelProblem}"
+					oncomplete="handleProblem(xhr, status, args);"
+					rendered="#{projectBean.problemModel == 'query' ? false : true}"/>
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}" type="button"
+					onclick="edit_question_dialog_var.hide()"/>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

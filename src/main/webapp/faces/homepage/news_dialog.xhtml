@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="我的消息" widgetVar="myNewsDialogWidgetVar"
+		id="myNewsDialogId" width="450" resizable="false" modal="true">
+		<p:ajax event="close" oncomplete="load()" update=":homePageForm:myNewsTabView" />
+		<h:form id="myNewsDialogForm" prependId="false">
+			<h:outputText value="标题：" />
+			<p:commandLink ajax="false" value="#{homePageBean.noticeVo != null ? homePageBean.noticeVo.title : ''}" action="#{homePageBean.sendRedirect}" />
+			<br />
+			<br />
+			<h:outputText value="内容：" />
+			<h:outputText
+				value="#{homePageBean.noticeVo != null ? homePageBean.noticeVo.content : ''}" />
+			<br />
+			<br />
+			<div style="text-align: center; position: relative;">
+				<p:commandButton onclick="myNewsDialogWidgetVar.hide()"
+					value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

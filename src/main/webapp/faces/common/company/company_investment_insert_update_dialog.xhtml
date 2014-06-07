@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<p:dialog modal="true" resizable="false"
+		header="#{companyInvestmentBean.insert=='true' ? '添加投资情况信息' :'编辑投资情况信息'}"
+		widgetVar="investmentInsertDialogvar" id="investmentInsertDialog">
+		<h:form id="investmenInsertForm" prependId="false">
+			<p:messages id="ivmessageid" autoUpdate="true" showDetail="true" />
+			<h:panelGrid columns="4" style="text-align:right;">
+
+				<h:outputText value="投资对象：" />
+				<h:panelGroup>
+					<p:inputText value="#{companyInvestmentBean.investVo.phase}" />
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				<h:outputText value="投资对象地址：" />
+				<h:column>
+					<p:inputText
+						value="#{companyInvestmentBean.investVo.investAddress}" />
+					<h:outputText style="color:red;" value="*" />
+				</h:column>
+				投资日期：
+				<h:panelGroup>
+					<p:calendar locale="cn" pattern="yyyy-MM-dd" id="ptCal"
+						navigator="true"
+						value="#{companyInvestmentBean.investVo.startDatetime}"
+						readOnlyInputText="true">
+					</p:calendar>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				<h:outputText value="投资所占比例：" />
+				<h:column>
+					<p:inputText
+						value="#{companyInvestmentBean.investVo.investmentRatio}" />
+					<h:outputText style="color:red;" value="*" />
+				</h:column>
+				<h:outputText value="投资金额(万元)：" />
+				<h:panelGroup>
+					<p:inputText id="投资金额"
+						value="#{companyInvestmentBean.investVo.investAccount}" />
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				<h:outputText value="币种 ：" />
+				<h:panelGroup>
+					<h:selectOneMenu
+						value="#{companyInvestmentBean.investVo.currency}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems
+							value="#{commonBean.getDictByCat(commonBean.tihTaxCurrency)}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+
+				<h:outputText value="有效：" />
+				<h:selectOneRadio
+					value="#{companyInvestmentBean.investVo.defunctInd}">
+					<f:selectItem itemLabel="是" itemValue="N" />
+					<f:selectItem itemLabel="否" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			<div align="center" style="margin-top: 5px;">
+				<p:commandButton value="确定" style="margin-right: 5px;"
+					update=":investmentForm,:growl,:investmenInsertForm:ivmessageid"
+					action="#{companyInvestmentBean.insertOrUpdate}"
+					oncomplete="handleinvestmentInsertDialogvar(xhr, status, args)"
+					icon="ui-icon ui-icon-check" />
+				<p:commandButton value="取消"
+					onclick="investmentInsertDialogvar.hide();"
+					icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+	<script>
+	function handleinvestmentInsertDialogvar(xhr, status, args) {
+		if (args.dataInfoSumbit == "yes") {
+			investmentInsertDialogvar.hide();
+		}
+	}
+
+	</script>
+</ui:composition>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Smartmstr" language="groovy" pageWidth="1575" pageHeight="99999" columnWidth="1535" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="82edc0d6-9101-4647-a8b0-ff583d03ffe7">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Yuan\\Documents\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="updatedDatetime" class="java.util.Date">
+		<fieldDescription><![CDATA[updatedDatetime]]></fieldDescription>
+	</field>
+	<field name="taxType" class="java.lang.String">
+		<fieldDescription><![CDATA[taxType]]></fieldDescription>
+	</field>
+	<field name="smartAttachmentmstrs" class="java.util.List">
+		<fieldDescription><![CDATA[smartAttachmentmstrs]]></fieldDescription>
+	</field>
+	<field name="region" class="java.lang.String">
+		<fieldDescription><![CDATA[region]]></fieldDescription>
+	</field>
+	<field name="smartStatisticsmstrs" class="java.util.List">
+		<fieldDescription><![CDATA[smartStatisticsmstrs]]></fieldDescription>
+	</field>
+	<field name="question" class="java.lang.String">
+		<fieldDescription><![CDATA[question]]></fieldDescription>
+	</field>
+	<field name="defunctInd" class="java.lang.String">
+		<fieldDescription><![CDATA[defunctInd]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="answer" class="java.lang.String">
+		<fieldDescription><![CDATA[answer]]></fieldDescription>
+	</field>
+	<field name="createdDatetime" class="java.util.Date">
+		<fieldDescription><![CDATA[createdDatetime]]></fieldDescription>
+	</field>
+	<field name="wfInstancemstrId" class="java.lang.Long">
+		<fieldDescription><![CDATA[wfInstancemstrId]]></fieldDescription>
+	</field>
+	<field name="updatedBy" class="java.lang.String">
+		<fieldDescription><![CDATA[updatedBy]]></fieldDescription>
+	</field>
+	<field name="createdBy" class="java.lang.String">
+		<fieldDescription><![CDATA[createdBy]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[id]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="20">
+			<frame>
+				<reportElement uuid="33ef0259-7aef-4e47-a31d-0c8ff0f92d59" mode="Opaque" x="0" y="0" width="1535" height="20" forecolor="#33CC00" backcolor="#33CC00"/>
+				<staticText>
+					<reportElement uuid="31c6dbeb-d50c-48fb-91ff-60ef9a690bd6" x="50" y="0" width="100" height="20" backcolor="#000000"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[问题]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="1356a0bd-eb33-4b44-9fb3-f02454fc3486" x="480" y="0" width="400" height="20" backcolor="#000000"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[问题描述]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ba553535-43cd-4c9f-a9ac-d7ba4d58a8b0" x="880" y="0" width="400" height="20" backcolor="#000000"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[答案]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ba553535-43cd-4c9f-a9ac-d7ba4d58a8b0" x="1280" y="0" width="255" height="20" backcolor="#000000"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[附件]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="f1261600-1bde-49b2-98b7-9ab6862a7ce3" stretchType="RelativeToBandHeight" x="150" y="0" width="100" height="20" backcolor="#000000"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[税种]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="7ed6b222-d0a1-474e-9264-06c46a500cc0" stretchType="RelativeToBandHeight" x="350" y="0" width="130" height="20" backcolor="#000000"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[创建时间]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="9b7a2301-a621-4724-b141-af5d179d5bb1" x="250" y="0" width="100" height="20" backcolor="#000000"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[地域]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3e59a133-7682-4af5-ac39-f56b96f128c4" x="0" y="0" width="50" height="20" backcolor="#000000"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[序号]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d786a6ae-cebf-452b-9e62-c5ddab05bb19" stretchType="RelativeToBandHeight" x="50" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="6e5cc97c-97a9-4c2c-8cec-b982128bef85" stretchType="RelativeToBandHeight" x="880" y="0" width="400" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{answer}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement uuid="e3e7f552-b8c8-4b9e-b270-6c5d92a8a6e0" stretchType="RelativeToBandHeight" x="1280" y="0" width="255" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<subreport>
+					<reportElement uuid="f9db9c3e-cafb-497e-a779-232981efd8df" x="0" y="0" width="255" height="20"/>
+					<subreportParameter name="questionName">
+						<subreportParameterExpression><![CDATA[$F{name}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{smartAttachmentmstrs})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[JasperCompileManager.compileReport($P{SUBREPORT_DIR}+"Smartmstr_SmartAttachmentmstr.jrxml")]]></subreportExpression>
+				</subreport>
+			</frame>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="a70e8e80-9795-4e6b-9188-26f878258eef" stretchType="RelativeToBandHeight" x="150" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{taxType}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="true">
+				<reportElement uuid="c8823081-3bb1-4d08-9470-e80fe149e451" stretchType="RelativeToBandHeight" x="350" y="0" width="130" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{createdDatetime}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d6201bec-4b0a-4ab5-98d0-c0c38018e8cb" stretchType="RelativeToBandHeight" x="480" y="0" width="400" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{question}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="253189be-dc31-453a-89f3-0366b8d8439b" stretchType="RelativeToBandHeight" x="250" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{region}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="e4e8196d-2b6e-419b-b3b8-2f2539a613e5" stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

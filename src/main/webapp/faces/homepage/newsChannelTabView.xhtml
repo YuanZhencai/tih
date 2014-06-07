@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:tabView style="border:none;" id="newsChanneTabView" widgetVar="nctv"
+		var="newsChanneVo" value="#{homePageBean.newsChannelList}">
+		<p:tab title="#{newsChanneVo.newschannelmstr.name}">
+			<p:dataTable id="newsChanneDataTable" value="#{newsChanneVo.rssList}"
+				var="rss" paginator="true" rows="5" effectSpeed="fast"
+				paginatorPosition="top"
+				paginatorTemplate=" {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown} "
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				emptyMessage="#{msgs.dataTable_empty}" rowIndexVar="var">
+				<p:column style="text-align:left;background-color: #F2F5F7;">
+					<h:outputText value="#{var + 1}、" />
+					<a href="#{rss.link}" target="_blank"> <h:outputText
+							value="#{rss.title}" />
+					</a>
+				</p:column>
+				<p:column style="text-align:right;background-color: #F2F5F7;">
+					<h:outputText value="#{commonBean.formatDate(rss.publishedDate)}" />
+				</p:column>
+			</p:dataTable>
+		</p:tab>
+	</p:tabView>
+</ui:composition>

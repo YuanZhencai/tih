@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="userIitemsFrom" prependId="false">
+	
+		<div class="style1">
+			<h:panelGrid id="formItems" columns="8"
+				columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+				<h:outputText value="用户帐号：" />
+				<p:inputText value="#{userBean.userSearchVo.adAccount}"
+					maxlength="48" />
+				<h:outputText value="用户姓名：" />
+				<p:inputText value="#{userBean.userSearchVo.userName}"
+					maxlength="18" />
+				<h:outputText value="岗位：" />
+				<h:selectOneMenu value="#{userBean.userSearchVo.positionId}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems value="#{userBean.positionList}" var="positionVo"
+						itemLabel="#{positionVo.name}"
+						itemValue="#{positionVo.id}" />
+				</h:selectOneMenu>
+				<h:outputText value="角色：" />
+				<h:selectOneMenu value="#{userBean.userSearchVo.rolemstrId}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems value="#{userBean.roleList}" var="role"
+						itemLabel="#{role.name}"
+						itemValue="#{role.id}" />
+				</h:selectOneMenu>
+				<h:outputText value="有效：" />
+				<h:selectOneMenu value="#{userBean.userSearchVo.status}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneMenu>
+			</h:panelGrid>
+			<div>
+				<p:commandButton actionListener="#{userBean.queryUser()}"
+					style="margin-right: 5px;" update=":userDataTableForm:userDataTable"
+					value="#{msgs.btn_query}" icon="ui-icon ui-icon-search" />
+				<p:commandButton actionListener="#{userBean.resetUser()}"
+					update="formItems" value="#{msgs.btn_reset}"
+					style="margin-right: 5px;" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</div>
+	</h:form>
+	
+</ui:composition>

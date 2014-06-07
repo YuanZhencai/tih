@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Smartmstr_SmartAttachmentmstr" language="groovy" pageWidth="255" pageHeight="20" columnWidth="255" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="bb00e5ca-f40d-44ea-8d5e-b99d7ad10b56">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="questionName" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="createdBy" class="java.lang.String">
+		<fieldDescription><![CDATA[createdBy]]></fieldDescription>
+	</field>
+	<field name="createdDatetime" class="java.util.Date">
+		<fieldDescription><![CDATA[createdDatetime]]></fieldDescription>
+	</field>
+	<field name="defunctInd" class="java.lang.String">
+		<fieldDescription><![CDATA[defunctInd]]></fieldDescription>
+	</field>
+	<field name="filemstrId" class="java.lang.String">
+		<fieldDescription><![CDATA[filemstrId]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[id]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="smartmstr" class="com.wcs.tih.model.Smartmstr">
+		<fieldDescription><![CDATA[smartmstr]]></fieldDescription>
+	</field>
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[type]]></fieldDescription>
+	</field>
+	<field name="updatedBy" class="java.lang.String">
+		<fieldDescription><![CDATA[updatedBy]]></fieldDescription>
+	</field>
+	<field name="updatedDatetime" class="java.util.Date">
+		<fieldDescription><![CDATA[updatedDatetime]]></fieldDescription>
+	</field>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement uuid="b5c3de2c-0138-4580-af77-7242ee2f055a" x="0" y="0" width="255" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{name} + "(" + $F{type} + ")"]]></textFieldExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{smartmstr}.getId().toString() + "/" + $F{type}.toString() + "/" + $F{name}.toString()]]></hyperlinkReferenceExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

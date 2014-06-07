@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<h:form id="summaryDataTableFormId" prependId="false">
+		<p:dataTable emptyMessage="#{msgs.dataTable_empty}" id="inspectionDataTable"
+			var="summary" value="#{summaryChartBean.summary}" 
+			rowIndexVar="index" rowKey="#{summary.id}" 
+			rowStyleClass="#{summary.id mod 2 == 1 ? 'table_tr1' : 'table_tr2'}"
+			selection="#{summaryChartBean.selectedSummary}" selectionMode="single">
+			<f:facet name="header">
+				<div class="header">
+					<h:outputText value="集团人员工作情况汇总表" />
+					<p:commandButton styleClass="header_button" value="刷新" icon="ui-icon-refresh"
+						update=":summaryDataTableFormId,:pieModel"
+						action="#{summaryChartBean.getSearch()}">
+					</p:commandButton>
+				</div>
+			</f:facet>
+			
+			<p:ajax event="rowSelect" listener="#{summaryChartBean.onRowSelect}" oncomplete="selectPie(xhr, status, args);" update=":summaryDataTableFormId,:pieModel"/>
+			<p:ajax event="rowUnselect" update=":summaryDataTableFormId"/>
+					
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column rowspan="2" headerText="流程名称" />
+					<p:column rowspan="2" headerText="审核人" />
+					<p:column colspan="3" headerText="状态" />
+				</p:row>
+						
+				<p:row>
+					<p:column headerText="处理中" />
+					<p:column headerText="完成" />
+					<p:column headerText="终止" />
+				</p:row>
+			</p:columnGroup>
+					
+					
+			<p:column style="width:200px;" styleClass="#{summary.name eq null ? 'table_td' : 'table_td_1'}">
+				<h:outputText value="#{summary.name}" />
+			</p:column>
+			<p:column >
+				<p:commandLink value="#{summary.auditorName}" 
+					action="#{summaryChartBean.selectedSummaryDetail}" 
+					update=":detailFormId,:detailPieModelId,:detailLayoutId,:pieModel" ajax="false">
+					<f:setPropertyActionListener target="#{summaryChartBean.selectedSummary}" value="#{summary}"/>
+				</p:commandLink>
+			</p:column>
+			<p:column >
+				<h:outputText value="#{summary.process}" />
+			</p:column>
+			<p:column >
+				<h:outputText value="#{summary.complete}" />
+			</p:column>
+			<p:column >
+				<h:outputText value="#{summary.termination}" />
+			</p:column>
+					
+		</p:dataTable>
+	</h:form>
+</ui:composition>

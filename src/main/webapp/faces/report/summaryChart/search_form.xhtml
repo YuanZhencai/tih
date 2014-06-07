@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form id="inspectionSeachForm" prependId="false">
+	
+		
+			<h:panelGrid id="SeachForm" columns="8" columnClasses="column40,column2">
+				<h:outputLabel value="任务处理时间："/>
+				<p:calendar value="#{summaryChartBean.searchFormMap['missionStartDatetime']}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+				<h:outputLabel value="到"/>
+				<p:calendar value="#{summaryChartBean.searchFormMap['missionEndDatetime']}" locale="cn" navigator="true" pattern="yyyy-MM-dd"/>
+				
+				<h:outputText value="任务类型：" />
+				<h:selectOneMenu value="#{summaryChartBean.searchFormMap['taskType']}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+					<f:selectItems var="item" value="#{summaryChartBean.item}" itemLabel="#{item.label}" itemValue="#{item.value}" />
+					<p:ajax update="report" event="change" listener="#{summaryChartBean.getReportBoolean()}"/>
+				</h:selectOneMenu>
+				
+				<h:outputLabel value="报表月度："/>
+				<p:calendar id="report" value="#{summaryChartBean.searchFormMap['reportDatetime']}" locale="cn" navigator="true" pattern="yyyy-MM" 
+						disabled="#{!summaryChartBean.getReportBoolean()}"/>
+			</h:panelGrid>
+			
+			<div style="text-align: right; position: relative; vertical-align: middle">
+				<p:commandButton action="#{summaryChartBean.getSearch()}" ajax="false"
+					style="margin-right: 5px;" update=":summaryDataTableFormId,:pieModel"
+					value="#{msgs.btn_query}" icon="ui-icon ui-icon-search" />
+				<p:commandButton action="#{summaryChartBean.reset()}"
+					update="SeachForm" value="#{msgs.btn_reset}"
+					style="margin-right: 5px;" icon="ui-icon ui-icon-cancel" />
+			</div>
+		
+	</h:form>
+	
+</ui:composition>

@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog header="可导入数据列表" widgetVar="showDataDlgVar" showEffect="fade"
+		hideEffect="fade" modal="true" resizable="false" width="750"
+		 id="showDataDlgId">
+
+		<h:form id="showDataDlgFormId" prependId="false">
+
+					<p:panel>
+						<div align="left">
+							<h:outputLabel value="问题标题：" />
+							<p:inputText value="#{smartImportBean.questionHead}" />
+						</div>
+						<div align="right">
+							<p:column>
+								<p:commandButton value="查询" icon="ui-icon ui-icon-search"
+									style="margin-right:5px"
+									actionListener="#{smartImportBean.forFirstTable()}"
+									update=":showDataDlgFormId" />
+								<p:commandButton value="#{msgs.btn_reset}" actionListener="#{smartImportBean.forFirstTableReset()}" update=":showDataDlgFormId" 
+									icon="ui-icon ui-icon-cancel" />
+							</p:column>
+						</div>
+					</p:panel>
+
+					<p:dataTable var="first" id="firstDataTableId"
+						value="#{smartImportBean.firstLazyModel}"
+						paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+						rows="5" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+						style="margin-top: 5px;" emptyMessage="#{msgs.dataTable_empty }">
+						<f:facet name="header">
+							<h:outputText value="可导入数据列表" />
+						</f:facet>
+						
+						<p:column style="width:20%;">
+							<f:facet name="header">
+								<h:outputText value="问题标题" />
+							</f:facet>
+							<h:outputText value="#{first.firstHead }" style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:130px;"/>
+						</p:column>
+
+						<p:column >
+							<f:facet name="header">
+								<h:outputText value="问题描述" />
+							</f:facet>
+							<h:outputText value="#{first.firstMore }" style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:260px;"/>
+						</p:column>
+						
+						<p:column style="width:21%;">
+							<f:facet name="header">
+								<h:outputText value="创建时间" />
+							</f:facet>
+							<h:outputText value="#{commonBean.formatDate(first.createTime) }" >
+								<f:convertDateTime pattern="yyyy-MM-dd hh:ss" timeZone="GTM+8"/>
+							</h:outputText>
+						</p:column>
+						
+						<p:column style="width:2%;">
+							<f:facet name="header">
+								<h:outputText value="导入状态" />
+							</f:facet>
+							<h:outputText value="#{first.isImport }" />
+						</p:column>
+						
+						
+						<p:column style="text-align: center;width:5%;">
+							<f:facet name="header">
+								<h:outputText value="操作" />
+							</f:facet>
+							<p:commandButton title="导入精灵" style="width: 18px; height: 18px;"
+								icon="ui-icon ui-icon-plus" 
+								oncomplete="autoImportDlgVar.show()"
+								actionListener="#{smartImportBean.forAutoImportWestData(first.firstId)}"
+								update=":autoImportFormId:autoImportLayout,:autoImportMsg,:autoImtDlgGrowl">
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+					<p:spacer width="5px" height="15px" />
+					
+		</h:form>
+
+	</p:dialog>
+</ui:composition>

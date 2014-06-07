@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="title">页面权限不足</ui:define>
+	<ui:define name="content">
+		<p:panel styleClass="panel1">
+			<h:form prependId="false">
+				<f:facet name="header">
+					<img class="header_title_img"
+						src="#{request.contextPath}/images/icons/tabTitle.gif" alt="" />
+					<h:outputText value="页面权限不足" />
+				</f:facet>
+				<div style="text-align: center;">
+					<h:outputText value="您没有该页面的权限，请联系管理员分配权限，谢谢！" />
+				</div>
+			</h:form>
+		</p:panel>
+	</ui:define>
+</ui:composition>

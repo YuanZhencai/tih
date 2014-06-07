@@ -1,0 +1,141 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:contextMenu for="right_document_list_id" id="doclist_contextmenu_id">
+		<p:menuitem value="属性" icon="ui-icon ui-icon-search"
+			update=":query_document_property_form,:doc_property"
+			oncomplete="query_document_property_dialog_var.show();"
+			action="#{documentBean.setPermission}">
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="property" />
+		</p:menuitem>
+		<p:menuitem value="下载并查看" icon="ui-icon ui-icon-arrowthick-1-s" ajax="false">
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="download" />
+			<p:fileDownload value="#{documentBean.getFileById(documentBean.doc.id)}" />
+		</p:menuitem>
+		<p:menuitem value="检出" icon="ui-icon ui-icon-arrowthickstop-1-w"
+			update=":growl,right_document_list_id" action="#{documentBean.checkOut}" >
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="checkout" />
+		</p:menuitem>	
+		<p:menuitem value="下载并检出" icon="ui-icon ui-icon-arrowthickstop-1-s" ajax="false">
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="checkoutdownload" />
+			<p:fileDownload value="#{documentBean.file}" />
+		</p:menuitem>
+		<p:menuitem value="取消检出" icon="ui-icon ui-icon-arrowreturnthick-1-w" 
+			update=":growl,right_document_list_id" action="#{documentBean.cancelCheckOut}"  >
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="cancelcheckout" />
+		</p:menuitem>
+		<p:menuitem value="检入" icon="ui-icon ui-icon-arrowthickstop-1-e" action="#{documentBean.initCheckinDocument}"
+			update=":checkin_document_form" oncomplete="checkin_document_dialog_var.show();">
+			<f:setPropertyActionListener target="#{documentBean.docModel}"
+				value="checkin" />
+		</p:menuitem>
+		<p:menuitem value="历史版本" icon="ui-icon ui-icon-clock"
+			action="#{documentBean.getDocumentVersions}"
+			update=":document_versions_dialog_form,:growl"
+			oncomplete="handleVersionsOption(xhr, status, args);">
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="version" />
+		</p:menuitem>
+		<p:menuitem value="权限" icon="ui-icon ui-icon-locked"
+			update=":document_permission_form"
+			oncomplete="document_permission_dialog_var.show();"
+			action="#{documentBean.searchPermissions}"
+			rendered="#{documentBean.docadmin}">
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="permission" />
+		</p:menuitem>
+		<p:menuitem value="复制" icon="ui-icon ui-icon-copy"
+			update=":folder_tree_dialog_id"
+			oncomplete="folder_tree_dialog_var.show();removeTextShadow();"
+			actionListener="#{documentBean.clearSelected}"
+			rendered="#{documentBean.docadmin}">
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="copy" />
+			<f:setPropertyActionListener target="#{documentBean.folderModel}" value="" />
+			<f:setPropertyActionListener target="#{documentBean.folderSelected}" value="" />
+		</p:menuitem>
+		<p:menuitem value="移动" icon="ui-icon ui-icon-extlink"
+			update=":folder_tree_dialog_id"
+			oncomplete="folder_tree_dialog_var.show();removeTextShadow();"
+			actionListener="#{documentBean.clearSelected}"
+			rendered="#{documentBean.docadmin}">
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="move" />
+			<f:setPropertyActionListener target="#{documentBean.folderModel}" value="" />
+			<f:setPropertyActionListener target="#{documentBean.folderSelected}" value="" />
+		</p:menuitem>
+		<p:menuitem value="删除" icon="ui-icon ui-icon-close"
+			update=":confirm_dialog_id" oncomplete="confirm_dialog_var.show();"
+			rendered="#{documentBean.docadmin}">
+			<f:setPropertyActionListener target="#{documentBean.docModel}" value="docDelete" />
+			<f:setPropertyActionListener target="#{documentBean.deleteModel}" value="docDelete" />
+		</p:menuitem>
+	</p:contextMenu>
+	
+	<p:dataTable var="d" value="#{documentBean.documents}" paginator="true"
+		rows="10" paginatorPosition="bottom" id="right_document_list_id"
+		emptyMessage="#{msgs.dataTable_empty}" rowKey="#{d.id}" reset="false"
+		paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+		currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}" 
+		rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}" rowIndexVar="index"
+		selectionMode="single" selection="#{documentBean.doc}">
+		<p:ajax event="page" id="paging" oncomplete="handelBut();"/>
+		<f:facet name="header">
+			<div class="header">
+				文档列表
+				<p:commandButton styleClass="header_button" value="添加文档" icon="ui-icon ui-icon-plus"
+					update=":add_document_form,:main_form_id"
+					oncomplete="add_document_dialog_var.show();"
+					actionListener="#{documentBean.initAddDocument}" />
+			</div>
+		</f:facet>
+
+		<p:column headerText="检出" style="width: 30px; text-align: center;">
+		<div style="width: 30px;">
+			<h:outputText styleClass="#{d.isFrozen? 'ui-icon ui-icon-locked' : null}" style="float:left;margin-right:0px;"/>
+			<h:outputText value="#{d.isFrozen? '是' : '否'}" style="float:right"/>
+		</div>
+		</p:column>
+		<p:column headerText="审核状态"  style="text-align: center;width: 11%" rendered="#{documentBean.admin}">
+			<h:outputText value="#{commonBean.getValueByDictCatKey(d.auditStatus)}" />
+		</p:column>
+		<p:column headerText="名称" style="word-break:break-all;width:48% ">
+				  <p:commandLink ajax="false">
+					<h:outputText value="#{d.documentTitle}" title="#{d.documentTitle}"/>
+					<f:setPropertyActionListener target="#{documentBean.docModel}" value="downloadTitle" />
+					<p:fileDownload value="#{documentBean.getFileById(d.id)}" /> 
+				</p:commandLink> 
+		</p:column>
+		<p:column headerText="大小" style="width: 8%">
+			<div style="text-align:right;">
+				<h:outputText value="#{documentBean.getDocSize(d.size)}B" />
+			</div>
+		</p:column>
+		<p:column headerText="修改人" style="width: 8%">
+			<h:outputText value="#{documentBean.findUsernameByAccount(d.updatedBy)}" />
+		</p:column>
+		<p:column headerText="修改日期" style="text-align: center;width: 15%">
+			<h:outputText value="#{d.updatedDate}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+			</h:outputText>
+		</p:column>
+		<p:column headerText="操作" style="text-align: center; width: 6%;">
+			<p:commandButton title="属性" icon="ui-icon ui-icon-search"
+				style="width: 18px; height: 18px"
+				update=":query_document_property_form,:doc_property"
+				oncomplete="query_document_property_dialog_var.show();"
+				action="#{documentBean.setPermission}">
+				<f:setPropertyActionListener target="#{documentBean.docModel}" value="property" />
+				<f:setPropertyActionListener target="#{documentBean.doc}" value="#{d}" />
+			</p:commandButton>
+			<p:commandButton title="下载并查看" icon="ui-icon ui-icon-arrowthick-1-s"
+				style="width: 18px; height: 18px" ajax="false">
+				<f:setPropertyActionListener target="#{documentBean.docModel}" value="download" />
+				<p:fileDownload value="#{documentBean.getFileById(d.id)}" />
+			</p:commandButton>
+		</p:column>
+	</p:dataTable>
+	<script>
+         function handelBut() {
+        	 PrimeFaces.ab({formId:'main_form_id',source:'main_form_id:paging',process:'@all',update:'right_document_list_id'});
+         } 	
+ 	</script>
+</ui:composition>

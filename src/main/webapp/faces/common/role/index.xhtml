@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="styleAndScript">
+		<style type="text/css">
+td div span {
+	overflow: hidden; /**超过长度文本隐藏*/
+	white-space: nowrap; /**强制不换行*/
+	text-overflow: ellipsis; /**ie专属,后跟省略号*/
+}
+
+input[type='radio'] {
+	width: 20px;
+}
+
+input[type='checkbox'] {
+	width: 20px;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<shiro:hasPermission name="system:security:role">
+		
+		<p:panel id="roleMain" styleClass="panel1">
+
+			<h:form id="roleQueryForm" prependId="false">
+				<p:breadCrumb preview="true" expandEffectDuration="200"
+					previewWidth="24" style="width: 99.1%">
+					<p:menuitem value="首页" url="#" />
+					<p:menuitem value="系统管理" url="#" />
+					<p:menuitem value="权限管理" url="#" />
+					<p:menuitem value="角色管理" url="#" />
+				</p:breadCrumb>
+
+				<div class="style1" style="margin: 5px 0 5px 0;">
+					<h:panelGrid columns="8" id="userSerachGrid"
+						columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+						<h:outputText value="角色名称：" />
+						<p:inputText value="#{roleBean.query['name']}" />
+						<h:outputText value="#{msgs.txt_defunct}" />
+						<h:selectOneMenu value="#{roleBean.query['del']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+							<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+							<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+						</h:selectOneMenu>
+					</h:panelGrid>
+					<div>
+						<p:commandButton id="roleSearch" value="#{msgs.btn_query}"
+							action="#{roleBean.search}" icon="ui-icon ui-icon-search"
+							style="margin-right: 5px;" ajax="false" />
+						<p:commandButton value="#{msgs.btn_reset}"
+							icon="ui-icon ui-icon-cancel" action="#{roleBean.reset}"
+							update=":roleQueryForm:userSerachGrid" style="margin-right: 5px;" />
+					</div>
+				</div>
+				<p:growl id="rowGrowl" showDetail="true" showSummary="true" life="10000"/>
+				<p:dataTable id="resultTable" var="role" value="#{roleBean.roles}"
+					rowKey="#{role.id}" paginatorPosition="bottom" rowIndexVar="index" paginator="true" rows="10"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+					rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+					selectionMode="single" emptyMessage="#{msgs.dataTable_empty}">
+
+					<f:facet name="header">
+					<div class="header">
+							角色列表
+							<p:commandButton value="#{msgs.btn_add}" styleClass="header_button"
+								oncomplete="insert_dialog_dialog.show()" update=":new_form"
+								icon="ui-icon ui-icon-plus" action="#{roleBean.editRole}">
+								<f:setPropertyActionListener target="#{roleBean.role}" value="" />
+							</p:commandButton>
+						</div>
+					</f:facet>
+					<p:column headerText="角色名称" style="width: 25%;">
+						<h:outputText value="#{role.name}" title="#{role.name}" />
+					</p:column>
+					<p:column headerText="角色编码" style="width: 15%;">
+						<h:outputText value="#{role.code}" title="#{role.code}" />
+					</p:column>
+					<p:column headerText="角色描述" style="width: 30%;">
+						<h:outputText value="#{role.desc}" title="#{role.desc}" />
+					</p:column>
+					<p:column headerText="系统标识" style="width: 10%;">
+						<h:outputText value="#{role.sysInd == 'Y' ? '是' : '否'}"/>
+					</p:column>
+					<p:column headerText="有效" style="width: 10%;">
+						<h:outputText value="#{role.defunctInd == 'Y' ? '否' : '是'}"/>
+					</p:column>
+					<p:column headerText="操作" style="width: 10%; text-align: center;">
+						<p:commandButton title="#{msgs.btn_edit}" disabled="#{role.sysInd == 'Y'?true:false }" 
+							icon="ui-icon ui-icon-pencil" update=":update_form"
+							oncomplete="update_dialog_dialog.show();"
+							style="width: 18px;height: 18px;" action="#{roleBean.editRole}">
+							<f:setPropertyActionListener target="#{roleBean.role}"
+								value="#{role}" />
+						</p:commandButton>
+						<p:commandButton title="分配" icon="ui-icon ui-icon-key"
+							update=":role_resource_form" action="#{roleBean.searchResources}"
+							style="width: 18px;height: 18px;"
+							oncomplete="role_resource_dialog.show();">
+							<f:setPropertyActionListener target="#{roleBean.role}" value="#{role}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:panel>
+
+		<ui:include src="insert_dialog.xhtml" />
+		<ui:include src="update_dialog.xhtml" />
+		<ui:include src="role_resource_dialog.xhtml" />
+
+		<script type="text/javascript">
+			function handleSaveRequest(xhr, status, args) {
+				if(args.issucc == "yes") {
+					insert_dialog_dialog.hide();
+				}
+			}
+			
+			function handleUpdateRequest(xhr, status, args) {
+				if(args.issucc == "yes") {
+					update_dialog_dialog.hide();
+				}
+			}
+			
+			function handleTreeRequest(xhr, status, args) {
+				if(args.issucc == "yes") {
+					role_resource_dialog.hide();
+				}
+			}
+		</script>
+		
+		</shiro:hasPermission>
+		
+		<shiro:lacksPermission name="system:security:role">
+			<ui:include src="/errorshiro.xhtml" />
+		</shiro:lacksPermission>
+		
+	</ui:define>
+</ui:composition>

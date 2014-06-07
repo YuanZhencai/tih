@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="styleAndScript">
+		<script type="text/javascript" src="#{request.contextPath}/template/js/uploadStyle.js" />
+		<style>
+			.cl1, .cl3, .cl5, .cl7, .cl9{text-align:right;}
+			.cl2, .cl4, .cl6, .cl8, .cl10{text-align:left;font-weight:normal;}
+			.cl11 {}
+
+			.btn {
+				position: relative;
+				float: right;
+			}
+
+			.tl0 {width: 23%;}
+			.tl1 {}
+			.tl2 {width: 15%;}
+			.tl3 {width: 16%;}
+			.tl4 {width: 25%; text-align: right; padding-right: 23px;}
+
+			.bbn {}
+
+			.ql1 {width: 15%}
+			.ql2 {width: 20%}
+			.ql3 {width: 50%}
+			
+			.task {
+				border-collapse: collapse;
+				width: 100%;
+				border: 1px solid white;
+				margin-top: -5px;
+			}
+			.task td {border: 1px solid white;}
+			
+			.evenRow {background: #C2D89A;}
+			.evenRow .oddRow {height: 24px;}
+			
+			th {text-align: left;}
+			
+			.titleTable {
+				margin-top: -5px;
+				width: 98%;
+				overflow: inherit;
+				overflow: visible;
+			}
+			
+			.panel {}
+			
+			input[type='radio'] {width: 25px;}
+			input[type='checkbox'] {width: 25px;}
+			
+			#search_result a.ui-panel-titlebar-icon.ui-corner-all.ui-state-default {
+				margin-top:-21px;
+			}
+			
+			
+		</style>
+
+		<script>
+				// 调整上传组件样式
+			function ensureUpload() {
+				$("#upload_id_input").attr("style","margin-right:60px");
+				fileUploadStyle.addlistener("upload_id_input");
+				var aa=document.getElementsByClassName("ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left fileinput-button","label"); 
+				for(var i=0;i &lt; aa.length;i++){
+					aa[i].attr("class","ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left");
+				}
+			}
+			document.getElementsByClassName=function(className,elementName) {
+				var elements=new Array();
+			    $(elementName).each(function(){
+				    if($(this).attr("class")==className){
+				    	elements.push($(this));
+			    	}
+			    });
+				return elements;
+			};
+			
+			function ensureTitleTable() {/*
+				var tabs = document.getElementsByTagName("table");
+				var f = false;
+				for(var i = 0; i &lt; tabs.length; i ++) {
+					var tab = tabs[i];
+					if(tab.className == "titleTable") {
+						if(!f) {
+							f = true;
+						} else {
+							var tds = tab.getElementsByTagName("td");
+							for(var j = 0; j &lt; tds.length; j++) {
+								if(j % 2 == 0 &amp; j != 8) {
+									tds[j].innerHTML = "";
+								}
+							}
+						}
+					}
+				}
+				f = false;*/
+			}
+			
+			function toggleLastPanel(){
+				var panelTogglers = $("a.ui-panel-titlebar-icon.ui-corner-all.ui-state-default");
+				if(panelTogglers.length > 1){
+					var lastPanelToggler = panelTogglers.last();
+					var minusthicks = lastPanelToggler.has("span.ui-icon.ui-icon-minusthick");
+					if(minusthicks.length > 0){
+						minusthicks.get(0).click();
+					}
+				}
+			}
+			
+			function handleProject(xhr, status, args) {
+				if(args.issucc == "yes") {
+					edit_project_dialog_var.hide();
+				}
+				try{
+					if(args.pid != null){
+						var panel = eval("panel" + args.pid);
+						if(panel != null){
+							panel.toggle();
+						}
+					}
+				} catch (err){
+					
+				}
+			}
+			
+			function handleMember(xhr, status, args) {
+				if(args.issucc == "yes") {
+					edit_member_dialog_var.hide();
+				}
+			}
+			
+			function handleTask(xhr, status, args) {
+				if(args.issucc == "yes") {
+					edit_task_dialog_var.hide();
+				}
+				try{
+					if(args.pid != null){
+						var panel = eval("panel" + args.pid);
+						if(panel != null){
+							panel.toggle();
+						}
+					}
+				} catch (err){
+					
+				}
+			}
+			function handleProblem(xhr, status, args) {
+				if(args.issucc == "yes") {
+					edit_question_dialog_var.hide();
+				}
+			}
+			function handleDelAtts(xhr, status, args) {
+				if(args.issucc == "yes") {
+					confirm_dialog_var.show();
+				}
+			}
+			
+			function handleSelectMember(xhr, status, args) {
+				if(args.issucc == "yes") {
+					query_projectmembers_dialog_var.hide();
+				}
+			}
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+		
+		<shiro:hasPermission name="affair:projectmanage">
+		<p:messages showDetail="true" showSummary="true" id="search_msg"/>
+		<h:form prependId="false" id="projectForm">
+			<p:panel id="projectsPanel" styleClass="panel1">
+				<p:breadCrumb>
+					<p:menuitem value="首页" url="#" />
+					<p:menuitem value="事务管理" url="#" />
+					<p:menuitem value="项目管理" url="#" />
+				</p:breadCrumb>
+
+				<p:panel toggleSpeed="50" toggleable="true" id="projectQueryPanel"
+					widgetVar="queryConditions" style="margin: 5px 0px 5px 0px;">
+					<f:facet name="header">
+						<h:outputText value="搜索条件" />
+					</f:facet>
+					<h:panelGrid id="queryTable" columns="8"
+						columnClasses="column1,column2,column1,column2,column1,column2">
+						<h:outputLabel value="项目名称："/>
+						<p:inputText id="qname" value="#{projectBean.query['qname']}" />
+						
+						<h:outputLabel value="项目阶段："/>
+						<h:selectOneMenu id="qstatus" value="#{projectBean.query['qstatus']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+							<f:selectItems value="#{commonBean.getDictByCat(projectBean.projectState)}" var="dict"
+								itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}"/>
+						</h:selectOneMenu>
+
+						<h:outputLabel value="开始日期："/>
+						<p:calendar id="qstartDate" navigator="true" locale="cn"
+							value="#{projectBean.query['qstartDate']}" pattern="yyyy-MM-dd"/>
+
+						<h:outputLabel value="结束日期："/>
+						<p:calendar id="qcloseDate" navigator="true" locale="cn"
+							value="#{projectBean.query['qcloseDate']}" pattern="yyyy-MM-dd"/>
+					</h:panelGrid>
+					<div style="margin-right: -10px; text-align: right;">
+						<p:commandButton icon="ui-icon ui-icon-search" value="#{msgs.btn_query}" id="queryProjectsId"
+							style="margin-right: 5px;" onclick="toggleLastPanel();"
+							action="#{projectBean.searchProjects}" update=":search_msg,:projectForm:add_project,:projectForm:search_result" />
+						<p:commandButton icon="ui-icon ui-icon-cancel" update="projectQueryPanel"
+							value="#{msgs.btn_reset}" id="reset" action="#{projectBean.resetQuery}"/>
+					</div>
+				</p:panel>
+
+				<p:growl id="pGrowl" showDetail="true" showSummary="true" life="10000"/>
+				
+				<h:panelGrid style="text-align: right; width: 100%" id="add_project">
+				<p:commandButton icon="ui-icon ui-icon-plusthick" value="添加项目"
+					oncomplete="edit_project_dialog_var.show();" update=":edit_project_dialog_id"
+					action="#{projectBean.initAddProject()}">
+					<f:setPropertyActionListener target="#{projectBean.projectModel}" value="add"/>
+					<f:setPropertyActionListener target="#{projectBean.projectUserName}" 
+						value="#{projectBean.getUsernameByAccount(currentUser.currentUsermstr.adAccount)}"/>
+				</p:commandButton>
+				</h:panelGrid>
+				
+				<h:dataTable var="po" value="#{projectBean.projectmstrses}" 
+					style="width: 100%; border-collapse:collapse;" id="search_result">
+				<h:column>
+					<p:panel id="poPanel" toggleSpeed="50" toggleable="true" styleClass="panel"
+						widgetVar="panel#{po.p.id}" collapsed="true">
+						<p:ajax event="toggle" listener="#{projectBean.searchProjectMissions}" update="poPanel" /> 
+						<f:facet name="header">
+							<h:panelGrid columns="11"
+								columnClasses="cl1,cl2,cl3,cl4,cl5,cl6,cl7,cl8,cl9,cl10,cl11"
+								styleClass="titleTable">
+								
+								<h:outputText value="项目名称："/>
+								<h:outputText value="#{po.p.name}" title="#{po.p.name}"
+								style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:200px;"/>
+								
+								<h:outputText value="项目经理："/>
+								<h:outputText value="#{projectBean.getUsernameByAccount(po.p.createdBy)}" title="#{projectBean.getUsernameByAccount(po.p.createdBy)}"
+								style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:80px;"/>
+								
+								<h:outputText value="项目阶段："/>
+								<h:outputText value="#{commonBean.getValueByDictCatKey(po.p.status)}" title="#{commonBean.getValueByDictCatKey(po.p.status)}"
+								style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:80px;"/>
+								
+								<h:outputText value="项目进度："/>
+								<h:outputText value="#{po.progress}%" title="#{po.progress}%"
+								style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:50px;"/>
+								
+								<h:column>
+									<h:inputHidden value="#{po.p.id}"/>
+									<p:commandButton styleClass="btn" title="新增任务" icon="ui-icon ui-icon-lightbulb"
+										action="#{projectBean.initTask}" update=":edit_task_dialog_id"
+										oncomplete="edit_task_dialog_var.show();" style="width: 18px; height: 18px;"
+										disabled="#{!(projectBean.proadmin or po.p.createdBy eq currentUser.currentUsermstr.adAccount)}">
+										<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+										<f:setPropertyActionListener target="#{projectBean.taskModel}" value="add"/>
+										<f:setPropertyActionListener target="#{projectBean.chargedBy}" value=""/>
+									</p:commandButton>
+									
+									<p:commandButton styleClass="btn" title="干系人" icon="ui-icon ui-icon-person"
+										update=":project_member_form_id" oncomplete="project_member_dialog_var.show();"
+										action="#{projectBean.searchMembers}" style="width: 18px; height: 18px;">
+										<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+									</p:commandButton>
+									
+									<p:commandButton styleClass="btn" title="附件" icon="ui-icon ui-icon-mail-closed"
+										update=":project_attachment_form_id" oncomplete="project_attachment_dialog_var.show()"
+										action="#{projectBean.searchProjectAttachments}" style="width: 18px; height: 18px;">
+										<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+										<f:setPropertyActionListener target="#{projectBean.operation}" value="project"/>
+									</p:commandButton>
+									<p:commandButton styleClass="btn" title="#{msgs.btn_edit}" icon="ui-icon ui-icon-pencil"
+										update=":edit_project_dialog_id" oncomplete="edit_project_dialog_var.show();"
+										disabled="#{!(projectBean.proadmin or po.p.createdBy eq currentUser.currentUsermstr.adAccount)}"
+										style="width: 18px; height: 18px;">
+										<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+										<f:setPropertyActionListener target="#{projectBean.projectModel}" value="edit"/>
+										<f:setPropertyActionListener target="#{projectBean.projectUserName}" 
+											value="#{projectBean.getUsernameByAccount(po.p.createdBy)}"/>
+									</p:commandButton>
+									<p:commandButton styleClass="btn" title="查看" icon="ui-icon ui-icon-search"
+										update=":edit_project_dialog_id" oncomplete="edit_project_dialog_var.show();"
+										style="width: 18px; height: 18px;">
+										<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+										<f:setPropertyActionListener target="#{projectBean.projectModel}" value="query"/>
+										<f:setPropertyActionListener target="#{projectBean.projectUserName}" 
+											value="#{projectBean.getUsernameByAccount(po.p.createdBy)}"/>
+									</p:commandButton>
+								</h:column>
+							</h:panelGrid>
+						</f:facet>
+						
+						<h:dataTable styleClass="task" value="#{po.pms}" var="m"
+							rowClasses="evenRow, oddRow" columnClasses="tl0,tl1,tl2,tl3,tl4">
+							<h:column/>
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="任务名称"/>
+								</f:facet>
+								<h:outputText value="#{m.name}" title="#{m.name}"
+								style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:180px;"/>
+							</h:column>
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="任务负责人"/>
+								</f:facet>
+								<h:outputText value="#{projectBean.getUsernameByAccount(m.chargedBy)}" title="#{projectBean.getUsernameByAccount(m.chargedBy)}"
+								style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:100px;"/>
+							</h:column>
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="任务状态"/>
+								</f:facet>
+								<h:outputText value="#{commonBean.getValueByDictCatKey(m.status)}" title="#{commonBean.getValueByDictCatKey(m.status)}"
+								style="white-space: nowrap;text-overflow:ellipsis;overflow:hidden;display: inline-block;width:100px;"/>
+							</h:column>
+							<h:column>
+								<h:inputHidden value="#{m.id}"/>
+								<p:commandButton styleClass="bbn" title="查看" icon="ui-icon ui-icon-search"
+									update=":edit_task_dialog_id" oncomplete="edit_task_dialog_var.show();" style="width: 18px; height: 18px;">
+									<f:setPropertyActionListener target="#{projectBean.taskModel}" value="query"/>
+									<f:setPropertyActionListener target="#{projectBean.task}" value="#{m}"/>
+									<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+									<f:setPropertyActionListener target="#{projectBean.currentOpAccount}" value="#{m.chargedBy}"/>
+									<f:setPropertyActionListener target="#{projectBean.chargedBy}" value="#{projectBean.getUsernameByAccount(m.chargedBy)}"/>
+								</p:commandButton>
+								
+								<p:commandButton styleClass="bbn" title="#{msgs.btn_edit}" icon="ui-icon ui-icon-pencil"
+									update=":edit_task_dialog_id" oncomplete="edit_task_dialog_var.show();" style="width: 18px; height: 18px;"
+									disabled="#{!(projectBean.proadmin or po.p.createdBy eq currentUser.currentUsermstr.adAccount or m.chargedBy eq currentUser.currentUsermstr.adAccount)}">
+									<f:setPropertyActionListener target="#{projectBean.taskModel}" value="edit"/>
+									<f:setPropertyActionListener target="#{projectBean.task}" value="#{m}"/>
+									<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+									<f:setPropertyActionListener target="#{projectBean.currentOpAccount}" value="#{m.chargedBy}"/>
+									<f:setPropertyActionListener target="#{projectBean.chargedBy}" value="#{projectBean.getUsernameByAccount(m.chargedBy)}"/>
+								</p:commandButton>
+								<p:commandButton styleClass="bbn" title="#{msgs.btn_delete}" icon="ui-icon ui-icon-close"
+									update=":confirm_form_id" oncomplete="confirm_dialog_var.show()" style="width: 18px; height: 18px;"
+									disabled="#{!(projectBean.proadmin or po.p.createdBy eq currentUser.currentUsermstr.adAccount)}">
+									<f:setPropertyActionListener target="#{projectBean.task}" value="#{m}"/>
+									<f:setPropertyActionListener target="#{projectBean.deleteModel}" value="task"/>
+									<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+								</p:commandButton>
+								
+								<p:commandButton styleClass="bbn" title="附件" icon="ui-icon ui-icon-mail-closed"
+									update=":project_attachment_form_id" oncomplete="project_attachment_dialog_var.show()"
+									action="#{projectBean.searchProjectAttachments}" style="width: 18px; height: 18px;">
+									<f:setPropertyActionListener target="#{projectBean.task}" value="#{m}"/>
+									<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+									<f:setPropertyActionListener target="#{projectBean.operation}" value="task"/>
+								</p:commandButton>
+
+								<p:commandButton styleClass="bbn" title="问题" icon="ui-icon ui-icon-help"
+									update=":task_question_form_id" oncomplete="task_question_dialog_var.show();"
+									action="#{projectBean.searchProblems}" style="width: 18px; height: 18px;">
+									<f:setPropertyActionListener target="#{projectBean.task}" value="#{m}"/>
+									<f:setPropertyActionListener target="#{projectBean.project}" value="#{po}"/>
+								</p:commandButton>
+							</h:column>
+						</h:dataTable>
+					</p:panel>
+				</h:column>
+				</h:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<ui:include src="/faces/transaction/project/edit_project_dialog.xhtml"/>
+		<ui:include src="/faces/transaction/project/confirm_dialog.xhtml"/>
+		
+		<ui:include src="/faces/transaction/project/project_member_dialog.xhtml"/>
+		<ui:include src="/faces/transaction/project/edit_member_dialog.xhtml"/>
+		
+		<ui:include src="/faces/transaction/project/edit_task_dialog.xhtml"/>
+		
+		<ui:include src="/faces/transaction/project/task_question_dialog.xhtml"/>
+		<ui:include src="/faces/transaction/project/edit_question_dialog.xhtml"/>
+		
+		<ui:include src="/faces/transaction/project/project_attachment_dialog.xhtml"/>
+		<ui:include src="/faces/transaction/project/add_attachment_dialog.xhtml"/>
+		
+		<ui:include src="/faces/common/user/common_user_dialog.xhtml"/>
+		<ui:include src="/faces/transaction/project/query_projectmembers_dialog.xhtml"/>
+		</shiro:hasPermission>
+		<shiro:lacksPermission name="affair:projectmanage">
+			<ui:include src="/errorshiro.xhtml" />
+		</shiro:lacksPermission>
+		
+	</ui:define>
+
+</ui:composition>

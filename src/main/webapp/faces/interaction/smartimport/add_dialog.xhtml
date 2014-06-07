@@ -1,0 +1,188 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog header="手工导入精灵" widgetVar="addImDlgVar" showEffect="fade" 
+		hideEffect="fade" modal="true" resizable="false" height="500" width="555" id="addImDlgId">
+		<p:ajax event="close" listener="#{smartImportBean.addPageCancelBtn()}" update=":firstFormId,:addImDlgMsg,:addImDlgGrowl"/>
+		<p:messages id="addImDlgMsg" showDetail="true"/>
+			<p:growl id="addImDlgGrowl" life="10000" showDetail="true"/>
+		<h:form id="addImDlgFormId" prependId="false">
+			
+			<p:accordionPanel id="addFirstAccId" style="width:525px;">
+				<p:tab title="问题" titleStyle="width:522px;">
+
+					<h:panelGrid columns="4"
+						columnClasses="column1,column2,column1,column2">
+						<div style="width:60px;">
+						地域：
+						</div>
+						<h:panelGroup>
+						<h:selectOneMenu value="#{smartImportBean.smtAdd.region}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="请选择" itemValue="" />
+							<f:selectItems 
+								value="#{commonBean.getDictByCat(applyQuestionBean.dropDownRegion)}" var="dict"
+								itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+						<h:outputText style="color:red;" value="*" />
+						</h:panelGroup>
+						
+						<h:outputLabel value="税种：" />
+						<h:panelGroup>
+						<h:selectOneMenu value="#{smartImportBean.smtAdd.taxType}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="请选择" itemValue="" />
+							<f:selectItems value="#{commonBean.getDictByCat(applyQuestionBean.dropDownTaxType)}" 
+								var="dict" itemLabel="#{dict.codeVal}"
+								itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+						</h:selectOneMenu>
+						<h:outputText style="color:red;" value=" *" />
+						</h:panelGroup>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" columnClasses="column1">
+						<div style="width:60px;">
+						问题标题：
+						</div>
+						<h:panelGroup>
+						<p:inputText style="width:362px" maxlength="50" 
+							value="#{smartImportBean.smtAdd.name}" >
+						</p:inputText>
+						<h:outputText style="color:red;" value=" *" />
+						</h:panelGroup>
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" columnClasses="column1,column2,column3">
+					<div style="width:60px;">
+						问题描述：
+					</div>
+						<p:inputTextarea style="width: 362px; height: 120px;" autoResize="false" maxlength="500" 
+							value="#{smartImportBean.smtAdd.question}" />
+						<h:outputText style="color:red;" value="*" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" columnClasses="column1,column3">
+						<p:dataTable var="handf"
+							value="#{smartImportBean.addQuestionList}"
+							paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+							rows="5"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+							style="margin-top: 5px;width:445px" emptyMessage="#{msgs.dataTable_empty }">
+							<f:facet name="header">
+								<h:outputText value="问题附件清单" />
+								<div
+									style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+									<p:commandButton value="添加附件" icon="ui-icon ui-icon-plus"
+										oncomplete="addAttachmentDlgVar.show();loadUpload();" update=":addAttachmentDlgFormId"  
+										actionListener="#{smartImportBean.enterPlace('addPageQue')}" />
+								</div>
+							</f:facet>
+
+							<p:column style="text-align:left;width:276px;">
+								<f:facet name="header">
+									<h:outputText value="附件名称" />
+								</f:facet>
+								<h:outputText value="#{handf.fileNameRF}" />
+							</p:column>
+							<p:column style="text-align: center;width:60px;">
+								<f:facet name="header">
+									<h:outputText value="操作" />
+								</f:facet>
+								<p:commandButton title="删除" style="width: 18px; height: 18px;"
+									icon="ui-icon ui-icon-close" 
+									actionListener="#{smartImportBean.addPageDeleteAtt(handf.fileIdRF,'1')}" 
+									update=":addImDlgFormId:addFirstAccId" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:tab>
+
+			</p:accordionPanel>
+
+			<p:accordionPanel id="addSecondAccId" style="width:525px">
+				<p:tab title="回答" titleStyle="width:522px;">
+					<h:panelGrid columns="4" columnClasses="column1,column2,column3">
+						<div style="width:60px;">
+						回答描述：
+						</div>
+						<p:inputTextarea style="width: 362px; height: 120px;" autoResize="false" maxlength="500" 
+							value="#{smartImportBean.smtAdd.answer}" />
+						<h:outputText style="color:red;" value="*" />
+					</h:panelGrid>
+					<h:panelGrid columns="4" columnClasses="column1,column3">
+
+						<p:dataTable var="ss" value="#{smartImportBean.addAnswerList}"
+							paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+							rows="5"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+							rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+							style="margin-top: 5px;width:445px" emptyMessage="#{msgs.dataTable_empty }">
+							<f:facet name="header">
+								<h:outputText value="回答附件清单" />
+								<div
+									style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+									<p:commandButton value="添加附件" icon="ui-icon ui-icon-plus" update=":addAttachmentDlgFormId" 
+										oncomplete="addAttachmentDlgVar.show();loadUpload();"
+										actionListener="#{smartImportBean.enterPlace('addPageAns')}" />
+								</div>
+							</f:facet>
+							<p:column style="text-align:left;width:276px;">
+								<f:facet name="header">
+									<h:outputText value="附件名称" />
+								</f:facet>
+								<h:outputText value="#{ss.fileNameRF }" />
+							</p:column>
+							<p:column style="text-align: center;width:60px;">
+								<f:facet name="header">
+									<h:outputText value="操作" />
+								</f:facet>
+								<p:commandButton title="删除" style="width: 18px; height: 18px;"
+									icon="ui-icon ui-icon-close" 
+									actionListener="#{smartImportBean.addPageDeleteAtt(ss.fileIdRF,'2')}" 
+									update=":addImDlgFormId:addSecondAccId" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:tab>
+
+			</p:accordionPanel>
+
+			<div style="width:523px;" align="left">
+				<h:panelGrid columns="4"
+					columnClasses="column1,column2,column1,column1">
+					<h:outputText value="有效：" />
+					<h:selectOneRadio styleClass="checkbox"
+						value="#{smartImportBean.addPageDefunt}">
+						<f:selectItem itemLabel="#{msgs.txt_effective }" itemValue="N"></f:selectItem>
+						<f:selectItem itemLabel="#{msgs.txt_effectiveLost }" itemValue="Y"></f:selectItem>
+					</h:selectOneRadio>
+				</h:panelGrid></div>		
+			<div style="width:523px;" align="center">
+					<p:commandButton value="#{msgs.btn_ok}"  icon="ui-icon ui-icon-check"  
+						oncomplete="addPageHandRequest(xhr, status, args);" 
+						actionListener="#{smartImportBean.addPageImportBtn()}" 
+						update=":firstFormId,:addImDlgMsg,:addImDlgGrowl"  style="margin-right:7px;" 
+						/>
+					<p:commandButton value="#{msgs.btn_cancel }"  type="button"  style="margin-right:7px;"  
+						icon="ui-icon ui-icon-cancel" onclick="addImDlgVar.hide();" />
+			</div>
+			<p:spacer width="20px" height="20px"></p:spacer>
+		</h:form>
+		<script type="text/javascript">
+			function addPageHandRequest(xhr, status, args) {
+				if (args.addPageImport == "yes") {
+					addImDlgVar.hide();
+				}
+			}
+		</script>
+	</p:dialog>
+</ui:composition>

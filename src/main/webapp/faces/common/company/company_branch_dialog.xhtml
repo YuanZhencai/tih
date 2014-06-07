@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="分支机构信息" widgetVar="branchDialogWidgetVar"
+		id="branchDialogId" resizable="false" modal="true">
+		<h:form id="branchDialogForm" prependId="false">
+			<div class="style1">
+				<h:panelGrid id="branchDialogPG" columns="4"
+					columnClasses="column1,column2,column1,column2">
+					<h:outputText value="机构名称：" />
+					<p:inputText value="#{branchBean.organizationName}"/>
+					<h:outputText value="有效：" />
+					<h:selectOneMenu value="#{branchBean.effective}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+						<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+					</h:selectOneMenu>
+				</h:panelGrid>
+				<div>
+					<p:commandButton actionListener="#{branchBean.queryBranch()}"
+						style="margin-right: 5px;" update="branchDataTable"
+						value="#{msgs.btn_query}" icon="ui-icon ui-icon-search" />
+					<p:commandButton type="reset" update="branchDialogPG"
+						value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel"
+						style="margin-right: 5px;" />
+				</div>
+			</div>
+			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+				id="branchDataTable" var="bv"
+				value="#{branchBean.lazyBranchVoModel}" paginator="true" rows="5"
+				paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+				rowIndexVar="index"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				style="margin-top:5px;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}">
+				<f:facet name="header">
+					<h:outputText value="分支机构信息列表" />
+					<div
+						style="text-align: right; position: relative; margin: -13px -4px 0px 0px; vertical-align: middle">
+						<p:commandButton actionListener="#{branchBean.addBranch()}"
+							value="#{msgs.btn_add}" icon="ui-icon ui-icon-plus"
+							oncomplete="branchAddEditDialogWidgetVar.show()"
+							update=":branchAddEditDialogId">
+							<f:setPropertyActionListener value="add"
+								target="#{branchBean.excuteMethod}" />
+						</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column headerText="机构名称">
+					<h:outputText value="#{bv.organizationName}" />
+				</p:column>
+				<p:column headerText="经营地点">
+					<h:outputText value="#{bv.location}" />
+				</p:column>
+				<p:column headerText="成立时间">
+					<h:outputText value="#{bv.setUpDatetime}">
+						<f:convertDateTime timeZone="GMT+8" pattern="yyyy-MM-dd" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="经营范围">
+					<h:outputText value="#{bv.businessScope}" />
+				</p:column>
+				<p:column headerText="有效" style="text-align: center;">
+					<h:outputText
+						value="#{bv.effective eq 'N' ? (msgs.txt_effective):(msgs.txt_effectiveLost)}" />
+				</p:column>
+				<p:column headerText="操作" style="text-align: center;">
+					<p:commandButton oncomplete="branchAddEditDialogWidgetVar.show()"
+						update=":branchAddEditDialogId" title="编辑"
+						icon="ui-icon ui-icon-pencil" style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener value="update"
+							target="#{branchBean.excuteMethod}" />
+						<f:setPropertyActionListener target="#{branchBean.branchVo}"
+							value="#{bv}" />
+						<f:setPropertyActionListener
+							target="#{branchBean.exsitsOrganizationName}"
+							value="#{bv.organizationName}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-attachment" title="附件" id="companyBranchAttachmentId"
+						style="width: 18px;height: 18px;" oncomplete="uploadOrDownloadAttachment.show();"
+						action="#{attachmentBean.searchFilemstr()}" update=":uploadOrDownloadAttachmentID">
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.tableName}" value="COMPANY_BRANCH" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.entityId}" value="#{bv.id}" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.operationType}" value="100" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

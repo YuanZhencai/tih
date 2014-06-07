@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="title">公司管理</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+.changeColor {
+	background: #DEEDF7;
+}
+
+input[type='radio'] {
+	width: 20px;
+}
+
+.startime>input[type='text'] {
+	width: 94px;
+}
+
+.column185 {
+	text-align: right;
+	width: 185px;
+}
+
+.column80 {
+	text-align: right;
+	width: 80px;
+}
+
+</style>
+		<p:panel styleClass="panel1">
+			<p:breadCrumb id="dataTable_breadCrumb" preview="true"
+				expandEffectDuration="200" previewWidth="24"
+				style="margin-bottom: 5px;">
+				<p:menuitem value="系统管理" url="#" />
+				<p:menuitem value="系统管理" url="#" />
+				<p:menuitem value="组织用户管理 " url="#" />
+				<p:menuitem value="公司管理" url="#" />
+			</p:breadCrumb>
+			<p:growl id="growl" showDetail="true" showSummary="true" life="3000" />
+			<h:form id="companySearchForm" prependId="false">
+			
+				<div class="style1" style="margin-top: 5px; margin-bottom: 5px;">
+					<h:panelGrid columns="10"
+						columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+						<h:outputText value="公司名称：" />
+						<p:inputText value="#{companyBean.filter['LIKES_stext']}" />
+						<h:outputText value="公司代码：" />
+						<p:inputText value="#{companyBean.filter['LIKES_code']}" />
+						<h:outputText value="有效：" />
+						<h:selectOneMenu
+							value="#{companyBean.filter['LIKES_defunctInd']}"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="请选择" itemValue="" />
+							<f:selectItem itemLabel="是" itemValue="N" />
+							<f:selectItem itemLabel="否" itemValue="Y" />
+						</h:selectOneMenu>
+						<h:outputText value="地域："/>
+					<h:selectOneMenu value="#{companyBean.filter['LIKES_region']}" >
+						<f:selectItem itemLabel="请选择"/>
+						<f:selectItems value="#{companyBean.regionItems}" />
+						<p:ajax update="provinces" event="change" listener="#{companyBean.handleRegionChange(companyBean.filter['LIKES_region'])}"/>
+					</h:selectOneMenu>
+				<h:outputText value="省："/>
+					<h:selectOneMenu id="provinces" value="#{companyBean.filter['LIKES_province']}" >
+						<f:selectItem itemLabel="请选择"/>
+						<f:selectItems value="#{companyBean.provinceItems}" />
+					</h:selectOneMenu>
+					</h:panelGrid>
+					<div align="right">
+						<p:commandButton value="查询" icon="ui-icon ui-icon-search"
+							action="#{companyBean.searchCompanys()}" update="companyDataTable"
+							style="margin-right: 5px;" />
+						<p:commandButton value="重置"
+							actionListener="#{companyBean.resetForm}"
+							update="companySearchForm" style="margin-right: 5px;"
+							icon="ui-icon ui-icon-cancel" />
+					</div>
+				</div>
+				 
+				<p:dataTable id="companyDataTable" var="company"
+					value="#{companyBean.companyVos}" paginator="true" rows="10"
+					paginatorPosition="bottom" rowKey="#{company.company}"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+					rowIndexVar="index"
+					rowStyleClass="#{index mod 2 == 1 ? 'changeColor' : null}"
+					emptyMessage="#{msgs.dataTable_empty}" style="margin-top: 5px;"
+					selectionMode="single" selection="#{companyBean.selectedCompanyVo}">
+					<f:facet name="header">
+						<div class="header">
+							<h:outputText value="公司列表" />
+							<p:commandButton value="添加" styleClass="header_button"
+								oncomplete="saveCompanyDialogVar.show();"
+								actionListener="#{companyBean.createCompany()}"
+								update=":saveCompanyForm,:saveCompanyDialog"
+								icon="ui-icon ui-icon-plus" />
+						</div>
+					</f:facet>
+					<p:column headerText="公司名称">
+						<h:outputText value="#{company.o.stext}" />
+					</p:column>
+					<p:column headerText="公司代码">
+						<h:outputText value="#{company.company.code}" />
+					</p:column>
+					<p:column headerText="法人代表">
+						<h:outputText value="#{company.company.representative}" />
+					</p:column>
+					<p:column headerText="地址" >
+						<h:outputText value="#{company.company.address}" />
+					</p:column>
+					<p:column headerText="邮编">
+						<h:outputText value="#{company.company.zipcode}" />
+					</p:column>
+					<p:column headerText="联系电话">
+						<h:outputText value="#{company.company.telphone}" />
+					</p:column>
+					<p:column headerText="有效" style="text-align:center;">
+						<h:outputText value="#{company.company.defunctInd =='Y' ?'否':'是'}" />
+					</p:column>
+					<p:column headerText="操作" style="text-align:center;">
+						<p:commandButton action="#{companyBean.editCompany()}"
+							oncomplete="saveCompanyDialogVar.show()"
+							update=":saveCompanyForm,:saveCompanyDialog"
+							title="编辑" icon="ui-icon ui-icon-pencil"
+							style="margin-right: 5px;width: 18px;height: 18px;">
+							<f:setPropertyActionListener target="#{companyBean.selectedCompanyVo}" value="#{company}" />
+						</p:commandButton>
+						
+						<p:commandButton oncomplete="taxDialogvar.show();"
+						update=":taxdialogForm"
+						action="#{companyTaxauthorityBean.init(company.company.id)}"
+						title="税务机关信息" icon="ui-icon ui-icon-arrowrefresh-1-w" style="margin-right: 5px;width: 18px;height: 18px;" />
+					</p:column>
+				</p:dataTable>
+				  
+			</h:form>
+		</p:panel>
+		
+
+		<ui:include src="CompanyManagerInsertDialog.xhtml" />
+		<ui:include src="insert_update_company.xhtml" />
+		<ui:include src="company_taxauthority_dialog.xhtml" />
+		<ui:include src="taxauthority_search_dialog.xhtml" />
+		<!-- 附件 -->
+		<ui:include src="/faces/common/attachment/common_attachment_dialog.xhtml"/>
+		<ui:include src="/faces/common/attachment/common_confirm_dialog.xhtml"/>
+		
+		<ui:include src="save_company_dialog.xhtml" />
+	
+	</ui:define>
+</ui:composition>

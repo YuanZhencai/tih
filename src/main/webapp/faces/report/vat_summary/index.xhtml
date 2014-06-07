@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="title">增值税进项税额抵扣信息汇总</ui:define>
+	<ui:define name="styleAndScript">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<p:panel styleClass="panel1">
+			<h:form prependId="false" id="vatFormId">
+				<p:growl id="growlId" life="5000" showDetail="true" />
+					<p:breadCrumb  preview="true" expandEffectDuration="200" 
+									previewWidth="24" style="width: 99.1%">
+						<p:menuitem value="" url="#" />
+						<p:menuitem value="报表查询" url="#" />
+						<p:menuitem value="专用报表处理" url="#" />
+						<p:menuitem value="增值税进项税额抵扣信息汇总" url="#" />
+					</p:breadCrumb>
+				
+							<div class="style1" style="margin: 5px 0 5px 0;">
+								<h:panelGrid  columns="7" columnClasses="column1,column2,column1,column2,column1,column2">
+								<h:outputLabel value="统计日期：" />
+								<h:panelGroup>
+								<p:calendar locale="cn" pattern="yyyy-MM"  navigator="true" value="#{vATSummaryBean.statisticalTime}" />
+								<h:outputText style="color:red;" value=" *" />
+								</h:panelGroup>
+											 
+								<h:outputLabel value="统计方式：" />
+								<h:selectOneMenu value="#{vATSummaryBean.statisticalWay}" styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+									<f:selectItem itemLabel="当月" itemValue="month" />
+									<f:selectItem itemLabel="累计" itemValue="total" />
+								</h:selectOneMenu>
+								
+								<h:outputLabel value="公司名称：" />
+									<p:selectCheckboxMenu id="companys" value="#{vATSummaryBean.companys}" style="width: 142px;">
+										<f:selectItems value="#{vATSummaryBean.companyItems}" var="c" itemLabel="#{c.stext}" itemValue="#{c.id}" />
+									</p:selectCheckboxMenu>
+ 									<p:commandButton icon="ui-icon ui-icon-search" style="width: 27px; height: 27px; vertical-align: top;" title="请选择" update=":commonCompany,:datatableform" actionListener="#{companyCommonBean.init(':vatFormId:companys','vATSummaryBean','multiple','selectCompanys')}" oncomplete="commoncompanyvar.show();" />
+								</h:panelGrid>
+								
+								<div >
+								<p:column>
+									<p:commandButton value="#{msgs.btn_query }" icon="ui-icon ui-icon-search"   
+										 style="margin-right: 5px;"  actionListener="#{vATSummaryBean.queryData}" update=":vatFormId:vatTabView:vATSummaryTable,growlId" 
+										/>
+									<p:commandButton value="#{msgs.btn_reset }" actionListener="#{vATSummaryBean.resetQueryData}" update=":vatFormId" 
+										icon="ui-icon ui-icon-cancel"   style="margin-right: 5px;"/>
+								</p:column>
+							</div>
+							</div>
+						<p:tabView id="vatTabView" activeIndex="#{vATSummaryBean.activeIndex}">
+							<p:tab title="增值税进项税额抵扣信息">
+								<p:dataTable var="ss"  id="vATSummaryTable"
+									value="#{vATSummaryBean.vatShowData}"  rowKey="#{ss.company.id}"
+									rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"  
+									style="margin-top: 5px;" emptyMessage="#{msgs.dataTable_empty }"  selection="#{vATSummaryBean.vatSelectData}">
+									<p:column selectionMode="multiple" style="width:18px" />
+									
+									<f:facet name="header">
+										<div class="header">
+											<h:outputText value="公司列表" />
+											<p:commandButton styleClass="header_button" value="汇总" actionListener="#{vATSummaryBean.queryExcelSummaryData}" update=":vatFormId:vatTabView,:vatFormId:growlId"  style="margin-right:5px" />  
+										</div>
+									</f:facet>
+		
+									<p:column >
+										<f:facet name="header">
+											<h:outputText value="公司名称" />
+										</f:facet>
+										<h:outputText value="#{ss.reportVat.companyName} " />
+									</p:column>
+									<p:column >
+										<f:facet name="header">
+											<h:outputText value="公司代码" />
+										</f:facet>
+										<h:outputText value="#{ss.company.code} " />
+									</p:column>
+									<p:column >
+										<f:facet name="header">
+											<h:outputText value="法人代表" />
+										</f:facet>
+										<h:outputText value="#{ss.company.representative} " />
+									</p:column>
+									<p:column >
+										<f:facet name="header">
+											<h:outputText value="地址" />
+										</f:facet>
+										<h:outputText value="#{ss.company.address} " />
+									</p:column>
+									
+									<p:column >
+										<f:facet name="header">
+											<h:outputText value="邮编" />
+										</f:facet>
+										<h:outputText value="#{ss.company.zipcode} " />
+									</p:column>
+									
+									<p:column >
+										<f:facet name="header">
+											<h:outputText value="联系电话" />
+								</f:facet>
+								<h:outputText value="#{ss.company.telphone} " />
+							</p:column>
+							
+							<p:column >
+								<f:facet name="header" >
+									<h:outputText value="统计方式" />
+								</f:facet>
+								<h:outputText value="#{vATSummaryBean.statisticalWay eq 'month'?'当月':'累计'}" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:18px">
+								<f:facet name="header">
+									<h:outputText value="操作" />
+								</f:facet>
+								<p:commandButton title="查看" icon="ui-icon ui-icon-search"  oncomplete="addAttachmentDlgVar.show()" update=":addAttachmentDlgFormId"  
+										actionListener="#{vATSummaryBean.showAllData(ss.companyId)}" 
+									 style="width: 18px; height: 18px;"  
+									>
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+							</p:tab>
+							<p:tab title="汇总历史">
+								<p:dataTable var="vath"  id="secondTab" 
+									value="#{vATSummaryBean.vatHistoryList}"  
+									paginatorPosition="bottom" rowIndexVar="index" paginator="true" 
+									rows="5" 
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+									currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "  
+									rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"  
+									style="margin-top: 5px;" emptyMessage="#{msgs.dataTable_empty }">
+									
+									<f:facet name="header">
+										<h:outputText value="汇总列表" />
+									</f:facet>
+		
+									<p:column >
+										<f:facet name="header">
+											<h:outputText value="名称" />
+										</f:facet>
+										<h:outputText value="#{vath.name}" />
+									</p:column>
+									
+									<p:column >
+										<f:facet name="header" >
+											<h:outputText value="汇总时间" />
+										</f:facet>
+										<h:outputText value="#{vath.createdDatetime}" >
+											<f:convertDateTime pattern="yyyy-MM-dd hh:mm" timeZone="GMT+8"  />
+										</h:outputText>
+									</p:column>
+									
+									<p:column style="text-align: center;width:18px">
+										<f:facet name="header">
+											<h:outputText value="操作" />
+										</f:facet>
+										<p:commandButton title="下载" icon="ui-icon ui-icon-arrowthick-1-s" ajax="false" 
+											 style="width: 18px; height: 18px;"  >
+											<p:fileDownload value="#{vATSummaryBean.downloadFile(vath.fileId)}" />
+										</p:commandButton>
+									</p:column>
+									
+								</p:dataTable>
+							</p:tab>
+						</p:tabView>
+			</h:form>
+		</p:panel>
+		<ui:include src="attachment_dialog.xhtml" />
+		<ui:include src="/faces/common/company/common_company_dialog.xhtml"/>
+	</ui:define>
+</ui:composition>
+
+  

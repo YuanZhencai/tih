@@ -1,0 +1,33 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<style type="text/css">
+		.pro1 {
+			text-align: right;
+		}
+	</style>
+	<p:dialog id="query_folder_dialog_id" header="文件夹属性"
+		widgetVar="query_folder_dialog_var" resizable="false" modal="true">
+		<h:form id="query_folder_form_id" prependId="false">
+			<h:panelGrid columns="2" columnClasses="pro1">
+				<h:outputLabel value="文件夹位置："/>
+				<p:inputText value="#{documentBean.selectedFolder.parent.data.pathName}" disabled="true" style="width: 300px;"/>
+				<h:outputLabel value="文件夹名称："/>
+				<p:inputText value="#{documentBean.selectedFolder.data.folderName}" disabled="true" style="width: 300px;"/>
+				
+				<h:outputLabel value="创建人员："/>
+				<p:inputText value="#{documentBean.selectedFolder.data.createdBy}" disabled="true" style="width: 300px;"/>
+				<h:outputLabel value="创建时间："/>
+				<p:inputText value="#{documentBean.selectedFolder.data.createdDate}" disabled="true" style="width: 300px;">
+					<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8"/>
+				</p:inputText>
+			</h:panelGrid>
+
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+					type="button" onclick="query_folder_dialog_var.hide()"/>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

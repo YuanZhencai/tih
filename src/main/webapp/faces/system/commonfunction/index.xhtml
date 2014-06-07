@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="title">常用功能管理</ui:define>
+
+	<ui:define name="styleAndScript">
+	</ui:define>
+
+	<ui:define name="content">
+		<shiro:hasPermission name="system:home:commonfunction">
+		<p:panel styleClass="panel1">
+			<h:form prependId="false" id="firstForm">
+			<p:growl id="growl" showDetail="false"  life="3000"  /> 
+				<div>
+					<p:breadCrumb>
+						<p:menuitem value="" url="#" />
+						<p:menuitem value="系统管理" url="#" />
+						<p:menuitem value="首页管理" url="#" />
+						<p:menuitem value="常用功能管理"
+							url="/tih/system/commonfunction/index.xhtml" />
+					</p:breadCrumb>
+				</div>
+				<div class="style1"  style="margin-top: 5px;margin-bottom: 5px;">
+					<h:panelGrid columns="8" id="serachId" 
+						columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+						<h:outputText value="功能名称：" />
+						<p:inputText value="#{commonFunctionBean.queryName }" />
+					</h:panelGrid>
+					<div align="right">
+						<p:column>
+							<p:commandButton value="#{msgs.btn_query }" icon="ui-icon ui-icon-search"
+								actionListener="#{commonFunctionBean.queryData}" style="margin-right:5px" 
+								update=":firstForm" />
+							<p:commandButton value="#{msgs.btn_reset }" action="#{commonFunctionBean.reset}" update=":firstForm:serachId"
+								icon="ui-icon ui-icon-cancel"  style="margin-right:5px"  />
+							
+						</p:column>
+					</div>
+				</div>
+				<p:dataTable var="ss" value="#{commonFunctionBean.indexLazyModel}"
+					paginator="true" paginatorPosition="bottom" rows="10"
+					rowIndexVar="index" id="dataTableId" 
+					rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+					style="margin-top: 5px;" emptyMessage="#{msgs.dataTable_empty }" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} " 
+					selectionMode="single">
+
+					<f:facet name="header">
+					<div class="header">
+						常用功能列表
+						<p:commandButton value="#{msgs.btn_setup}" icon="ui-icon ui-icon-gear" 
+								oncomplete="updateDlgVar.show()" styleClass="header_button"
+								actionListener="#{commonFunctionBean.queryPickList}"
+								update=":updateFormId" />
+					</div>
+					</f:facet>
+
+					
+					<p:column style="width:50%;text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="优先级" />
+						</f:facet>
+						<h:outputText value="#{ss.priority }" />
+					</p:column>
+					
+					<p:column style="width:50%;text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="功能名称" />
+						</f:facet>
+						<h:outputText value="#{ss.name }" />
+					</p:column>
+				</p:dataTable>
+
+			</h:form>
+		</p:panel>
+		<ui:include src="update_dialog.xhtml" />
+		<script type="text/javascript">
+			function handleUpdateRequest(xhr, status, args) {
+				if (args.modifyInfo == "yes") {
+					updateDlgVar.hide();
+				}
+			}
+
+		</script>
+		
+		</shiro:hasPermission>
+		<shiro:lacksPermission name="system:home:commonfunction">
+			<ui:include src="/errorshiro.xhtml" />
+		</shiro:lacksPermission>
+		
+	</ui:define>
+</ui:composition>
+

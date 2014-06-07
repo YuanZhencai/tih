@@ -1,0 +1,61 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="600" id="query_projectmembers_dialog_id"
+		widgetVar="query_projectmembers_dialog_var" resizable="false" modal="true"
+		header="干系人选择">
+		<h:form id="query_projectmembers_form_id" prependId="false">
+			<p:dataTable var="su" value="#{projectBean.membermstres}" paginatorPosition="bottom" paginator="true" rows="5"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				emptyMessage="#{msgs.dataTable_empty}" selection="#{projectBean.membermstr}">
+				<f:facet name="header">
+					<h:outputText value="干系人列表"/>
+				</f:facet>
+				<p:column selectionMode="single"/>
+				<p:column headerText="姓名">
+					<h:outputText value="#{projectBean.getUsernameByAccount(su.m.member)}" />
+				</p:column>
+				<p:column headerText="角色">
+					<h:outputText value="#{su.m.role}"/>
+				</p:column>
+			</p:dataTable>
+			
+			<div style="margin-top: 5px; text-align: center;">
+				<p:column headerText="操作">
+					<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" 
+						update=":edit_task_form_id:taskChargedBy,:projectForm:pGrowl" 
+						style="margin-right: 5px;" action="#{projectBean.selectMember()}"
+						oncomplete="handleSelectMember(xhr, status, args);"
+						rendered="#{projectBean.memberflag eq 'task'}">
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+						oncomplete="query_projectmembers_dialog_var.hide();"
+						update=":edit_task_form_id:taskChargedBy" 
+						rendered="#{projectBean.memberflag eq 'task'}">
+						<f:setPropertyActionListener target="#{projectBean.membermstr}" value=""/>
+						<f:setPropertyActionListener target="#{projectBean.chargedBy}" value=""/>
+					</p:commandButton>
+					
+					<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}" 
+						update=":edit_question_form_id:problemupnachn,:projectForm:pGrowl" 
+						style="margin-right: 5px;" action="#{projectBean.selectMember()}"
+						oncomplete="handleSelectMember(xhr, status, args);"
+						rendered="#{projectBean.memberflag eq 'question'}">
+					</p:commandButton>
+					
+					<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+						oncomplete="query_projectmembers_dialog_var.hide();"
+						update=":edit_question_form_id:problemupnachn" 
+						rendered="#{projectBean.memberflag eq 'question'}">
+						<f:setPropertyActionListener target="#{projectBean.membermstr}" value=""/>
+						<f:setPropertyActionListener target="#{projectBean.chargedBy}" value=""/>
+					</p:commandButton>
+				</p:column>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

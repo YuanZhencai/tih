@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<style type="text/css">
+			#contactDialog .ui-dialog-content.ui-widget-content {
+				max-height: 500px;
+			}
+	</style>
+	<p:dialog id="contactDialog" widgetVar="contactDialogVar" minWidth="900" header="通讯录" resizable="false" minimizable="true">
+
+		<h:form id="contactDialogForm" prependId="false">
+			<p:growl id="contactDialogMsg" autoUpdate="false" showDetail="true"
+				life="10000" />
+			<div class="style1">
+			<h:panelGrid id="contactDialogSearchPanel" columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="人员姓名：" />
+				<p:inputText value="#{contactBean.filter['LIKES_username']}" />
+				<h:outputText value="岗位描述：" />
+				<p:inputText value="#{contactBean.filter['LIKES_position']}" />
+				<h:outputText value="公司名称：" />
+				<p:inputText value="#{contactBean.filter['LIKES_company']}" />
+			</h:panelGrid>
+			<div>
+				<p:commandButton value="查询" icon="ui-icon ui-icon-search"
+					action="#{contactBean.searchContactsAndUsers()}"
+					update=":contactDialogForm:contactDialogDataTable" style="margin-right: 5px;" />
+				<p:commandButton value="重置" icon="ui-icon ui-icon-search"
+					action="#{contactBean.reset()}"
+					update=":contactDialogForm:contactDialogSearchPanel" style="margin-right: 5px;" />
+			</div>
+		</div>
+		<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+			id="contactDialogDataTable" value="#{contactBean.contacts}"
+			var="contact" rowIndexVar="index" style="margin-top:5px;"
+			rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}">
+			<f:facet name="header">
+				<div class="header">
+					<h:outputText value="通讯录列表" />
+					<p:commandButton styleClass="header_button" value="导出" update=":contactDialogForm:contactDialogMsg" ajax="false" action="#{contactBean.exportContacts()}" />
+				</div>
+			</f:facet>
+			<p:column headerText="公司名称">
+				<h:outputText value="#{contact.company}" />
+			</p:column>
+			<p:column headerText="人员姓名">
+				<h:outputText value="#{contact.username}" />
+			</p:column>
+			<p:column headerText="岗位描述">
+				<h:outputText value="#{contact.position}" />
+			</p:column>
+			<p:column headerText="手机号码">
+				<h:outputText value="#{contact.mobile}" />
+			</p:column>
+			<p:column headerText="办公电话">
+				<h:outputText value="#{contact.telephone}" />
+			</p:column>
+			<p:column headerText="电子邮箱" style="width:205px">
+				<h:outputText value="#{contact.email}" />
+			</p:column>
+			<p:column headerText="联系地址">
+				<h:outputText value="#{contact.address}" />
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	</p:dialog>
+
+</ui:composition>

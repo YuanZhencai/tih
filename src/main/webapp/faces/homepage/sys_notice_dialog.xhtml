@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<p:dialog id="sysNoticeDialog" widgetVar="sysNoticeDialogVar"
+		modal="true" header="系统通知" resizable="false" >
+
+		<h:form id="sysNoticeDialogForm" prependId="false">
+			<p:growl id="sysNoticeDialogMsg" autoUpdate="false" showDetail="true"
+				life="10000" />
+			<p:messages id="sysNoticeMessage" autoUpdate="false"
+				showDetail="true" />
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="通知主题：" />
+				<h:column>
+					<p:inputText value="#{sysNoticeBean.sysNoticeVo.typeId}" style="width: 428px;"/>
+					<h:outputText value="*" style="color: red;" />
+				</h:column>
+			</h:panelGrid>
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="收件人：" />
+				<h:column>
+					<p:selectCheckboxMenu id="receivers"
+						value="#{sysNoticeBean.sysNoticeVo.receiverList}"
+						style="width: 150px;">
+						<f:selectItems value="#{sysNoticeBean.selectedNoticeReceivers}"
+							var="r" itemLabel="#{r.username}" itemValue="#{r.account}" />
+					</p:selectCheckboxMenu>
+					<p:commandButton icon="ui-icon ui-icon-search"
+						style="width: 27px; height: 27px; vertical-align:top;margin-left:5px;"
+						title="请选择" update=":contactCommonForm"
+						actionListener="#{contactCommonBean.initMode(':sysNoticeDialogForm:receivers','multiple','sysNoticeBean','selectContacts')}"
+						oncomplete="contactCommonDialogVar.show();" />
+				</h:column>
+				<h:outputText value="发送邮件：" />
+				<p:selectBooleanCheckbox value="#{sysNoticeBean.sysNoticeVo.mail}" />
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="抄送人：" />
+				<h:column>
+					<p:inputText id="cc" value="#{sysNoticeBean.sysNoticeVo.cc}"
+						style="width: 428px;" />
+					<p:watermark value="邮箱，多个以 ; 隔开" for="cc" />
+				</h:column>
+			</h:panelGrid>
+			<h:panelGrid columns="3" columnClasses="column1,column2">
+				<h:outputText value="通知内容：" />
+				<h:inputTextarea cols="59" rows="3" value="#{sysNoticeBean.sysNoticeVo.content}"
+					/>
+				<h:outputText value="*" style="color: red;" />
+			</h:panelGrid>
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					oncomplete="handleDialog(xhr, status, args);"
+					update=":sysNoticeDialogForm"
+					action="#{sysNoticeBean.sendSysNotice()}" style="margin-right: 5px;" />
+				<p:commandButton icon="ui-icon ui-icon-cancel"
+					value="#{msgs.btn_cancel}" type="button"
+					onclick="sysNoticeDialogVar.hide()" />
+			</div>
+		</h:form>
+	</p:dialog>
+	<ui:include src="/faces/common/contact/contact_common_dialog.xhtml" />
+</ui:composition>

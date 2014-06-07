@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="土地明细信息" widgetVar="landDetailDialogWidgetVar"
+		id="landDetailDialogId" resizable="false" modal="true">
+		<h:form id="landDetailDialogForm" prependId="false">
+			<div class="style1">
+				<h:panelGrid id="landDetailDialogPG" columns="4" columnClasses="column80,column2,column80,column2">
+					<h:outputText value="土地证编号：" />
+					<p:inputText value="#{landDetailBean.landCertificateNo}" />
+					<h:outputText value="宗地名称：" />
+					<p:inputText value="#{landDetailBean.landName}" />
+					<h:outputText value="有效：" />
+					<h:selectOneMenu value="#{landDetailBean.effective}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+						<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+					</h:selectOneMenu>
+				</h:panelGrid>
+				<div>
+					<p:commandButton
+						actionListener="#{landDetailBean.queryLandDetail()}"
+						style="margin-right: 5px;" update="landDetailDataTable"
+						value="#{msgs.btn_query}" icon="ui-icon ui-icon-search" />
+					<p:commandButton type="reset" update="landDetailDialogPG"
+						value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel"
+						style="margin-right: 5px;" />
+				</div>
+			</div>
+			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+				id="landDetailDataTable" var="ldv"
+				value="#{landDetailBean.lazyLandDetailVoModel}" paginator="true"
+				rows="5" paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+				rowIndexVar="index"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				style="margin-top:5px;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}">
+				<f:facet name="header">
+					<div class="header">
+					<h:outputText value="土地明细信息列表" />
+						<p:commandButton styleClass="header_button"
+							actionListener="#{landDetailBean.addLandDetail()}"
+							value="#{msgs.btn_add}" icon="ui-icon ui-icon-plus"
+							oncomplete="landDetailAddEditDialogWidgetVar.show()"
+							update=":landDetailAddEditDialogId">
+							<f:setPropertyActionListener value="add"
+								target="#{landDetailBean.excuteMethod}" />
+						</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column headerText="土地证编号">
+					<h:outputText value="#{ldv.landCertificateNo}" />
+				</p:column>
+				<p:column headerText="宗地名称">
+					<h:outputText value="#{ldv.landName}" />
+				</p:column>
+				<p:column headerText="宗地面积(平方米)">
+					<h:outputText value="#{ldv.landArea}" />
+				</p:column>
+				<p:column headerText="宗地性质">
+					<h:outputText value="#{ldv.landKind}" />
+				</p:column>
+				<p:column headerText="有效" style="text-align: center;">
+					<h:outputText
+						value="#{ldv.effective eq 'N' ? (msgs.txt_effective):(msgs.txt_effectiveLost)}" />
+				</p:column>
+				<p:column headerText="操作" style="text-align: center;">
+					<p:commandButton
+						oncomplete="landDetailAddEditDialogWidgetVar.show()"
+						update=":landDetailAddEditDialogId" title="编辑"
+						icon="ui-icon ui-icon-pencil" style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener value="update"
+							target="#{landDetailBean.excuteMethod}" />
+						<f:setPropertyActionListener
+							target="#{landDetailBean.existLandName}" value="#{ldv.landName}" />
+						<f:setPropertyActionListener
+							target="#{landDetailBean.landDetailVo}" value="#{ldv}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-attachment" title="附件" id="companyLandDetailAttachment"
+						style="width: 18px;height: 18px;" oncomplete="uploadOrDownloadAttachment.show();"
+						action="#{attachmentBean.searchFilemstr()}" update=":uploadOrDownloadAttachmentID">
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.tableName}" value="COMPANY_LAND_DETAILS" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.entityId}" value="#{ldv.id}" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.operationType}" value="100" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

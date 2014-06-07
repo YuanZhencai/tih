@@ -1,0 +1,422 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="title">公司管理</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+.changeColor {
+	background: #DEEDF7;
+}
+
+input[type='radio'] {
+	width: 20px;
+}
+
+.cal_taxpay>input[type='text'] {
+	width: 200px;
+}
+
+.startime>input[type='text'] {
+	width: 94px;
+}
+
+.column185 {
+	text-align: right;
+	width: 185px;
+}
+
+.column80 {
+	text-align: right;
+	width: 80px;
+}
+
+.buttonmenu {
+margin-right: 5px;width: 18px;height: 18px;vertical-align: middle;
+}
+.tooltipMenu {
+    background-color: #FFFF66;
+    border: 1px solid #999999;
+    color: #333333;
+    font-family: 宋体;
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    opacity: 0.85;
+    padding: 5px;
+    position: absolute;
+    z-index: 99999;
+}
+
+</style>
+		<p:panel styleClass="panel1">
+			<p:breadCrumb id="dataTable_breadCrumb" preview="true"
+				expandEffectDuration="200" previewWidth="24"
+				style="margin-bottom: 5px;">
+				<p:menuitem value="首页" url="#" />
+					<p:menuitem value="事务管理" url="#"/>
+					<p:menuitem value="专项管理" url="#"/>
+					<p:menuitem value="我的公司管理" url="#" />
+			</p:breadCrumb>
+			
+			<p:growl id="growl" showDetail="true" showSummary="true" life="10000" />
+			<h:form id="companySearchForm" prependId="false">
+				<p:contextMenu for="companyDataTable">
+					<!-- 
+					<p:menuitem value="投资情况信息" update=":investmentFormDiaLog"
+						oncomplete="investmentFormDiaLogvar.show();"
+						action="#{companyBean.invokeMethod('companyInvestmentBean','init')}" />
+					<p:menuitem value="股票机构信息" oncomplete="stockFormDiaLogvar.show();"
+						update=":stockFormDiaLog"
+						action="#{companyBean.invokeMethod('companyStockBean','init')}" />
+					<p:menuitem value="税务机关信息" oncomplete="taxDialogvar.show();"
+						update=":taxdialogForm"
+						action="#{companyBean.invokeMethod('companyTaxauthorityBean','init')}" />
+					 -->
+					<p:menuitem oncomplete="taxDialogvar.show();"
+						update=":taxdialogForm"
+						action="#{companyTaxauthorityBean.init(companyBean.selectModel.id)}"
+						value="税务机关信息" />
+					<p:menuitem action="#{branchBean.initBranch()}"
+						oncomplete="branchDialogWidgetVar.show()" update=":branchDialogId"
+						value="分支机构信息" >
+						<f:setPropertyActionListener target="#{branchBean.companymstrId}"
+							value="#{companyBean.selectModel.id}" />
+					</p:menuitem>
+					<p:menuitem action="#{taxIncentiveBean.initTaxIncentive()}"
+						oncomplete="taxIncentiveDialogWidgetVar.show()" value="税收优惠信息"
+						update=":taxIncentiveDialogId" >
+						<f:setPropertyActionListener
+							target="#{taxIncentiveBean.companymstrId}"
+							value="#{companyBean.selectModel.id}" />
+					</p:menuitem>
+					<p:menuitem action="#{financialReturnBean.initFinancialReturn()}"
+						oncomplete="financialReturnWidgetVar.show()" value="财政返还信息"
+						update=":financialReturnDialogId">
+						<f:setPropertyActionListener
+							target="#{financialReturnBean.companymstrId}"
+							value="#{companyBean.selectModel.id}" />
+					</p:menuitem>
+					<p:menuitem action="#{materialBean.initMaterial()}"
+						oncomplete="materialDialogWidgetVar.show()" value="原料及工艺信息"
+						update=":materialDialogId">
+						<f:setPropertyActionListener
+							target="#{materialBean.companymstrId}"
+							value="#{companyBean.selectModel.id}" />
+					</p:menuitem>
+					<p:menuitem action="#{landDetailBean.initLandDetail()}"
+						oncomplete="landDetailDialogWidgetVar.show()" value="土地明细信息"
+						update=":landDetailDialogId">
+						<f:setPropertyActionListener
+							target="#{landDetailBean.companymstrId}"
+							value="#{companyBean.selectModel.id}" />
+					</p:menuitem>
+					<p:menuitem oncomplete="company_estate_var.show();"
+						update=":company_estate_form" value="房产明细信息"
+						action="#{companyEstateBean.clearEstateInfo()}">
+						<f:setPropertyActionListener
+							target="#{companyEstateBean.companyId}"
+							value="#{companyBean.selectModel.id}" />
+					</p:menuitem>
+					<p:menuitem oncomplete="company_taxtype_ratio_var.show();"
+						update=":company_taxtype_ratio_form" value="税种税率信息"
+						action="#{companyTaxTypeRatioBean.clearTaxInfo()}">
+						<f:setPropertyActionListener
+							target="#{companyTaxTypeRatioBean.companyId}"
+							value="#{companyBean.selectModel.id}" />
+					</p:menuitem>
+					<p:menuitem oncomplete="company_main_asset_var.show();"
+						update=":company_main_asset_form" value="主要资产信息"
+						action="#{companyMainAssetBean.clearAssertInfo()}">
+						<f:setPropertyActionListener
+							target="#{companyMainAssetBean.companyId}"
+							value="#{companyBean.selectModel.id}" />
+					</p:menuitem>
+					<p:menuitem oncomplete="stockFormDiaLogvar.show();"
+						update=":stockFormDiaLog"
+						action="#{companyStockBean.init(companyBean.selectModel.id)}"
+						value="股权结构信息" />
+					<p:menuitem oncomplete="investmentFormDiaLogvar.show();"
+						update=":investmentFormDiaLog"
+						action="#{companyInvestmentBean.init(companyBean.selectModel.id)}"
+						value="投资情况信息" />
+
+
+
+				</p:contextMenu>
+				<div class="style1" style="margin-top: 5px; margin-bottom: 5px;">
+					<h:panelGrid id="searchPanel" columns="8"
+						columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+						<h:outputText value="公司名称：" />
+						<p:inputText value="#{companyBean.companyManagerModel.stext}" />
+						<h:outputText value="公司代码：" />
+						<p:inputText value="#{companyBean.companyManagerModel.code}" />
+						<h:outputText value="地域："/>
+					<h:selectOneMenu value="#{companyBean.companyManagerModel.region}">
+						<f:selectItem itemLabel="请选择"/>
+						<f:selectItems value="#{companyBean.regionItems}" />
+						<p:ajax update="provinces" event="change" listener="#{companyBean.handleRegionChange(companyBean.companyManagerModel.region)}"/>
+					</h:selectOneMenu>
+				<h:outputText value="省："/>
+					<h:selectOneMenu id="provinces" value="#{companyBean.companyManagerModel.province}">
+						<f:selectItem itemLabel="请选择"/>
+						<f:selectItems value="#{companyBean.provinceItems}" />
+					</h:selectOneMenu>
+					</h:panelGrid>
+					<div align="right">
+						<p:commandButton value="查询"  id="search" icon="ui-icon ui-icon-search"
+							actionListener="#{companyBean.search}" update="companyDataTable" oncomplete="addStyel();"
+							style="margin-right: 5px;"    />
+						<p:commandButton value="重置" id="reset"
+							actionListener="#{companyBean.resetForm}" oncomplete="addStyel();"
+							update=":companySearchForm:searchPanel" style="margin-right: 5px;"
+							icon="ui-icon ui-icon-cancel" />
+					</div>
+				</div>
+				<p:dataTable id="companyDataTable" var="company"
+					value="#{companyBean.lazyModel}" paginator="true" rows="10"
+					paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+					rowIndexVar="index"
+					rowStyleClass="#{index mod 2 == 1 ? 'changeColor' : null}"
+					emptyMessage="#{msgs.dataTable_empty}" style="margin-top: 5px;"
+					selectionMode="single" selection="#{companyBean.selectModel}">
+					<f:facet name="header">
+						<h:outputText value="公司列表" />
+					</f:facet>
+					<p:column headerText="公司名称">
+						<h:outputText value="#{company.stext}" />
+					</p:column>
+					<p:column headerText="公司代码">
+						<h:outputText value="#{company.code}" />
+					</p:column>
+					<p:column headerText="法人代表">
+						<h:outputText value="#{company.representative}" />
+					</p:column>
+					<p:column headerText="地址"  styleClass="columndiv">
+						<h:outputText value="#{company.address}" />
+					</p:column>
+					<p:column headerText="邮编">
+						<h:outputText value="#{company.zipcode}" />
+					</p:column>
+					<p:column headerText="联系电话">
+						<h:outputText value="#{company.telphone}" />
+					</p:column>
+					
+					<p:column headerText="操作" style="text-align:center;">
+					<span id="companyDataTable:99:buttonMenus" class="ui-menubutton" >
+						<p:commandButton oncomplete="companyInsertConfirmDiaLog.show()"
+							update=":insertConfirmDiaLog" action="#{companyBean.update}"
+							title="编辑" icon="ui-icon ui-icon-pencil"
+							style="margin-right: 5px;width: 18px;height: 18px;vertical-align: middle;">
+							<f:setPropertyActionListener
+								target="#{companyBean.companySaveModel}" value="#{company}" />
+						</p:commandButton>
+						</span>
+						
+						<p:tooltip for="buttonMenus" value="展开" id="toopTip"    style="    background-color: #FFFF66;
+    border: 1px solid #999999;
+    color: #333333;
+    font-family: 宋体;
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    opacity: 0.85;
+    padding: 5px;
+    position: absolute;
+    z-index: 99999;
+    font-weight:bold;"  /> 
+						<p:menuButton  value="" icon="ui-icon ui-icon-pencil"      id="buttonMenus"  >  
+						
+						<p:menuitem oncomplete="taxDialogvar.show();"
+						update=":taxdialogForm"
+						action="#{companyTaxauthorityBean.init(company.id)}"
+						value="税务机关信息" />
+					<p:menuitem action="#{branchBean.initBranch()}"
+						oncomplete="branchDialogWidgetVar.show()" update=":branchDialogId"
+						value="分支机构信息" >
+						<f:setPropertyActionListener target="#{branchBean.companymstrId}"
+							value="#{company.id}" />
+					</p:menuitem>
+					<p:menuitem action="#{taxIncentiveBean.initTaxIncentive()}"
+						oncomplete="taxIncentiveDialogWidgetVar.show()" value="税收优惠信息"
+						update=":taxIncentiveDialogId" >
+						<f:setPropertyActionListener
+							target="#{taxIncentiveBean.companymstrId}"
+							value="#{company.id}" />
+					</p:menuitem>
+					<p:menuitem action="#{financialReturnBean.initFinancialReturn()}"
+						oncomplete="financialReturnWidgetVar.show()" value="财政返还信息"
+						update=":financialReturnDialogId">
+						<f:setPropertyActionListener
+							target="#{financialReturnBean.companymstrId}"
+							value="#{company.id}" />
+					</p:menuitem>
+					<p:menuitem action="#{materialBean.initMaterial()}"
+						oncomplete="materialDialogWidgetVar.show()" value="原料及工艺信息"
+						update=":materialDialogId" >
+						<f:setPropertyActionListener
+							target="#{materialBean.companymstrId}"
+							value="#{company.id}" />
+					</p:menuitem>
+					<p:menuitem action="#{landDetailBean.initLandDetail()}"
+						oncomplete="landDetailDialogWidgetVar.show()" value="土地明细信息"
+						update=":landDetailDialogId" >
+						<f:setPropertyActionListener
+							target="#{landDetailBean.companymstrId}"
+							value="#{company.id}" />
+					</p:menuitem>
+					<p:menuitem oncomplete="company_estate_var.show();"
+						update=":company_estate_form" value="房产明细信息"
+						action="#{companyEstateBean.clearEstateInfo()}">
+						<f:setPropertyActionListener
+							target="#{companyEstateBean.companyId}"
+							value="#{company.id}" />
+					</p:menuitem>
+					<p:menuitem oncomplete="company_taxtype_ratio_var.show();"
+						update=":company_taxtype_ratio_form" value="税种税率信息"
+						action="#{companyTaxTypeRatioBean.clearTaxInfo()}">
+						<f:setPropertyActionListener
+							target="#{companyTaxTypeRatioBean.companyId}"
+							value="#{company.id}" />
+					</p:menuitem>
+					<p:menuitem oncomplete="company_main_asset_var.show();"
+						update=":company_main_asset_form" value="主要资产信息"
+						action="#{companyMainAssetBean.clearAssertInfo()}">
+						<f:setPropertyActionListener
+							target="#{companyMainAssetBean.companyId}"
+							value="#{company.id}" />
+					</p:menuitem>
+					<p:menuitem oncomplete="stockFormDiaLogvar.show();"
+						update=":stockFormDiaLog"
+						action="#{companyStockBean.init(company.id)}"
+						value="股权结构信息" />
+					<p:menuitem oncomplete="investmentFormDiaLogvar.show();"
+						update=":investmentFormDiaLog"
+						action="#{companyInvestmentBean.init(company.id)}"
+						value="投资情况信息" />
+						
+						
+						</p:menuButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:panel>
+		<ui:include src="CompanyManagerInsertDialog.xhtml" />
+		<ui:include src="insertConfirmDiaLog.xhtml" />
+		<!-- 分支机构 -->
+		<ui:include src="company_branch_dialog.xhtml" />
+		<ui:include src="company_branch_add_edit_dialog.xhtml" />
+		<!-- 土地明细 -->
+		<ui:include src="company_land_detail_dialog.xhtml" />
+		<ui:include src="company_land_detail_add_edit_dialog.xhtml" />
+		<!-- 原料及工艺 -->
+		<ui:include src="company_material_detail_dialog.xhtml" />
+		<ui:include src="company_material_add_edit_dialog.xhtml" />
+		<!-- 税收优惠 -->
+		<ui:include src="company_tax_incentive_dialog.xhtml" />
+		<ui:include src="company_tax_incentive_add_edit_dialog.xhtml" />
+		<!-- 财政返还 -->
+		<ui:include src="company_financial_return_dialog.xhtml" />
+		<ui:include src="company_financial_return_add_edit_dialog.xhtml" />
+		<ui:include src="company_annual_return_dialog.xhtml" />
+		<!-- 房产明细 -->
+		<ui:include src="company_estate_edit.xhtml" />
+		<ui:include src="company_estate.xhtml" />
+		<!-- 主要资产 -->
+		<ui:include src="company_main_asset_edit.xhtml" />
+		<ui:include src="company_main_asset.xhtml" />
+		<!-- 税种优惠 -->
+		<ui:include src="company_taxtype_ratio_edit.xhtml" />
+		<ui:include src="company_taxtype_ratio.xhtml" />
+		<ui:include src="company_annualtaxpay_edit.xhtml" />
+		<ui:include src="company_depreciation_edit.xhtml" />
+		<!--投资情况  -->
+		<ui:include src="company_investment_dialog.xhtml" />
+		<ui:include src="company_investment_insert_update_dialog.xhtml" />
+		<!-- 股权结构 -->
+		<ui:include src="company_stock_dialog.xhtml" />
+		<ui:include src="company_stock_insert_update_dialog.xhtml" />
+		<ui:include src="company_stock_search_dialog.xhtml" />
+		<!-- 税务机关 -->
+		<ui:include src="company_taxauthority_dialog.xhtml" />
+		<ui:include src="taxauthority_search_dialog.xhtml" />
+		
+		<ui:include src="/faces/common/attachment/common_attachment_dialog.xhtml"/>
+		<ui:include src="/faces/common/attachment/common_confirm_dialog.xhtml"/>
+		<script type="text/javascript">
+		
+			function handleRequest(xhr, status, args ,method) {
+				if(args.issucc == "yes") {
+					if(method == "branch"){
+						branchAddEditDialogWidgetVar.hide();
+					}else if(method == "landDetail"){
+						landDetailAddEditDialogWidgetVar.hide();
+					}else if(method == "material"){
+						materialAddEditDialogWidgetVar.hide();
+					}else if(method == "taxIncentive"){
+						taxIncentiveAddEditDialogWidgetVar.hide();
+					}else if(method == "annualReturn"){
+						annualReturnAddEditDialogWidgetVar.hide();
+					}else if(method == "financialReturn"){
+						financialReturnAddEditDialogWidgetVar.hide();
+					}else if(method == "preferentialItem"){
+						preferentialItemWv.hide();
+					}else if(method == "mainMaterial"){
+						mainMaterialWv.hide();
+					}else if(method == "mainProduct"){
+						mainProductWv.hide();
+					}else if(method == "processing"){
+						processingWv.hide();
+					}
+				} 
+			}
+			
+			
+		
+			   
+			   $(document).ready(function (){
+				   addStyel();
+				   });
+			   function addStyel(){
+				   var element=document.getElementsByClassName("ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left","button");
+					 
+					 for(var i=0; i &lt; element.length;i++){
+						 if(element[i].attr("id").indexOf("buttonMenus_button")!=-1){
+						 element[i].attr("class","ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only buttonmenu");
+						 }
+						 }
+					 
+					 var element2=document.getElementsByClassName("ui-tooltip ui-widget ui-widget-content ui-corner-all","div");
+					 for(var i=0; i &lt; element2.length;i++){
+						 if(element2[i].attr("id").indexOf("toopTip")!=-1){
+						 element2[i].attr("class","ui-tooltip ui-widget  ui-corner-all");
+						 }
+						 }
+			   }
+				   
+				   
+				   
+						
+			   
+			   document.getElementsByClassName=function(className,elementName) {
+					
+				    var elements=new Array();
+				    $(elementName).each(function(){
+				    //alert($(this).attr("class"));
+				    if($(this).attr("class")==className){
+				    elements.push($(this));
+				    }
+				    });
+				return elements;
+				   };
+		</script>
+	</ui:define>
+</ui:composition>

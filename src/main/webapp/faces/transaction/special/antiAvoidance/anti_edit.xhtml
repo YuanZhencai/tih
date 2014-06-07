@@ -1,0 +1,323 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+	<p:dialog id="editAntiDialog" widgetVar="endiAntiVar" header="编辑反避税信息">
+		<p:ajax event="close"  listener="#{feedBackAntiBean.clear()}"/>
+		<p:growl id="messages" showDetail="true"/>
+		<p:layout style="width: 1100px;height: 600px; margin: 5px 0 0 0;"
+			id="layout">
+			<p:layoutUnit style="width: 100%;height:100%;" size="340"
+				minSize="20" position="west" >
+				<h:form id="historyForm">
+				操作类型:
+				<h:selectOneMenu value="#{feedBackAntiBean.operationType}">
+					<p:ajax update="historiesDatatable,:add_edit_anti" event="change" listener="#{feedBackAntiBean.history}"/>
+					<f:selectItem itemLabel="请选择"/>
+					<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxOperatetypeType)}"
+						var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}">
+					</f:selectItems> 
+				</h:selectOneMenu>
+				<p:dataTable id="historiesDatatable" value="#{feedBackAntiBean.historyVos}" var="history"  paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+						rowIndexVar="index" style="margin-top:5px;"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+						selection="#{feedBackAntiBean.selectedAnti}" selectionMode="single" 
+						rowKey="#{history.id}" emptyMessage="#{msgs.dataTable_empty}">
+						<f:facet name="header">
+						历史信息列表
+						</f:facet>
+						
+						<p:ajax event="rowSelect" listener="#{feedBackAntiBean.onRowSelect}" update=":add_edit_anti"/>
+						<p:ajax event="rowUnselect" />
+						
+						<p:column headerText="操作类型" style="width: 50px">
+							<h:outputText value="#{commonBean.getValueByDictCatKey(history.operationType)}" />
+						</p:column>
+						<p:column headerText="操作时间" style="width: 125px">
+							<h:outputText value="#{history.updateTime}" >
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="操作人">
+							<h:outputText value="#{history.updateBy}" style="width: 75px" />
+						</p:column>
+						<p:column headerText="操作" style="width: 50px">
+							<div>
+								<p:commandButton title="修改" action="#{feedBackAntiBean.specialEdit}" 
+									rendered="#{history.operationType eq commonBean.tihTaxOperatetypeType4 ? true : false}"
+									icon="ui-icon ui-icon-pencil"  update=":add_edit_anti"
+									disabled="#{feedBackAntiBean.authority}"
+									style="width: 18px;height: 18px;"/>
+								<p:commandButton title="删除" icon="ui-icon ui-icon-close" 
+									oncomplete="confirmation.show();"
+									disabled="#{feedBackAntiBean.authority}"
+									rendered="#{history.operationType eq commonBean.tihTaxOperatetypeType4 ? true : false}"
+									style="width: 18px;height: 18px;">
+									<f:setPropertyActionListener target="#{feedBackAntiBean.id}" value="#{history.id}"/>
+								</p:commandButton>
+							</div>
+						</p:column>
+				</p:dataTable>
+				</h:form>
+			</p:layoutUnit>
+			<p:layoutUnit position="center" size="700" >
+				<h:form id="add_edit_anti">  
+						<p:messages id="antiMsg" autoUpdate="true" showDetail="true" /> 
+						<h:panelGrid columns="2" columnClasses="column41,column2">
+							<h:outputText value="公司名称：" />
+							<p:inputText value="#{feedBackAntiBean.antiAvoidance.companyName}" style="width: 410px;" maxlength="50" disabled="true"/>
+						
+							<h:outputText value="发起机关：" />
+							<h:column>
+								<p:inputText value="#{feedBackAntiBean.antiAvoidance.sponsorOrg}" style="width: 410px;" maxlength="50" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+								<h:outputText value="*" style="color: red;"/>
+							</h:column>
+							
+							<h:outputText value="实施机构：" />
+							<h:column>
+								<p:inputText value="#{feedBackAntiBean.antiAvoidance.implementOrg}" style="width: 410px;" maxlength="50" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+								
+							</h:column>
+							
+							<h:outputLabel value="反避税调查的起因：" />
+							<h:column>
+								<p:inputTextarea value="#{feedBackAntiBean.antiAvoidance.cause}" style="width: 410px;" rows="2" maxlength="50" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+								
+							</h:column>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="4" columnClasses="column41,column2,column41,column2">
+							<h:outputText value="调查类型：" />
+							<h:column>
+							<p:selectOneMenu value="#{feedBackAntiBean.antiAvoidance.investType}" style="width: 142px;" disabled="#{feedBackAntiBean.lookOrEdit}">
+								<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+								<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxAntiavoidanceType)}" 
+									var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}">
+								</f:selectItems>
+							</p:selectOneMenu>
+							</h:column>
+								
+							<h:outputLabel value="税种：" />
+							<h:column>
+							<p:selectCheckboxMenu value="#{feedBackAntiBean.taxTypes}" label="请选择" style="width: 142px;">
+									<f:selectItems value="#{commonBean.getDictByCat(commonBean.tihTaxType)}" 
+										itemDisabled="#{feedBackAntiBean.lookOrEdit}"
+										var="dict" itemLabel="#{dict.codeVal}" itemValue="#{dict.codeCat}.#{dict.codeKey}">
+									</f:selectItems>  
+							</p:selectCheckboxMenu>
+							</h:column>
+							
+							<h:outputLabel value="调查/评估期间："/>
+							<p:calendar value="#{feedBackAntiBean.antiAvoidance.investStartDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+							<h:column>
+								<h:outputLabel value="到"/><p:spacer width="10"/>
+							</h:column>
+							<p:calendar value="#{feedBackAntiBean.antiAvoidance.investEndDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+								
+							<h:outputLabel value="任务处理时间："/>
+							<h:column>
+								<p:calendar value="#{feedBackAntiBean.antiAvoidance.missionStartDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+								
+							</h:column>
+							<h:column>
+								<h:outputLabel value="到"/><p:spacer width="10"/>
+							</h:column>
+							<h:column>
+								<p:calendar value="#{feedBackAntiBean.antiAvoidance.missionEndDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+								
+							</h:column>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2" columnClasses="column41,column2">
+							<h:outputLabel value="税务调查或发现可能存在避税疑点的方式：" />
+							<p:inputTextarea value="#{feedBackAntiBean.antiAvoidance.method}" style="width: 410px;" rows="2" maxlength="50" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+							
+							<h:outputLabel value="税务任务可能存在的避税疑点：" />
+							<p:inputTextarea value="#{feedBackAntiBean.antiAvoidance.doubt}" style="width: 410px;" rows="2" maxlength="50" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+							
+							<h:outputText value="可能涉及调整的企业所得税风险金额（万元）：" />
+							<p:inputText value="#{feedBackAntiBean.antiAvoidance.riskAccount}" disabled="#{feedBackAntiBean.lookOrEdit}" />
+						
+							<h:outputLabel value="应对方式：" />
+							<p:inputTextarea value="#{feedBackAntiBean.antiAvoidance.dealWith}" style="width: 410px;" rows="2" maxlength="50" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+							
+							<h:outputLabel value="阶段性说明：" />
+							<p:inputTextarea value="#{feedBackAntiBean.antiAvoidance.phaseRemarks}" style="width: 410px;" rows="2" maxlength="200" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+							
+							<h:outputLabel value="调查/结案结论：" />
+							<p:inputTextarea value="#{feedBackAntiBean.antiAvoidance.conclusion}" style="width: 410px;" rows="2" maxlength="200" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="4" columnClasses="column41,column2,column41,column2">
+							<h:outputLabel value="税务跟踪期："/>
+							<h:column>
+								<p:calendar value="#{feedBackAntiBean.antiAvoidance.traceStartDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+								<p:spacer width="4"  />
+							</h:column>
+							<h:column>
+								<h:outputText value="到"/>
+							</h:column>
+							<p:calendar value="#{feedBackAntiBean.antiAvoidance.traceEndDatetime}" locale="cn" navigator="true" pattern="yyyy-MM-dd" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+							
+							<h:outputText value="联系人：" />
+							<h:column>
+								<p:inputText value="#{feedBackAntiBean.antiAvoidance.contact}" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+								<p:spacer width="4"  />
+							</h:column>
+								
+							<h:outputLabel value="联系电话：" />
+							<p:inputText value="#{feedBackAntiBean.antiAvoidance.contactNum}" disabled="#{feedBackAntiBean.lookOrEdit}"/>
+						</h:panelGrid>
+						
+						<p:dataTable var="anti" id="antiAvoidance_list" value="#{feedBackAntiBean.antiResults}"  scrollWidth="550"
+								paginatorPosition="bottom" rowIndexVar="index" paginator="true" rows="5" editable="true"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+								currentPageReportTemplate="#{component.rowCount == 0 ? '1/1' : '{currentPage}/{totalPages}'} "
+								rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+								emptyMessage="#{msgs.dataTable_empty}">
+								<f:facet name="header">
+									<h:outputText value="调查调整结果" />
+									<div style="text-align: right; position: relative; margin: -13px 0px 0px 0px; vertical-align: middle">
+										<p:commandButton value="添加" icon="ui-icon ui-icon-plus"
+											action="#{feedBackAntiBean.addAntiResult}"
+											update="antiAvoidance_list" oncomplete="rowEdit();"
+											disabled="#{feedBackAntiBean.lookOrEdit}">
+											
+										</p:commandButton>
+									</div>
+								</f:facet>
+								
+								<p:ajax event="rowEdit" listener="#{feedBackAntiBean.onEdit}" />  
+								
+								<p:columnGroup type="header">
+									<p:row>
+										<p:column colspan="3" headerText="补税税款（元）" />
+										<p:column rowspan="2" headerText="加收利息（元）" />
+										<p:column rowspan="2" headerText="加收罚款（元）" />
+										<p:column rowspan="2" headerText="调减亏损（元）" />
+										<p:column rowspan="2" headerText="操作" rendered="#{!feedBackAntiBean.lookOrEdit}"/>
+									</p:row>
+									
+									<p:row>
+										<p:column headerText="增值税" />
+										<p:column headerText="企业所得税" />
+										<p:column headerText="小计" />
+									</p:row>
+								</p:columnGroup>
+								<p:column style="width: 60px;">
+									<p:cellEditor>
+										<f:facet name="output" >
+											<div style="width: 60px;text-align: right;">
+											 	<h:outputText value="#{anti.vat}" />
+											</div>
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{anti.vat}" style="width: 60px;">
+												<f:validator validatorId="customValidator" />
+												<w:validateRegex regex="INSPECTION" regexMessage="增值税：填写格式只能为整数或保留2位小数"/>
+											</p:inputText>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column style="width: 100px;">
+									<p:cellEditor>
+										<f:facet name="output">
+											<div style="text-align: right;">
+												<h:outputText value="#{anti.cit}" />
+											</div>
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{anti.cit}" style="width: 100px;">
+												<f:validator validatorId="customValidator" />
+												<w:validateRegex regex="INSPECTION" regexMessage="企业所得税：填写格式只能为整数或保留2位小数"/>
+											</p:inputText>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column >
+									<p:cellEditor>
+										<f:facet name="output">
+											<div style="text-align: right;">
+												<h:outputText value="#{anti.cit.add(anti.vat)}" />
+											</div>
+										</f:facet>
+										<f:facet name="input">
+											<h:outputLabel value="#{anti.cit.add(anti.vat)}" />
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column style="width: 100px;">
+									<p:cellEditor>
+										<f:facet name="output">
+											<div style="text-align: right;">
+												<h:outputText value="#{anti.addInterest}" />
+											</div>
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{anti.addInterest}" style="width: 80px;">
+												<f:validator validatorId="customValidator" />
+												<w:validateRegex regex="INSPECTION" regexMessage="加收利息（元）：填写格式只能为整数或保留2位小数"/>
+											</p:inputText>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column style="width: 100px;">
+									<p:cellEditor>
+										<f:facet name="output">
+											<div style="text-align: right;">
+												<h:outputText value="#{anti.addFine}" />
+											</div>
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{anti.addFine}" style="width: 80px;">
+												<f:validator validatorId="customValidator" />
+												<w:validateRegex regex="INSPECTION" regexMessage="加收罚款（元）：填写格式只能为整数或保留2位小数"/>
+											</p:inputText>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column style="width: 100px;">
+									<p:cellEditor>
+										<f:facet name="output">
+											<div style="text-align: right;">
+												<h:outputText value="#{anti.reducedLoss}" />
+											</div>
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{anti.reducedLoss}" style="width: 80px;">
+												<f:validator validatorId="customValidator" />
+												<w:validateRegex regex="INSPECTION" regexMessage="调减亏损（元）：填写格式只能为整数或保留2位小数"/>
+											</p:inputText>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								
+								<p:column rendered="#{!feedBackAntiBean.lookOrEdit}">  
+						            <p:rowEditor id="rowEditor"/>
+						            <p:commandButton title="删除"  style="width: 18px;height: 18px;"
+										icon="ui-icon ui-icon-close" update=":add_edit_anti,antiAvoidance_list"
+										rendered="#{item.startDate eq null ? true : false }"
+										oncomplete="resultConfirmation.show();">
+										<f:setPropertyActionListener target="#{feedBackAntiBean.result}" value="#{anti}"/>
+									</p:commandButton>
+						        </p:column>
+							</p:dataTable>
+					
+					<div style="text-align: center; margin: 13px -3px 0px 0px; vertical-align: middle">
+						<p:commandButton value="确认" action="#{feedBackAntiBean.specialUpdateAnti()}"
+							update=":historyForm,:add_edit_anti,:messages," icon="ui-icon ui-icon-check"
+						    style="margin-right: 5px;" 
+						    disabled="#{feedBackAntiBean.lookOrEdit}"/>
+						<p:commandButton value="取消" icon="ui-icon ui-icon-cancel" 
+							action="#{feedBackAntiBean.onCancel}"
+							update="add_edit_anti"
+							disabled="#{feedBackAntiBean.lookOrEdit}"/>
+					</div>
+				</h:form>
+			</p:layoutUnit>
+		</p:layout>
+	</p:dialog>
+</ui:composition>

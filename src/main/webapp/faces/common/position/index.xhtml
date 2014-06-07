@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+	<ui:define name="styleAndScript">
+		<style type="text/css">
+			td div span {
+				overflow:hidden;		/**超过长度文本隐藏*/
+				white-space:nowrap;		/**强制不换行*/
+				text-overflow:ellipsis;	/**ie专属,后跟省略号*/
+			}
+			input[type='radio'] {
+				width: 20px;
+			}
+			input[type='checkbox'] {
+				width: 20px;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="content">
+	
+	<shiro:hasPermission name="system:user:postion">
+	
+	<p:panel id="positionMain" styleClass="panel1">
+		
+		<h:form id="positionQueryForm" prependId="false">
+			<p:breadCrumb preview="true" expandEffectDuration="200"
+				previewWidth="24" style="width: 99.1%">
+				<p:menuitem value="首页" url="#" />
+				<p:menuitem value="系统管理" url="#" />
+				<p:menuitem value="组织用户管理" url="#" />
+				<p:menuitem value="岗位管理" url="#" />
+			</p:breadCrumb>
+			<div class="style1" style="margin: 5px 0 5px 0;">
+				<h:panelGrid columns="8" id="userSerachGrid"
+					columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+					<h:outputText value="岗位名称："/>
+					<p:inputText value="#{positionBean.query['name']}"/>
+					<h:outputText value="岗位编码："/>
+					<p:inputText value="#{positionBean.query['code']}"/>
+					<h:outputText value="所属公司："/>
+					<p:inputText value="#{positionBean.query['stext']}"/>
+					<h:outputText value="#{msgs.txt_defunct}"/>
+					<h:selectOneMenu value="#{positionBean.query['del']}" styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=""/>
+						<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N"/>
+						<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y"/>
+					</h:selectOneMenu>
+				</h:panelGrid>
+				<div>
+					<p:commandButton id="positionSearch" value="#{msgs.btn_query}" action="#{positionBean.search}"
+						icon="ui-icon ui-icon-search" style="margin-right: 5px;" ajax="false"/>
+					<p:commandButton value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel"
+						action="#{positionBean.reset}" update=":positionQueryForm:userSerachGrid" style="margin-right: 5px;"/>
+				</div>
+			</div>
+			
+			<p:growl showDetail="true" showSummary="true" life="10000"/>
+			<p:dataTable id="resultTable" var="p" value="#{positionBean.positionLazyModel}" 
+				paginatorPosition="bottom" rowIndexVar="index" paginator="true" rows="10"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				selectionMode="single" rowKey="#{p.id}" emptyMessage="#{msgs.dataTable_empty}">
+				<f:facet name="header">
+					<div class="header">
+					岗位列表
+					<p:commandButton styleClass="header_button" value="#{msgs.btn_add}" oncomplete="insert_dialog_dialog.show()" update=":new_form"
+						icon="ui-icon ui-icon-plus" action="#{positionBean.initAddPosition}">
+						<f:setPropertyActionListener target="#{positionBean.position}" value=""/>
+					</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column headerText="岗位名称" style="width: 20%;">
+					<h:outputText value="#{p.name}" title="#{p.name}"/>
+				</p:column>
+				<p:column headerText="岗位描述">
+					<h:outputText value="#{p.desc}" title="#{p.desc}"/>
+				</p:column>
+				<p:column headerText="岗位编码" style="width: 20%;">
+					<h:outputText value="#{p.code}" title="#{p.code}"/>
+				</p:column>
+				<p:column headerText="系统标识" style="width: 10%; text-align: center">
+					<h:outputText value="#{p.sysInd == 'Y' ? '是' : '否'}"/>
+				</p:column>
+				<p:column headerText="有效" style="width: 10%; text-align: center">
+					<h:outputText value="#{p.defunctInd == 'Y' ? msgs.txt_effectiveLost : msgs.txt_effective}" title="#{p.defunctInd == 'Y' ? '生效' : '失效'}"/>
+				</p:column>
+				<p:column headerText="操作" style="width: 10%; text-align: center;">
+					<p:commandButton title="#{msgs.btn_edit}" icon="ui-icon ui-icon-pencil" update=":update_form" 
+						style="width: 18px;height: 18px;" oncomplete="update_dialog_dialog.show();"
+						disabled="#{p.sysInd eq 'Y'}">
+						<f:setPropertyActionListener target="#{positionBean.position}" value="#{p}"/>
+					</p:commandButton>
+					<p:commandButton title="分配公司" icon="ui-icon ui-icon-assign" update=":position_company_form" 
+						action="#{positionBean.searchBelongCompany}" style="width: 18px;height: 18px;" 
+						oncomplete="position_company_dialog.show();">
+						<f:setPropertyActionListener target="#{positionBean.position}" value="#{p}"/>
+					</p:commandButton>
+					<p:commandButton title="分配岗位业务" icon="ui-icon ui-icon-org" update=":position_profession_dialog" 
+						action="#{positionProfessionBean.init(p.id,p.name)}" style="width: 18px;height: 18px;" 
+						oncomplete="position_profession_dialog_widgetVar.show();"/>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+		</p:panel>
+		
+		<ui:include src="insert_dialog.xhtml"/>
+		<ui:include src="update_dialog.xhtml"/>
+		<ui:include src="position_company_dialog.xhtml"/>
+		<ui:include src="company_dialog.xhtml"/>
+		<ui:include src="position_profession_dialog.xhtml"/>
+		
+		<script type="text/javascript">
+			function handleSaveRequest(xhr, status, args) {
+				if(args.issucc == "yes") {
+					insert_dialog_dialog.hide();
+				}
+			}
+			
+			function handleUpdateRequest(xhr, status, args) {
+				if(args.issucc == "yes") {
+					update_dialog_dialog.hide();
+				}
+			}
+
+			function handlePositonProfessionRequest(xhr, status, args) {
+				if(args.issucc == "yes") {
+					position_profession_dialog_widgetVar.hide();
+				}
+			}
+		</script>
+	
+		</shiro:hasPermission>
+		<shiro:lacksPermission name="system:user:postion">
+			<ui:include src="/errorshiro.xhtml" />
+		</shiro:lacksPermission>
+	
+	</ui:define>
+</ui:composition>

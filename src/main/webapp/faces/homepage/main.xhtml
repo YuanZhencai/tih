@@ -1,0 +1,313 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<style>
+#homePageForm .ui-datatable-data tr {
+	border-width: 0px;
+	background: #f2f5f7;
+}
+
+#homePageForm .ui-datatable-data-empty tr {
+	border-width: 0px;
+	background: #f2f5f7;
+}
+
+#homePageForm .ui-datatable .ui-datatable-data-empty {
+	border-width: 0px;
+}
+
+#homePageForm .ui-datatable .ui-datatable-data {
+	border-width: 0px;
+}
+
+#homePageForm .ui-datatable .ui-datatable-data-empty td {
+	border-width: 0px;
+}
+
+#homePageForm .ui-datatable .ui-datatable-data td {
+	border-width: 0px;
+}
+
+#homePageForm div.ui-datatable table thead th:nth-child(1) {
+	text-align: right;
+	background: #f2f5f7;
+	border-width: 0px;
+}
+
+#homePageForm div.ui-datatable table thead tr:nth-child(2) {
+	display: none;
+}
+
+.scrollbox {
+	border: #ccc 0px solid;
+}
+
+#scrollDiv {
+	height: 125px;
+	overflow: hidden;
+} /*这里的高度和超出隐藏是必须的*/
+#scrollDiv li {
+	height: 25px;
+	line-height: 25px;
+	vertical-align: bottom;
+	zoom: 1;
+	border-bottom: #CCC dashed 1px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+#scrollDiv li a {
+	color: #333;
+	text-decoration: none;
+}
+
+#scrollDiv li a:hover {
+	color: #FF0000;
+	text-decoration: underline;
+}
+
+.scroltit {
+	height: 26px;
+	line-height: 26px;
+	border-bottom: #CCC dashed 1px;
+	padding-bottom: 4px;
+	margin-bottom: 4px;
+}
+
+.scroltit h3 {
+	width: 100px;
+	float: left;
+}
+
+.scroltit small {
+	float: right;
+	font-size: 13px;
+}
+.main {
+overflow-y: auto;
+}
+</style>
+	<script type="text/javascript">
+$(document).ready(
+		function (){
+			load();
+		}
+	);
+function load() {
+	removeHtml();
+	scoll();
+}
+function removeHtml(){
+	var prevs = $("span.ui-icon-seek-prev");
+    prevs.html("&amp;nbsp;");
+	var nexts = $("span.ui-icon-seek-next");
+	nexts.html("&amp;nbsp;");
+} 
+</script>
+
+	<h:form id="homePageForm" prependId="false">
+		<p:growl id="growl" showDetail="true" life="3000" />
+		<p:layout
+			style="min-width:99%;min-height:230px;max-width:99%;max-height:230px;margin-top:5px;margin-left:5px;margin-right:5px;">
+			<p:layoutUnit position="west" size="40%">
+				<p:panel header="待办任务" style="border:none;">
+					<p:dataTable id="waitTaskDataTable"
+						value="#{homePageBean.myWaitDealWithTaskList}" var="wfiv"
+						paginator="true" rows="5" effectSpeed="fast"
+						paginatorPosition="top"
+						paginatorTemplate=" {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown} "
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						emptyMessage="#{msgs.dataTable_empty}" rowIndexVar="var">
+						<p:column style="text-align:left;background-color: #F2F5F7;">
+							<h:outputText value="#{var + 1}、" />
+
+							<p:graphicImage url="/images/urgent1.png" title="紧急程度：非常紧急"
+								style="width:45px;height:15px;"
+								rendered="#{wfiv.wfInstancemstr.urgency eq commonBean.tihTaxWorkflowurgency3 ? true : false}" />
+							<p:graphicImage url="/images/urgent2.png" title="紧急程度：紧急"
+								style="width:45px;height:15px;"
+								rendered="#{wfiv.wfInstancemstr.urgency eq commonBean.tihTaxWorkflowurgency2 ? true : false}" />
+							<p:graphicImage url="/images/urgent3.png" title="紧急程度：一般"
+								style="width:45px;height:15px;"
+								rendered="#{wfiv.wfInstancemstr.urgency eq commonBean.tihTaxWorkflowurgency1 ? true : false}" />
+
+
+							<p:graphicImage url="/images/important1.png" title="重要程度：非常重要"
+								style="width:45px;height:15px;"
+								rendered="#{wfiv.wfInstancemstr.importance eq commonBean.tihTaxWorkflowimportance3 ? true : false}" />
+							<p:graphicImage url="/images/important2.png" title="重要程度：重要"
+								style="width:45px;height:15px;"
+								rendered="#{wfiv.wfInstancemstr.importance eq commonBean.tihTaxWorkflowimportance2 ? true : false}" />
+							<p:graphicImage url="/images/important3.png" title="重要程度：一般"
+								style="width:45px;height:15px;"
+								rendered="#{wfiv.wfInstancemstr.importance eq commonBean.tihTaxWorkflowimportance1 ? true : false}" />
+
+
+							<p:commandLink ajax="false"
+								value="#{commonBean.getValueByDictCatKey(wfiv.wfInstancemstr.type)}"
+								action="#{homePageBean.queryMyWaitDealWithTask(wfiv.wfInstancemstr.no)}" />
+						</p:column>
+						<p:column style="text-align:right;background-color: #F2F5F7;">
+							<h:outputText value="#{wfiv.frontHandleDatetime}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</p:layoutUnit>
+			<p:layoutUnit position="center" size="40%">
+				<p:tabView style="border : none;" id="myNewsTabView">
+					<p:tab id="myNotReadNews" title="未读消息">
+						<p:contextMenu for="myNotReadNews">
+							<p:menuitem value="全部置成已读"
+								action="#{homePageBean.setAllReaded()}" oncomplete="load()"
+								update="myNewsTabView" />
+						</p:contextMenu>
+						<div class="scrollbox">
+							<div class="scroltit">
+								<small id="but_up">↑向上</small><small id="but_down">↓向下</small>
+							</div>
+							<div id="scrollDiv">
+								<ul>
+									<ui:repeat value="#{homePageBean.notReadNotices}" var="notice"
+										varStatus="status">
+										<li><h:outputText value="#{status.index + 1}、" /> <p:graphicImage
+												url="/images/news.gif" /> <p:commandLink id="notReadNews"
+												oncomplete="myNewsDialogWidgetVar.show()"
+												update=":myNewsDialogId"
+												actionListener="#{homePageBean.lookMyNews(notice.receiverId)}"
+												value="#{notice.title}">
+												<f:setPropertyActionListener value="#{notice}"
+													target="#{homePageBean.noticeVo}" />
+											</p:commandLink></li>
+
+									</ui:repeat>
+								</ul>
+							</div>
+						</div>
+					</p:tab>
+					<p:tab id="myReadedNews" title="已读消息">
+						<p:dataTable id="myReadedNewsDataTable"
+							value="#{homePageBean.readedLazyModel}" var="notice"
+							paginator="true" rows="5" effectSpeed="fast"
+							paginatorPosition="top"
+							paginatorTemplate=" {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown} "
+							currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+							emptyMessage="#{msgs.dataTable_empty}" rowIndexVar="var">
+							<p:column style="text-align:left;background-color: #F2F5F7;">
+								<h:outputText value="#{var + 1}、" />
+								<p:commandLink id="readedNews"
+									oncomplete="myNewsDialogWidgetVar.show()"
+									update=":myNewsDialogId" value="#{notice.title}">
+									<f:setPropertyActionListener value="#{notice}"
+										target="#{homePageBean.noticeVo}" />
+								</p:commandLink>
+								<!-- <p:tooltip for="readedNews" value="#{notice.content}" showEffect="fade" hideEffect="fade" /> -->
+							</p:column>
+							<p:column style="text-align:right;background-color: #F2F5F7;">
+								<h:outputText
+									value="#{commonBean.formatDate(notice.sendDatetime)}" />
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+				</p:tabView>
+			</p:layoutUnit>
+			<p:layoutUnit position="east" size="19%">
+				<p:panel header="常用功能" style="border:none;">
+					<p:dataTable id="commonFunctionDataTable"
+						value="#{homePageBean.commonFunctionList}" var="commonFunction"
+						paginator="true" rows="5" effectSpeed="fast"
+						paginatorPosition="top"
+						paginatorTemplate=" {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown} "
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						emptyMessage="#{msgs.dataTable_empty}" rowIndexVar="var">
+						<p:column style="text-align:left;background-color: #F2F5F7;">
+							<p>
+								<h:outputText value="#{var + 1}、" />
+								<p:commandLink ajax="false" value="#{commonFunction.name}"
+									type="link"
+									action="#{homePageBean.gotoCommonFunction(commonFunction.rid)}" />
+							</p>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</p:layoutUnit>
+		</p:layout>
+
+		<p:layout
+			style="min-width:99%;min-height:230px;max-height:230px;max-width:99%;margin-top:5px;margin-left:5px;margin-right:5px;"
+			id="layout">
+			<p:layoutUnit position="center" size="99%" style="border: none;">
+				<p:layout>
+					<p:layoutUnit position="center" size="99%">
+						<ui:include src="newsChannelTabView.xhtml" />
+					</p:layoutUnit>
+				</p:layout>
+			</p:layoutUnit>
+		</p:layout>
+
+		<p:layout
+			style="min-width:99%;min-height:230px;max-width:99%;max-height:230px;margin-top:5px;margin-bottom:6px;margin-left:5px;margin-right:5px;"
+			id="layout2">
+			<p:layoutUnit position="west" size="33%">
+				<p:panel header="学习园地" style="border:none;">
+					<p:dataTable id="learningGardenDataTable"
+						value="#{homePageBean.learningGardenList}" var="learningGardenVo"
+						paginator="true" rows="5" effectSpeed="fast"
+						paginatorPosition="top"
+						paginatorTemplate=" {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown} "
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						emptyMessage="#{msgs.dataTable_empty}" rowIndexVar="var">
+						<p:column style="text-align:left;background-color: #F2F5F7;">
+							<h:outputText value="#{var + 1}、" />
+							<p:commandLink id="learningGarden"
+								value="#{learningGardenVo.name}" ajax="false">
+								<p:fileDownload
+									value="#{homePageBean.download(learningGardenVo.documentId)}" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</p:layoutUnit>
+			<p:layoutUnit position="center" size="33%">
+				<p:panel header="常用资料" style="border:none;">
+					<p:dataTable id="commonDataDataTable"
+						value="#{homePageBean.commonDataList}" var="commonDataVo"
+						paginator="true" rows="5" effectSpeed="fast"
+						paginatorPosition="top"
+						paginatorTemplate=" {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown} "
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						emptyMessage="#{msgs.dataTable_empty}" rowIndexVar="var">
+						<p:column style="text-align:left;background-color: #F2F5F7;">
+							<h:outputText value="#{var + 1}、" />
+							<p:commandLink id="commonDataCommandLink"
+								value="#{commonDataVo.name}" ajax="false">
+								<p:fileDownload
+									value="#{homePageBean.download(commonDataVo.documentId)}" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</p:layoutUnit>
+			<p:layoutUnit position="east" size="33%">
+				<p:panel header="常用链接" style="border:none;">
+					<p:dataTable id="linkDataTable"
+						value="#{homePageBean.commonLinkList}" var="link" paginator="true"
+						rows="5" effectSpeed="fast" paginatorPosition="top"
+						paginatorTemplate=" {PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown} "
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						emptyMessage="#{msgs.dataTable_empty}" rowIndexVar="var">
+						<p:column style="text-align:left;background-color: #F2F5F7;">
+							<h:outputText value="#{var + 1}、" />
+							<a href="#{link.url}" target="_blank"> <h:outputText
+									value="#{link.name}" /></a>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</p:layoutUnit>
+		</p:layout>
+	</h:form>
+	<ui:include src="news_dialog.xhtml" />
+</ui:composition>

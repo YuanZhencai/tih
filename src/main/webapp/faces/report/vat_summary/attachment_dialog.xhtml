@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog header="附件下载" widgetVar="addAttachmentDlgVar"
+		showEffect="fade" hideEffect="fade" modal="true" resizable="false"
+		 id="addAttachmentDlgId">
+		<p:messages id="attMsg" />
+		<p:growl id="attGrowl" life="10000" />
+		<h:form id="addAttachmentDlgFormId" prependId="false">
+			<p:dataTable var="ss" value="#{vATSummaryBean.showAttDlgList}"
+				rowIndexVar="index"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				style="margin-top: 5px;width:300px;"
+				emptyMessage="#{msgs.dataTable_empty }" >
+
+				<p:column style="text-align:left;">
+					<f:facet name="header">
+						<h:outputText value="附件名称" />
+					</f:facet>
+					<h:outputText value="#{ss.fileName}" />
+				</p:column>
+				<p:column style="text-align: center;width:7px;">
+					<f:facet name="header">
+						<h:outputText value="操作" />
+					</f:facet>
+					<p:commandButton title="下载" icon="ui-icon ui-icon-arrowthick-1-s" update=":attGrowl,:attMsg" 
+						style="width: 18px; height: 18px;" ajax="false">
+						<p:fileDownload value="#{smartImportBean.downAtt(ss.fileId)}" />
+					</p:commandButton>
+					<p:spacer width="5px" />
+				</p:column>
+			</p:dataTable>
+
+		</h:form>
+
+	</p:dialog>
+</ui:composition>

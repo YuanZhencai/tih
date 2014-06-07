@@ -1,0 +1,124 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<h:form prependId="false" id="left_folder_tree_form_id">
+	
+	<p:tabView id="tabViewId" style="border: none; height: 100%;">
+	<p:ajax listener="#{documentBean.tabChange}" event="tabChange"/>
+	
+	<p:tab title="文件夹浏览" id="folder_tab_id"
+		rendered="#{documentBean.docadmin}">
+		<p:contextMenu for="left_folder_tree_id">
+			<p:menuitem value="#{msgs.btn_add}" icon="ui-icon ui-icon-plusthick"
+				update=":add_folder_form_id,:folder_tree_dialog_id" oncomplete="add_folder_dialog_var.show();"
+				actionListener="#{documentBean.initAddFolder}">
+				<f:setPropertyActionListener target="#{documentBean.folderModel}" value="add"/>
+				<f:setPropertyActionListener target="#{documentBean.docModel}" value=""/>
+			</p:menuitem>
+			
+			<p:menuitem value="重命名" icon="ui-icon ui-icon-pencil"
+				update=":edit_folder_form_id" oncomplete="edit_folder_dialog_var.show();">
+				<f:setPropertyActionListener target="#{documentBean.newFolderName}" value="#{documentBean.selectedFolder.data.folderName}"/>
+			</p:menuitem>
+			
+			<p:menuitem value="#{msgs.btn_delete}" icon="ui-icon ui-icon-close"
+				update=":confirm_dialog_id" oncomplete="confirm_dialog_var.show();focusInput('folderDeleteId');">
+				<f:setPropertyActionListener target="#{documentBean.docModel}" value="" />
+				<f:setPropertyActionListener target="#{documentBean.deleteModel}" value="folderDelete"/>
+			</p:menuitem>
+			
+			<p:menuitem value="复制" icon="ui-icon ui-icon-copy" actionListener="#{documentBean.clearFolderSelected}"
+				update=":folder_tree_dialog_id" oncomplete="folder_tree_dialog_var.show();removeTextShadow();">
+				<f:setPropertyActionListener target="#{documentBean.folderModel}" value="copy"/>
+				<f:setPropertyActionListener target="#{documentBean.docModel}" value=""/>
+			</p:menuitem>
+			
+			<p:menuitem value="移动" icon="ui-icon ui-icon-extlink" actionListener="#{documentBean.clearFolderSelected}"
+				update=":folder_tree_dialog_id" oncomplete="folder_tree_dialog_var.show();removeTextShadow();">
+				<f:setPropertyActionListener target="#{documentBean.folderModel}" value="move"/>
+				<f:setPropertyActionListener target="#{documentBean.docModel}" value=""/>
+			</p:menuitem>
+			
+			<p:menuitem value="属性" icon="ui-icon ui-icon-search"
+				update=":query_folder_form_id" oncomplete="query_folder_dialog_var.show();"/>
+		</p:contextMenu>
+		<p:toolbar id="folder_toolbar_id" style="margin-left: -15px;">
+			<p:toolbarGroup align="left">
+				<p:commandButton title="#{msgs.btn_add}" icon="ui-icon ui-icon-plusthick" style="width: 18px; height: 18px;"
+					update=":add_folder_form_id,:folder_tree_dialog_id" oncomplete="add_folder_dialog_var.show();"
+					actionListener="#{documentBean.initAddFolder}">
+					<f:setPropertyActionListener target="#{documentBean.folderModel}" value="add"/>
+					<f:setPropertyActionListener target="#{documentBean.docModel}" value=""/>
+				</p:commandButton>
+				
+				<p:commandButton title="重命名" icon="ui-icon ui-icon-pencil" style="width: 18px; height: 18px;"
+					update=":edit_folder_form_id" oncomplete="edit_folder_dialog_var.show();"
+					disabled="#{documentBean.selectedFolder==null or documentBean.selectedFolder==rootFolder ? true : false}">
+					<f:setPropertyActionListener target="#{documentBean.newFolderName}" value="#{documentBean.selectedFolder.data.folderName}"/>
+				</p:commandButton>
+				
+				<p:commandButton title="#{msgs.btn_delete}" icon="ui-icon ui-icon-close" style="width: 18px; height: 18px;"
+					update=":confirm_dialog_id" oncomplete="confirm_dialog_var.show();focusInput('folderDeleteId');"
+					disabled="#{documentBean.selectedFolder==null or documentBean.selectedFolder==rootFolder ? true : false}">
+					<f:setPropertyActionListener target="#{documentBean.docModel}" value="" />
+					<f:setPropertyActionListener target="#{documentBean.deleteModel}" value="folderDelete"/>
+				</p:commandButton>
+				
+				<p:commandButton title="复制" icon="ui-icon ui-icon-copy" style="width: 18px; height: 18px;"
+					update=":folder_tree_dialog_id" oncomplete="folder_tree_dialog_var.show();removeTextShadow();"
+					actionListener="#{documentBean.clearFolderSelected}"
+					disabled="#{documentBean.selectedFolder==null or documentBean.selectedFolder==rootFolder ? true : false}">
+					<f:setPropertyActionListener target="#{documentBean.folderModel}" value="copy"/>
+					<f:setPropertyActionListener target="#{documentBean.docModel}" value=""/>
+				</p:commandButton>
+				
+				<p:commandButton title="移动" icon="ui-icon ui-icon-extlink" style="width: 18px; height: 18px;"
+					update=":folder_tree_dialog_id" oncomplete="folder_tree_dialog_var.show();removeTextShadow();"
+					actionListener="#{documentBean.clearFolderSelected}"
+					disabled="#{documentBean.selectedFolder==null or documentBean.selectedFolder==rootFolder ? true : false}">
+					<f:setPropertyActionListener target="#{documentBean.folderModel}" value="move"/>
+					<f:setPropertyActionListener target="#{documentBean.docModel}" value=""/>
+				</p:commandButton>
+				
+				<p:commandButton title="属性" icon="ui-icon ui-icon-search" style="width: 18px; height: 18px;"
+					update=":query_folder_form_id" oncomplete="query_folder_dialog_var.show();"
+					disabled="#{documentBean.selectedFolder==null or documentBean.selectedFolder==rootFolder ? true : false}">
+				</p:commandButton>
+				
+				<p:commandButton title="刷新" icon="ui-icon ui-icon-refresh" style="width: 18px; height: 18px;"
+					update=":left_folder_tree_form_id" action="#{documentBean.refreshTree()}"
+					oncomplete="removeTextShadow();">
+				</p:commandButton>
+			</p:toolbarGroup>
+		</p:toolbar>
+		<p:tree id="left_folder_tree_id" value="#{documentBean.rootFolder}" var="folder"
+		style="margin-left: -15px;border: 0px;"
+			selectionMode="single" selection="#{documentBean.selectedFolder}">
+
+			<p:ajax event="select" listener="#{documentBean.searchDocumentByFolder}" 
+				update=":left_folder_tree_form_id:tabViewId:folder_toolbar_id,:main_form_id"
+				oncomplete="removeTextShadow();"/>
+			<p:ajax event="unselect" update=":left_folder_tree_form_id:tabViewId:left_folder_tree_id"/>
+
+			<p:treeNode expandedIcon="ui-icon ui-icon-folder-open" collapsedIcon="ui-icon ui-icon-folder-collapsed">
+				<h:outputText value="#{folder.folderName}" title="#{folder.folderName}"/>
+			</p:treeNode>
+		</p:tree>
+	</p:tab>
+	<p:tab title="文件类别" id="cate_tab_id">
+		<p:tree id="left_cate_tree_id" value="#{documentBean.cateNode}" var="cate" 
+		style="margin-left: -15px;  border: 0px;"
+			selectionMode="single" selection="#{documentBean.selectedCate}">
+			<p:ajax event="select" update=":main_form_id"
+				listener="#{documentBean.searchDocumentByCate}"/>
+			<p:ajax event="unselect" update=":left_folder_tree_form_id:tabViewId:folder_toolbar_id"/>
+			<p:treeNode >
+				<h:outputText value="#{cate.codeVal}" title="#{cate.codeVal}" style="text-shadow: none;"/>
+			</p:treeNode>
+		</p:tree>
+	</p:tab>
+	</p:tabView>
+	</h:form>
+</ui:composition>

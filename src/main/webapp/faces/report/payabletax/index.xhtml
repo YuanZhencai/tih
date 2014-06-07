@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+
+	<ui:define name="content">
+	<p:panel styleClass="panel1">
+		<h:form id="report_payable_tax_form" prependId="false">
+			<p:growl id="tax_growl" showDetail="true" showSummary="true" life="10000"/>
+			<p:breadCrumb preview="true" expandEffectDuration="200"
+				previewWidth="24" style="width: 99.1%">
+				<p:menuitem value="首页" url="#" />
+				<p:menuitem value="报表查询" url="#"/>
+				<p:menuitem value="专用报表处理" url="#" />
+				<p:menuitem value="应交税费综合信息汇总" url="#" />
+			</p:breadCrumb>
+			<div class="style1" style="margin: 5px 0 5px 0;">
+				<h:panelGrid columns="6" columnClasses="column1,column2,column2,column1,column2">
+					<h:outputText value="统计日期："/>
+					<p:calendar value="#{reportPayableTaxBean.query['statisticDate']}" navigator="true" pattern="yyyy-MM" locale="cn"/>
+					<h:outputText style="color:red;" value="*" />
+					<h:outputText value="公司名称："/>
+					<p:selectCheckboxMenu id="companys" value="#{reportPayableTaxBean.companys}" style="width: 142px;">
+						<f:selectItems value="#{reportPayableTaxBean.companyItems}" var="c" itemLabel="#{c.stext}" itemValue="#{c.id}" />
+					</p:selectCheckboxMenu>
+ 					<p:commandButton icon="ui-icon ui-icon-search" style="width: 27px; height: 27px; vertical-align: top;" title="请选择" update=":commonCompany,:datatableform" actionListener="#{companyCommonBean.init(':report_payable_tax_form:companys','reportPayableTaxBean','multiple','selectCompanys')}" oncomplete="commoncompanyvar.show();" />
+					</h:panelGrid>
+				<div>
+					<p:commandButton value="#{msgs.btn_query}" action="#{reportPayableTaxBean.searchCompanys}"
+						icon="ui-icon ui-icon-search" style="margin-right: 5px;" update=":report_payable_tax_form:payTaxTabView:resultTable,:report_payable_tax_form:tax_growl"/>
+					<p:commandButton value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel" action="#{reportPayableTaxBean.reset()}" update=":report_payable_tax_form" style="margin-right: 5px;"/>
+				</div>
+			</div>
+			<p:tabView id="payTaxTabView" activeIndex="#{reportPayableTaxBean.activeIndex}">
+				<p:tab title="应交税费信息">
+					<p:dataTable id="resultTable" var="tax" value="#{reportPayableTaxBean.payTaxCompanys}" 
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}" rowKey="#{tax.payableTax.id}"
+						emptyMessage="#{msgs.dataTable_empty}" selection="#{reportPayableTaxBean.selections}">
+						<f:facet name="header">
+							<div class="header">
+								公司列表
+								<p:commandButton styleClass="header_button" value="汇总" update=":report_payable_tax_form:payTaxTabView,:report_payable_tax_form:tax_growl" 
+									action="#{reportPayableTaxBean.collectCompanysTax()}" />
+							</div>
+						</f:facet>
+						<p:column selectionMode="multiple" style="width: 18px; text-align: center;"/>
+						<p:column headerText="公司名称">
+							<h:outputText value="#{tax.o.stext}" title="#{tax.o.stext}"/>
+						</p:column>
+						<p:column headerText="公司代码">
+							<h:outputText value="#{tax.c.code}" title="#{tax.c.code}"/>
+						</p:column>
+						<p:column headerText="法人代表">
+							<h:outputText value="#{tax.c.representative}" title="#{tax.c.representative}"/>
+						</p:column>
+						<p:column headerText="地址">
+							<h:outputText value="#{tax.c.address}" title="#{tax.c.address}"/>
+						</p:column>
+						<p:column headerText="邮编">
+							<h:outputText value="#{tax.c.zipcode}" title="#{tax.c.zipcode}"/>
+						</p:column>
+						<p:column headerText="联系电话">
+							<h:outputText value="#{tax.c.telphone}" title="#{tax.c.telphone}"/>
+						</p:column>
+						<p:column headerText="操作" style="width: 18px; text-align: center;">
+							<p:commandButton icon="ui-icon ui-icon-arrowthick-1-s" style="width: 18px; height: 18px;"
+								ajax="false" title="查看" update=":report_payable_tax_form:tax_growl">
+								<p:fileDownload value="#{reportPayableTaxBean.getTaxExcel(tax.payableTax.id)}"/>
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+						</p:tab>
+				<p:tab title="汇总历史">
+					<p:dataTable id="summary_tax" var="rep" value="#{reportPayableTaxBean.reports}"
+						paginatorPosition="bottom" rowIndexVar="index" paginator="true" rows="5"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+						currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+						rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+						emptyMessage="#{msgs.dataTable_empty}">
+						<f:facet name="header">应交税费汇总列表</f:facet>
+						<p:column headerText="报表名称">
+							<h:outputText value="#{rep.name}" title="#{rep.name}" />
+						</p:column>
+						<p:column headerText="操作" style="width: 18px; text-align: center;">
+							<p:commandButton title="下载" icon="ui-icon ui-icon-arrowthick-1-s" style="width: 18px; height: 18px;"
+								ajax="false" update=":report_payable_tax_form:tax_growl">
+								<p:fileDownload value="#{reportPayableTaxBean.getTotalTaxExcel(rep.fileId)}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:tabView>
+		</h:form>
+		</p:panel>
+		<ui:include src="/faces/common/company/common_company_dialog.xhtml"/>
+	</ui:define>
+</ui:composition>

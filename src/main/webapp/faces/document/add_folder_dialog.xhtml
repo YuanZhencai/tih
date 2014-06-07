@@ -1,0 +1,42 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog id="add_folder_dialog_id" header="添加文件夹"
+		widgetVar="add_folder_dialog_var" resizable="false" modal="true">
+		<h:form id="add_folder_form_id" prependId="false">
+			<p:messages id="add_folder_msg" showDetail="true" showSummary="true"/>
+			
+			<h:panelGrid columns="2">
+				<h:outputLabel value="文件夹位置："/>
+				<h:column>
+					<p:inputText value="#{documentBean.newFolderParentPath}" readonly="true" style="width: 270px; margin-right: 3px" 
+						id="new_folder_parentpath_id" title="#{documentBean.newFolderParentPath}" />
+					<p:commandButton icon="ui-icon ui-icon-search" title="查找上级文件夹" 
+						style="width: 26px; height: 26px; vertical-align: top;"
+						oncomplete="folder_tree_dialog_var.show();removeTextShadow();"
+						update=":folder_tree_dialog_id"/>
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+			
+				<h:outputLabel value="文件夹名称："/>
+				<h:column>
+					<p:inputText value="#{documentBean.newFolderName}" style="width: 300px;" />
+					<h:outputText value="*" style="color: red;"/>
+				</h:column>
+			</h:panelGrid>
+
+			<div style="text-align: center; margin-top: 5px;">
+				<p:commandButton icon="ui-icon ui-icon-check" value="#{msgs.btn_ok}"
+					update=":add_folder_form_id:add_folder_msg,:left_folder_tree_form_id,:growl"
+					oncomplete="handleFolder(xhr, status, args);removeTextShadow();"
+					action="#{documentBean.addFolder}"
+					style="margin-right: 5px;"/>
+				
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+					type="button" onclick="add_folder_dialog_var.hide()"/>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<div id="top_up_menu">
+		<h:form prependId="false" id="up_menu">
+			<ul>
+				<ui:repeat var="topMenu" value="#{currentUser.topNavs}">
+						<li class="#{currentUser.selectedTopNavId == topMenu.data.id ? 'top_up_menu_ul_li_B':'top_up_menu_ul_li_A'}"><p:commandLink
+								value="#{topMenu.data.name}"
+								action="#{currentUser.clickMenu(topMenu)}" ajax="false" >
+									<f:setPropertyActionListener target="#{currentUser.selectedTopNavId}" value="#{topMenu.data.id}" />
+								</p:commandLink>
+						</li>
+				</ui:repeat>
+			</ul>
+		</h:form>
+	</div>
+	<div id="top_up_center">
+		<h:form prependId="false" id="up_center">
+			<ul>
+				
+				<li>
+					<img src="#{request.contextPath}/images/icons/exit.gif" />
+					<p:commandLink ajax="false" action="#{currentUser.doLogout()}" value="注销">
+						<f:param name="casServerUrl" value="${cas.server.url}"/>
+						<f:param name="appUrl" value="${app.url}"/>
+					</p:commandLink>
+				</li>
+				<li>
+					<img src="#{request.contextPath}/images/icons/tongxunlu.png" />
+					<p:commandLink id="contactLink" action="#{contactBean.searchContactsAndUsers()}" oncomplete="contactDialogVar.show()" update=":contactDialogForm" value="通讯录">
+					</p:commandLink>
+				</li>
+				<li><img src="#{request.contextPath}/images/icons/mytable.gif" />
+					<p:commandLink action="#{sysNoticeBean.addSysNotice()}" update=":sysNoticeDialogForm" value="系统通知" oncomplete="sysNoticeDialogVar.show();">
+					</p:commandLink>
+					</li>
+				<li><img src="#{request.contextPath}/images/icons/help.gif" />
+					<p:commandLink id="supportLink" value="运维支持" type="button">
+					</p:commandLink>
+					<p:overlayPanel id="supportPanel" for="supportLink" widgetVar="supportPanelVar">
+						<p:dataTable value="#{supportBean.supportUsers}" var="supportUser">
+							<p:column headerText="运维人员" style="width: 50px">
+								<h:outputText value="#{userCommonBean.getUserRealName(supportUser.adAccount)}" />
+							</p:column>
+							<p:column headerText="联系方式" style="width: 220px">
+								<h:outputText value="#{supportUser.backgroundInfo == null ? '' : (supportUser.backgroundInfo.trim().replaceAll(' {2,}',' ').replaceAll(' {1,}', '&lt;/br&gt;'))}" escape="false"/>
+							</p:column>
+						</p:dataTable>
+					</p:overlayPanel>
+					</li>
+			<!-- 
+				<li><img src="#{request.contextPath}/images/icons/help.gif" />帮助</li>
+			 -->
+			</ul>
+		</h:form>
+	</div>
+
+</ui:composition>

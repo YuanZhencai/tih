@@ -1,0 +1,30 @@
+<ui:composition xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="400" resizable="false" modal="true" header="附件编辑"
+		id="edit_attachment_dialog_id" widgetVar="edit_attachment_dialog_var">
+		
+		<h:form id="edit_attachment_form_id" prependId="false">
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputLabel value="文件名称："/>
+				<p:inputText value="#{projectBean.attachment.attachment.name}"/>
+				
+				<h:outputLabel value="是否有效："/>
+				<h:selectOneRadio value="#{projectBean.attachment.attachment.defunctInd}">
+					<f:selectItem itemLabel="有效" itemValue="N"/>
+					<f:selectItem itemLabel="失效" itemValue="Y"/>
+				</h:selectOneRadio>
+			</h:panelGrid>
+			
+			<div style="margin: 5px 0 0 0; text-align: center;">
+				<p:commandButton icon="ui-icon ui-icon-disk" value="#{msgs.btn_save}" update=":project_attachment_form_id"
+					oncomplete="edit_attachment_dialog_var.hide();" style="margin-right: 5px;"
+					action="#{projectBean.modelProjectAttachment}"/>
+				<p:commandButton icon="ui-icon ui-icon-cancel" value="#{msgs.btn_cancel}"
+					oncomplete="edit_attachment_dialog_var.hide();"/>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

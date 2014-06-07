@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="分配角色" widgetVar="userRoleDialog" id="userRoleDlg"
+		resizable="false" modal="true">
+		<p:messages id="userRolesErrorMsg" showDetail="true" />
+		<h:form id="userRoleDialogForm" prependId="false">
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="用户账号：" />
+				<p:inputText value="#{userBean.userName}" style="width:192px;"
+					disabled="true" />
+				<h:outputText value="用户姓名：" />
+				<p:inputText value="#{userBean.realName}" style="width:192px;"
+					disabled="true" />
+				<h:outputText value="角色列表：" />
+				<p:scrollPanel style="width:200px;height:155px">
+					<p:selectManyCheckbox value="#{userBean.selectedRoleVos}"
+						layout="pageDirection">
+						<f:selectItems value="#{userBean.roleVos}" />
+					</p:selectManyCheckbox>
+				</p:scrollPanel>
+			</h:panelGrid>
+			<div
+				style="text-align: center; position: relative; margin-top: 10px;">
+				<p:commandButton actionListener="#{userBean.saveUserRole()}"
+					update=":userRolesErrorMsg,:userGrowl"
+					oncomplete="handleRequest(xhr, status, args ,'userRole');"
+					value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+					style="margin-right: 5px;" />
+				<p:commandButton type="button" onclick="userRoleDialog.hide()"
+					value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

@@ -1,0 +1,136 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog modal="true" resizable="false"
+		header="#{companyBean.flag==false?'添加公司':'编辑公司'}"
+		widgetVar="companyInsertConfirmDiaLog" id="insertConfirmDiaLog">
+		<p:messages id="message" autoUpdate="true" showDetail="true" />
+		<h:form id="insertConfirmForm">
+
+			<h:panelGrid columns="2">
+				<h:outputText value="公司名称：" />
+				<p:inputText value="#{companyBean.companySaveModel.stext}"
+					disabled="true" style="width:475px;" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="4">
+				<h:outputText value="机构代码：" />
+				<p:inputText value="#{companyBean.companySaveModel.jgCode}"
+					disabled="true" style="width:195px;margin-right:5px" />
+				<h:outputText value="公司代码：" />
+				<p:inputText value="#{companyBean.companySaveModel.code}"
+					style="width:195px;" />
+				<h:outputText value="法人代表：" />
+				<p:inputText value="#{companyBean.companySaveModel.representative}"
+					style="width:195px;" />
+
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="2">
+				<h:outputText value="公司地址：" />
+				<h:panelGroup>
+					<p:inputText value="#{companyBean.companySaveModel.address}"
+						style="width:475px;" maxlength="160">
+					</p:inputText>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+			</h:panelGrid>
+
+			<h:panelGrid columns="4">
+				<h:outputText value="地域：" />
+				<h:panelGroup>
+					<h:selectOneMenu value="#{companyBean.companySaveModel.region}"
+						style="width:205px;">
+						<f:selectItem itemLabel="请选择" />
+						<f:selectItems value="#{companyBean.regionItems}" />
+						<p:ajax update="provinces" event="change"
+							listener="#{companyBean.handleRegionChange(companyBean.companySaveModel.region)}" />
+					</h:selectOneMenu>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				<h:outputText value="省：" />
+				<h:panelGroup>
+					<h:selectOneMenu id="provinces"
+						value="#{companyBean.companySaveModel.province}"
+						style="width:205px;">
+						<f:selectItem itemLabel="请选择" />
+						<f:selectItems value="#{companyBean.provinceItems}" />
+					</h:selectOneMenu>
+					<h:outputText style="color:red;" value="*" />
+				</h:panelGroup>
+				<h:outputText value="邮政编码：" />
+				<p:inputText value="#{companyBean.companySaveModel.zipcode}"
+					style="width:195px;">
+				</p:inputText>
+				<h:outputText value="电话号码：" />
+				<p:inputText value="#{companyBean.companySaveModel.telphone}"
+					style="width:195px;">
+				</p:inputText>
+			</h:panelGrid>
+			<h:inputHidden value="#{companyBean.companySaveModel.id}" />
+			<h:panelGrid columns="5">
+				<h:outputText value="公司类型：" />
+
+				<h:selectOneMenu value="#{companyBean.companySaveModel.type}"
+					styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+					<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue=" " />
+					<f:selectItem itemLabel="贸易公司" itemValue="贸易公司" />
+					<f:selectItem itemLabel="制造工厂" itemValue="制造工厂" />
+					<f:selectItem itemLabel="其它" itemValue="其它" />
+				</h:selectOneMenu>
+				<h:outputText value="成立时间：" />
+				<p:calendar locale="cn" pattern="yyyy-MM-dd" navigator="true"
+					readOnlyInputText="true"
+					value="#{companyBean.companySaveModel.stepDatetime}"
+					styleClass="startime" />
+				<h:panelGroup>
+					<h:outputText value="经营时间：" />
+					<p:calendar locale="cn" pattern="yyyy-MM-dd" navigator="true"
+						readOnlyInputText="true"
+						value="#{companyBean.companySaveModel.startDatetime}"
+						styleClass="startime" />
+				</h:panelGroup>
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:outputText value="经营范围：" />
+				<p:inputTextarea value="#{companyBean.companySaveModel.desc}"
+					style="width:475px;" maxlength="500">
+				</p:inputTextarea>
+			</h:panelGrid>
+
+			<h:panelGrid columns="8" style="display:none;">
+		&#160;&#160;&#160;&#160;&#160;<h:outputText value="有效：" />
+				<h:selectOneRadio value="#{companyBean.companySaveModel.defuctInt}"
+					disabled="#{companyBean.flag}">
+					<f:selectItem itemLabel="是" itemValue="N" />
+					<f:selectItem itemLabel="否" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+
+			<div align="center" style="margin-top: 5px;">
+				<p:commandButton value="确定" style="margin-right: 5px;"
+					update=":companySearchForm,:growl,:message"
+					action="#{companyBean.saveOrUpdateCompany}"
+					oncomplete="handleSumbitRequest(xhr, status, args);addStyel();"
+					icon="ui-icon ui-icon-check" />
+				<p:commandButton value="取消" type="button"
+					onclick="companyInsertConfirmDiaLog.hide();"
+					icon="ui-icon ui-icon-cancel" />
+			</div>
+
+		</h:form>
+	</p:dialog>
+	<script>
+	function handleSumbitRequest(xhr, status, args) {
+		if (args.dataInfoSumbit == "yes") {
+			companyInsertConfirmDiaLog.hide();
+			companyInsertDiaLog.hide();
+		}
+	}
+	</script>
+</ui:composition>

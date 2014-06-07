@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+	<ui:define name="styleAndScript">
+	</ui:define>
+	<ui:define name="content">
+		
+		<shiro:hasPermission name="system:user:taxauth">
+	
+		<p:panel styleClass="panel1">
+			<h:form prependId="false" id="taxFormId">
+				<p:growl id="growl" showDetail="true" life="3000" />
+				<div>
+					<p:breadCrumb>
+						<p:menuitem value="" url="#" />
+						<p:menuitem value="系统管理" url="#" />
+						<p:menuitem value="组织用户管理" url="#" />
+						<p:menuitem value="税务机关管理" url="/faces/system/taxauth/index.xhtml" />
+					</p:breadCrumb>
+				</div>
+
+				<div class="style1" style="margin-top: 5px; margin-bottom: 5px;">
+					<h:panelGrid columns="8" id="serachPanelId"
+						columnClasses="column1,column2,column1,column2,column1,column2,column1,column2">
+
+						<h:outputText value="机关名称：" />
+						<p:inputText value="#{taxAuthorityBean.queryName }" />
+
+						<h:outputText value="地址：" />
+						<p:inputText value="#{taxAuthorityBean.queryAddress }" />
+
+						<h:outputText value="有效：" />
+						<h:selectOneMenu value="#{taxAuthorityBean.queryState }"
+							styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+							<f:selectItem itemLabel="#{msgs.txt_pleaseSelect }" itemValue=""></f:selectItem>
+							<f:selectItem itemLabel="#{msgs.txt_effective }" itemValue="N"></f:selectItem>
+							<f:selectItem itemLabel="#{msgs.txt_effectiveLost }"
+								itemValue="Y"></f:selectItem>
+						</h:selectOneMenu>
+
+					</h:panelGrid>
+
+					<DIV>
+						<p:commandButton value="#{msgs.btn_query }"
+							icon="ui-icon ui-icon-search"
+							actionListener="#{taxAuthorityBean.queryPlan}"
+							update=":taxFormId" style="margin-right:5px" />
+						<p:commandButton value="#{msgs.btn_reset }"
+							update=":taxFormId:serachPanelId"
+							action="#{taxAuthorityBean.reset()}"
+							icon="ui-icon ui-icon-cancel" style="margin-right:5px" />
+					</DIV>
+				</div>
+
+
+				<p:dataTable var="ss" value="#{taxAuthorityBean.lazyModelIndex}"   
+					paginatorPosition="bottom" rowIndexVar="index" paginator="true"
+					rows="10"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}" 
+					currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'} "
+					rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : null}"
+					style="margin-top: 5px;" emptyMessage="#{msgs.dataTable_empty }" >
+
+					<f:facet name="header">
+						<div class="header">
+							税务机关列表
+							<p:commandButton styleClass="header_button" value="#{msgs.btn_add}" icon="ui-icon ui-icon-plus" actionListener="#{taxAuthorityBean.newAdd()}"
+								oncomplete="thxAddDlgVar.show();document.forms['thxAddDlgFormId'].reset();"
+								update=":thxAddDlgFormId" />
+						</div>
+					</f:facet>
+					<p:column style="width:5%;">
+						<f:facet name="header">
+							<h:outputText value="机关类型" />
+						</f:facet>
+						<h:outputText value="#{commonBean.getValueByDictCatKey(ss.taxauthority.type)}" />
+					</p:column>
+					<p:column style="width:15%;">
+						<f:facet name="header">
+							<h:outputText value="机关名称" />
+						</f:facet>
+						<h:outputText value="#{ss.taxauthority.name}" />
+					</p:column>
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="机构地址" />
+						</f:facet>
+						<h:outputText value="#{ss.taxauthority.address}" />
+					</p:column>
+					<p:column style="text-align: center;width:5%;">
+						<f:facet name="header">
+							<h:outputText value="邮编" />
+						</f:facet>
+						<h:outputText value="#{ss.taxauthority.zipcode}" />
+					</p:column>
+					<p:column style="width:122px;">
+						<f:facet name="header">
+							<h:outputText value="联系电话" />
+						</f:facet>
+						<h:outputText value="#{ss.taxauthority.telphone}" />
+					</p:column>
+					<p:column style="text-align: center;width:5%;">
+						<f:facet name="header">
+							<h:outputText value="有效" />
+						</f:facet>
+						<h:outputText
+							value="#{(ss.taxauthority.defunctInd) eq 'N'?(msgs.txt_effective):(msgs.txt_effectiveLost) }" />
+					</p:column>
+					<p:column style="text-align: center;width:5%">
+						<f:facet name="header">
+							<h:outputText value="操作" />
+						</f:facet>
+						<p:commandButton update=":thxUpDlgFormId" 
+							icon="ui-icon ui-icon-pencil" title="#{msgs.btn_edit }"
+							oncomplete="thxUpDlgVar.show()" style="width:18px;height:18px;">
+							<f:setPropertyActionListener 
+								target="#{taxAuthorityBean.tax}" value="#{ss.taxauthority}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:panel>
+		<ui:include src="insert_dialog.xhtml" />
+		<ui:include src="update_dialog.xhtml" />
+		<script type="text/javascript">
+			function handleSaveRequest(xhr, status, args) {
+				if (args.addInfo == "yes") {
+					thxAddDlgVar.hide();
+				}
+			}
+
+			function handleUpdateRequest(xhr, status, args) {
+				if (args.modifyInfo == "yes") {
+					thxUpDlgVar.hide();
+				}
+			}
+		</script>
+		
+		</shiro:hasPermission>
+		<shiro:lacksPermission name="system:user:taxauth">
+			<ui:include src="/errorshiro.xhtml" />
+		</shiro:lacksPermission>
+		
+	</ui:define>
+</ui:composition>
+

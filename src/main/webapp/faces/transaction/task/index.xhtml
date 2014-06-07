@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+	<ui:define name="title">任务管理</ui:define>
+	<script type="text/javascript"
+		src="#{request.contextPath}/template/js/uploadStyle.js" />
+	<style type="text/css">
+.op_btn {
+	width: 25px;
+	height: 25px;
+}
+
+.column1 {
+	text-align: right;
+	width: 110px;
+}
+
+.pcolumn2 {
+	width: 120px;
+}
+
+input[type='radio'] {
+	width: 30px;
+}
+
+.column185 {
+	text-align: right;
+	width: 185px;
+}
+</style>
+	<ui:define name="content">
+
+		<p:growl id="growl" showDetail="true" life="10000" />
+		<p:breadCrumb id="taskBreadCrumb" preview="true"
+			expandEffectDuration="200" previewWidth="24">
+			<p:menuitem value="税务平台" url="#" />
+			<p:menuitem value="事务管理" url="#" />
+			<p:menuitem value="任务管理" url="#" />
+		</p:breadCrumb>
+		<p:layout
+			style="min-height:93.5%;max-height:93.5%;min-width:500px;max-width:99%;margin-top:5px;margin-left:15px;margin-right:15px;"
+			id="layout">
+			<p:layoutUnit style="width: 100%;height:100%;" size="225"
+				minSize="20" position="west" resizable="false">
+				<ui:include src="task_tree.xhtml" />
+			</p:layoutUnit>
+			<p:layoutUnit style="width: 100%;height:100%;" position="center">
+				<ui:include src="task_main.xhtml" />
+				<ui:include src="task_timeout_mail_config.xhtml" />
+			</p:layoutUnit>
+		</p:layout>
+
+		<!-- 授权 -->
+		<ui:include src="warrant_dialog.xhtml" />
+		<ui:include src="confirm_dialog.xhtml" />
+		<!-- 用户公用组件  -->
+		<ui:include src="/faces/common/user/common_user_dialog.xhtml" />
+		<!-- 提问申请单 -->
+		<ui:include
+			src="/faces/interaction/applyquestion/applyquestion_dialog.xhtml" />
+		<ui:include
+			src="/faces/interaction/applyquestion/new_applyquestion_dialog.xhtml" />
+		<ui:include
+			src="/faces/interaction/applyquestion/attachment_dialog.xhtml" />
+		<!-- 文档键入流程 -->
+		<ui:include
+			src="/faces/document/documen_checkin_workflow_dialog.xhtml" />
+		<!-- 上传文档审核流程 -->
+		<ui:include src="/faces/documentAudit/query_company_dialog.xhtml" />
+		<ui:include
+			src="/faces/documentAudit/document_upload_audit_worklfow_dialog.xhtml" />
+		<ui:include src="/faces/documentAudit/upload_document_dialog.xhtml" />
+		<ui:include src="/faces/interaction/sendreport/create_dialog.xhtml" />
+		<ui:include src="/faces/interaction/sendreport/process_dialog.xhtml" />
+		<ui:include
+			src="/faces/interaction/sendreport/attachment_dialog.xhtml" />
+		<!-- 情况反馈 -->
+		<ui:include src="/faces/feedback/insert_feedback_dialog.xhtml" />
+		<ui:include src="/faces/feedback/add_attachment_dialog.xhtml" />
+		<ui:include src="/faces/feedback/donext_feedback_dialog.xhtml" />
+
+		<ui:include src="/faces/common/company/common_company_dialog.xhtml" />
+
+		<!-- 邮件配置 -->
+		<ui:include src="task_job_dialog.xhtml" />
+		<ui:include src="task_timeout_email_dialog.xhtml" />
+		<ui:include src="task_timeout_config_dialog.xhtml" />
+
+
+		<script type="text/javascript">
+			function handleRequest(xhr, status, args) {
+				if(args.issucc == "yes") {
+					if(args.showRequestFormDialog != ""){
+						(eval(args.showRequestFormDialog)).show();
+					}
+					if(args.authorized == "yes"){
+						warrantDialogWidgetVar.hide();
+					}
+				}
+			}
+			
+			function disableItems(){
+				var checkbokItems = $("[id*='configTable:'] .ui-chkbox-box.ui-widget.ui-corner-all.ui-state-default");
+				console.info(checkbokItems.size());
+				for(var i=0;i &lt; checkbokItems.length;i++){
+					var checkbokItem = checkbokItems[i];
+					checkbokItem.className = checkbokItem.className + " ui-state-disabled";
+				}
+			};
+		</script>
+	</ui:define>
+</ui:composition>

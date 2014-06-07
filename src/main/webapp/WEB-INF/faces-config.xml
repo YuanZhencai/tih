@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+	<application>
+		<message-bundle>messages</message-bundle>
+		<locale-config>
+			<default-locale>zh</default-locale>
+			<supported-locale>zh_CN</supported-locale>
+			<supported-locale>en_US</supported-locale>
+		</locale-config>
+		<resource-bundle>
+			<base-name>messages</base-name>
+			<var>msgs</var>
+		</resource-bundle>
+		
+	</application>
+<render-kit>
+    <renderer>
+            <component-family>org.primefaces.component</component-family>
+            <renderer-type>org.primefaces.component.DataTableRenderer</renderer-type>
+            <renderer-class>com.wcs.base.ui.BaseDataTableRenderer</renderer-class>
+    </renderer>
+</render-kit>
+</faces-config>

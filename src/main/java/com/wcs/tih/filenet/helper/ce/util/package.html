@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+
+<html>
+<head>
+  <title></title>
+</head>
+
+<body>
+  <h3>Usage of Connction, ObjectStore and UserConext</h3>To get a authorized
+  object store to CE server, Java system properties must be set. Then the
+  following code can be used to get a authorized object store.
+  <pre>
+        /*
+         * 1. get connection
+         */
+        // ceUrl is Content Engine URL
+        Connection conn = Factory.Connection.getConnection(ceUrl); // 
+
+        /*
+         * 2. push subject for a user
+         */
+        Subject subject = UserContext.createSubject(conn,
+                                                    username, // a user's name
+                                                    password, // a user's password
+                                                    null);
+        UserContext uc = UserContext.get();
+        uc.pushSubject(subject);
+
+        /* 
+         * 3. fetch object store
+         */
+        Domain domain = Factory.Domain.getInstance(conn, null);
+        ObjectStore os = Factory.ObjectStore.fetchInstance(domain, osName, null);
+  
+</pre>A authorized object store can reused in the same thread as the execution
+of the above code. There are 2 ways if authorized store with same authorization
+information (same user and password) needs to be used in different threads.
+
+  <ul>
+    <li>execute the above to create a authorized object store with the same
+    authorized information</li>
+
+    <li>reuse the object store and push the subject into the current thread's
+    UserConext</li>
+  </ul>Method 1 has a bad performance because Step 1 and Step 3 involves
+  round-trips to CE server. For Method 2, reuse of a authorized object store
+  only involves push a subject which is saved when creating the authorized
+  object store. It has a much better performance than Method 1. Some
+  performance tests have been done for these 2 methods. The result shows the
+  performance analysis is right. For 1000 times of getting a authorized object
+  store, Method 1 cost 70 seconds. But Method 2 only costs 3 seconds.
+</body>
+</html>

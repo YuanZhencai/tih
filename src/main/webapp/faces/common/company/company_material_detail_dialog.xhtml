@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog header="原料及工艺信息" widgetVar="materialDialogWidgetVar"
+		id="materialDialogId" resizable="false" modal="true">
+		<h:form id="materialDialogForm" prependId="false">
+			<div class="style1">
+				<h:panelGrid id="materialDialogPG" columns="4" columnClasses="column80,column2,column80,column2">
+					<h:outputText value="主要原料：" />
+					<p:inputText value="#{materialBean.mainMaterial}" />
+					<h:outputText value="主要产品：" />
+					<p:inputText value="#{materialBean.mainProduct}" />
+					<h:outputText value="有效：" />
+					<h:selectOneMenu value="#{materialBean.effective}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+						<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+					</h:selectOneMenu>
+				</h:panelGrid>
+				<div>
+					<p:commandButton actionListener="#{materialBean.queryMaterial()}"
+						style="margin-right: 5px;" update="materialDataTable"
+						value="#{msgs.btn_query}" icon="ui-icon ui-icon-search" />
+					<p:commandButton type="reset" update="materialDialogPG"
+						value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel"
+						style="margin-right: 5px;" />
+				</div>
+			</div>
+			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+				id="materialDataTable" var="mv"
+				value="#{materialBean.lazyMaterialVoModel}" paginator="true"
+				rows="5" paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+				rowIndexVar="index"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				style="margin-top:5px;text-algin:center;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}">
+				<f:facet name="header">
+					<div class="header">
+						<h:outputText value="原料及工艺信息列表" />
+						<p:commandButton styleClass="header_button" actionListener="#{materialBean.addMaterial()}"
+							value="#{msgs.btn_add}" icon="ui-icon ui-icon-plus"
+							oncomplete="materialAddEditDialogWidgetVar.show()"
+							update=":materialAddEditDialogId">
+							<f:setPropertyActionListener value="add"
+								target="#{materialBean.excuteMethod}" />
+						</p:commandButton>
+					</div>
+				</f:facet>
+			  
+				<p:column headerText="主要原料"   >
+					<h:outputText value="#{mv.mainMaterial}" />
+				</p:column>
+				<p:column headerText="主要产品"  >
+					<h:outputText value="#{mv.mainProduct}" />
+				</p:column>
+				<p:column headerText="加工项目"  >
+					<h:outputText value="#{mv.processing}" />
+				</p:column>
+				<p:column headerText="处理能力"  >
+					<h:outputText value="#{mv.ability}" />
+				</p:column>
+				<p:column headerText="有效" style="text-align: center;">
+					<h:outputText
+						value="#{mv.effective eq 'N' ? (msgs.txt_effective):(msgs.txt_effectiveLost)}" />
+				</p:column>
+				<p:column headerText="操作" style="text-align: center;">
+					<p:commandButton oncomplete="materialAddEditDialogWidgetVar.show()"
+						update=":materialAddEditDialogId" title="编辑"
+						icon="ui-icon ui-icon-pencil" style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener value="update"
+							target="#{materialBean.excuteMethod}" />
+						<f:setPropertyActionListener target="#{materialBean.materialVo}"
+							value="#{mv}" />
+						<f:setPropertyActionListener
+							target="#{materialBean.existMainMaterial}"
+							value="#{mv.mainMaterial}" />
+						<f:setPropertyActionListener
+							target="#{materialBean.existMainProduct}"
+							value="#{mv.mainProduct}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-attachment" title="附件" id="comapnyMaterialDetailAttachment"
+						style="width: 18px;height: 18px;" oncomplete="uploadOrDownloadAttachment.show();"
+						action="#{attachmentBean.searchFilemstr()}" update=":uploadOrDownloadAttachmentID">
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.tableName}" value="COMPANY_MATERIAL" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.entityId}" value="#{mv.id}" />
+						<f:setPropertyActionListener target="#{attachmentBean.attachmentVo.operationType}" value="100" />
+					</p:commandButton>
+				</p:column>
+	 
+				 
+				 
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

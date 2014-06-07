@@ -1,0 +1,581 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<style type="text/css">
+.TIH-TAX-WORKFLOWSTATUS-1 {
+	
+}
+
+.TIH-TAX-WORKFLOWSTATUS-2 {
+	background-color: lightblue;
+}
+
+.TIH-TAX-WORKFLOWSTATUS-3 {
+	background-color: lime;
+}
+
+.TIH-TAX-WORKFLOWSTATUS-4 {
+	background-color: red;
+}
+</style>
+	<script>
+	
+		$(document).ready(function(){
+			$("#task input").keydown(function(){
+				if (event.keyCode == 13) {
+					event.returnValue= false; // 取消此事件的默认操作
+					document.getElementById("query_task_submit").click();
+				}
+			});
+		});
+	
+	</script>
+	<h:form id="taskFrom" prependId="false">
+		<p:panel id="createTask" style="border: none; "
+			rendered="#{taskManagementBean.taskNodeCreateTask == taskManagementBean.nodeName}">
+			<f:facet name="header">
+				<h:outputText value="新建任务" />
+			</f:facet>
+			<h:panelGrid id="createTaskFormItems" columns="2"
+				columnClasses="column185,column2">
+				<h:outputText value="提问处理流程" />
+				<p:commandButton value="新建"
+					action="#{applyQuestionBean.initAddApplyQuestion()}"
+					oncomplete="newApplyQuestionDlgVar.show()"
+					update=":newApplyQuestionFormId,:newQuestionMsgId" />
+				<h:outputText value="报送报表流程" />
+				<p:commandButton value="新建"
+					action="#{sendReportBean.initAddReport()}"
+					oncomplete="createReportDlgVar.show()" update=":createReportFormId" />
+				<h:outputText value="情况反馈流程" />
+				<p:commandButton value="新建"
+					action="#{feedBackBean.cancelFeedBack()}"
+					oncomplete="insert_feedback_dialog_var.show()"
+					update=":insert_feedback_form_id,:insert_feedback_mes" />
+			</h:panelGrid>
+		</p:panel>
+
+		<p:panel id="task" style="border: none; "
+			rendered="#{taskManagementBean.showMyTaskFlag}">
+			<f:facet name="header">
+				<h:outputText
+					value="#{taskManagementBean.selectedTaskTreeNode eq null ? '我的待处理任务' : taskManagementBean.selectedTaskTreeNode.data.taskNodeName}" />
+			</f:facet>
+			<div class="style1">
+				<h:panelGrid id="taskFormItems" columns="8"
+					columnClasses="column1,column2">
+					<h:outputText value="任务单号：" />
+					<p:inputText value="#{taskManagementBean.taskSearchVo.taskNumber}"
+						maxlength="48" />
+
+					<h:outputText value="提交日期：" />
+					<p:calendar
+						value="#{taskManagementBean.taskSearchVo.startSubmitDatetime}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true"
+						readOnlyInputText="true" />
+					<h:column>
+						<div style="text-align: right; width: 40px;">
+							<h:outputLabel value="到" />
+						</div>
+					</h:column>
+					<p:calendar
+						value="#{taskManagementBean.taskSearchVo.endSubmitDatetime}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true"
+						readOnlyInputText="true" />
+
+					<h:outputText value="任务状态：" />
+					<h:selectOneMenu value="#{taskManagementBean.taskSearchVo.status}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems
+							value="#{commonBean.getDictByCat(commonBean.tihTaxWorkflowstatus)}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+
+				</h:panelGrid>
+
+				<h:panelGrid id="taskFormItems1" columns="9"
+					columnClasses="column1,column2">
+					<h:outputText value="任务类型：" />
+					<h:selectOneMenu
+						value="#{taskManagementBean.taskSearchVo.taskName}"
+						styleClass="ui-inputfield ui-widget ui-state-default ui-corner-all">
+						<p:ajax event="change" listener="#{taskManagementBean.changeType}"
+							update=":taskFrom:taskFormItems1" />
+						<f:selectItem itemLabel="#{msgs.txt_pleaseSelect}" itemValue="" />
+						<f:selectItems
+							value="#{commonBean.getDictByCat(commonBean.tihTaxRequestform)}"
+							var="dict" itemLabel="#{dict.codeVal}"
+							itemValue="#{dict.codeCat}.#{dict.codeKey}" />
+					</h:selectOneMenu>
+
+					<h:column
+						rendered="#{taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform1 ? true : taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform2 ? true : false}">
+						<h:outputText value="文档名称：" />
+					</h:column>
+					<h:column
+						rendered="#{taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform1 ? true : taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform2 ? true : false}">
+						<p:inputText
+							value="#{taskManagementBean.taskSearchVo.documentName}"
+							maxlength="225" style="width:326px;" />
+					</h:column>
+
+					<h:column
+						rendered="#{taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform3 ? true : false}">
+						<h:outputText value="提问标题：" />
+					</h:column>
+					<h:column
+						rendered="#{taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform3 ? true : false}">
+						<p:inputText
+							value="#{taskManagementBean.taskSearchVo.questionTitle}"
+							maxlength="225" style="width:326px;" />
+					</h:column>
+
+					<h:column
+						rendered="#{taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform4 ? true : taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform5 ? true : false}">
+						<h:outputText value="公司名称：" />
+					</h:column>
+
+					<h:column
+						rendered="#{taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform4 ? true : false}">
+						<p:selectCheckboxMenu id="questionCompanys"
+							value="#{taskManagementBean.taskSearchVo.selectedQuestionCompanys}"
+							style="width: 304px;">
+							<f:selectItems value="#{taskManagementBean.companyMap}" />
+						</p:selectCheckboxMenu>
+					</h:column>
+					<h:column
+						rendered="#{taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform4 ? true : false}">
+						<p:commandButton icon="ui-icon ui-icon-search"
+							style="width: 26px;vertical-align: top;" title="请选择"
+							update=":commonCompany,:datatableform"
+							oncomplete="commoncompanyvar.show();"
+							actionListener="#{companyCommonBean.init(':taskFrom:taskFormItems1','taskManagementBean','multiple','selectQuestionCompanys')}" />
+					</h:column>
+
+					<h:column
+						rendered="#{taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform5 ? true : false}">
+						<p:selectCheckboxMenu id="feedBackCompanys"
+							value="#{taskManagementBean.taskSearchVo.selectedFeebBackCompanys}"
+							style="width: 304px;">
+							<f:selectItems value="#{taskManagementBean.companyItems}" var="c"
+								itemLabel="#{c.stext}" itemValue="#{c.id}" />
+						</p:selectCheckboxMenu>
+					</h:column>
+					<h:column
+						rendered="#{taskManagementBean.taskSearchVo.taskName eq commonBean.tihTaxRequestform5 ? true : false}">
+						<p:commandButton icon="ui-icon ui-icon-search"
+							style="width: 26px;" title="请选择"
+							update=":commonCompany,:datatableform"
+							oncomplete="commoncompanyvar.show();"
+							actionListener="#{companyCommonBean.init(':taskFrom:taskFormItems1','taskManagementBean','multiple','selectedFeebBackCompanys')}" />
+					</h:column>
+
+				</h:panelGrid>
+				<div>
+					<p:commandButton actionListener="#{taskManagementBean.queryTask()}"
+						update=":taskFrom:treeDataTable,:growl" style="margin-right: 5px;"
+						value="#{msgs.btn_query}" icon="ui-icon ui-icon-search"
+						id="query_task_submit" />
+					<p:commandButton
+						actionListener="#{taskManagementBean.resetTaskSearchVo()}"
+						update=":taskFrom:taskFormItems,:taskFrom:taskFormItems1"
+						value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel"
+						style="margin-right: 5px;" />
+				</div>
+			</div>
+			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+				id="treeDataTable" var="wfiv" rowKey="#{wfiv.id}"
+				value="#{taskManagementBean.lazyWfInstancemstrVoModel}"
+				paginator="true" rows="10" paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} #{component.rowCount eq 0 ? '' : '总行数：'}#{component.rowCount eq 0 ? '' : component.rowCount}"
+				rowIndexVar="index" style="margin-top:5px;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				selectionMode="single"
+				selection="#{taskManagementBean.selectedWfInstancemstrVo}">
+				<f:facet name="header">
+					<h:outputText
+						value="#{taskManagementBean.tableHeader==null?'待处理任务列表':taskManagementBean.tableHeader}" />
+				</f:facet>
+				<p:column headerText="紧急" style="text-align: center;">
+
+					<p:graphicImage url="/images/urgent1.png" title="紧急程度：非常紧急"
+						style="width:45px;height:15px;"
+						rendered="#{wfiv.wfInstancemstr.urgency eq commonBean.tihTaxWorkflowurgency3 ? true : false}" />
+					<p:graphicImage url="/images/urgent2.png" title="紧急程度：紧急"
+						style="width:45px;height:15px;"
+						rendered="#{wfiv.wfInstancemstr.urgency eq commonBean.tihTaxWorkflowurgency2 ? true : false}" />
+					<p:graphicImage url="/images/urgent3.png" title="紧急程度：一般"
+						style="width:45px;height:15px;"
+						rendered="#{wfiv.wfInstancemstr.urgency eq commonBean.tihTaxWorkflowurgency1 ? true : false}" />
+
+				</p:column>
+				<p:column headerText="重要" style="text-align: center;">
+
+					<p:graphicImage url="/images/important1.png" title="重要程度：非常重要"
+						style="width:45px;height:15px;"
+						rendered="#{wfiv.wfInstancemstr.importance eq commonBean.tihTaxWorkflowimportance3 ? true : false}" />
+					<p:graphicImage url="/images/important2.png" title="重要程度：重要"
+						style="width:45px;height:15px;"
+						rendered="#{wfiv.wfInstancemstr.importance eq commonBean.tihTaxWorkflowimportance2 ? true : false}" />
+					<p:graphicImage url="/images/important3.png" title="重要程度：一般"
+						style="width:45px;height:15px;"
+						rendered="#{wfiv.wfInstancemstr.importance eq commonBean.tihTaxWorkflowimportance1 ? true : false}" />
+
+				</p:column>
+				<p:column headerText="任务单号" style="width: 100px">
+					<h:outputText value="#{wfiv.noabb}"
+						title="#{wfiv.wfInstancemstr.no}" />
+				</p:column>
+				<p:column headerText="任务类型" style="text-align: center;">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(wfiv.wfInstancemstr.type)}" />
+				</p:column>
+				<p:column headerText="提交时间" style="width: 120px">
+					<h:outputText value="#{wfiv.wfInstancemstr.submitDatetime}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="状态" style="text-align: center;width: 36px ;"
+					styleClass="#{(empty wfiv.wfInstancemstr.status) ? '':wfiv.wfInstancemstr.status.replaceAll('\\.','-')}">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(wfiv.wfInstancemstr.status)}" />
+				</p:column>
+				<p:column headerText="描述" style="word-break:break-all;width: 350px">
+					<div
+						style="word-break: break-all; width: 350px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
+						title="#{wfiv.wfInstancemstr.remarks}">
+						<h:outputText value="#{wfiv.wfInstancemstr.remarks}" />
+					</div>
+				</p:column>
+				<p:column headerText="操作" style="text-align: center;">
+					<!-- 提问申请单 -->
+					<p:commandButton
+						action="#{applyQuestionBean.showWorkflowProcessData}"
+						update=":createDlgFirstId,:questionMsgIdX,:createDlgFirstId:sumbitAccId:supervisorAs"
+						oncomplete="applyQuestionDlgVar.show()" title="详细"
+						icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;"
+						rendered="#{wfiv.type eq commonBean.tihTaxRequestform3 and wfiv.status != commonBean.tihTaxWorkflowstatus1 ? true : false}">
+						<f:setPropertyActionListener target="#{applyQuestionBean.wfIns}"
+							value="#{wfiv.wfInstancemstr}" />
+					</p:commandButton>
+					<!-- 提问申请单草稿 -->
+					<p:commandButton action="#{applyQuestionBean.addInfoToDrafts}"
+						update=":newApplyQuestionDlgId"
+						oncomplete="newApplyQuestionDlgVar.show()" title="详细"
+						icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;"
+						rendered="#{wfiv.type eq commonBean.tihTaxRequestform3 and wfiv.status eq commonBean.tihTaxWorkflowstatus1 ? true : false}">
+						<f:setPropertyActionListener target="#{applyQuestionBean.wfIns}"
+							value="#{wfiv.wfInstancemstr}" />
+					</p:commandButton>
+					<!-- 文档检入审核流程 -->
+					<p:commandButton action="#{documentCheckinBean.init()}"
+						update=":documentCheckInDialogId"
+						oncomplete="documentCheckInDialogVar.show()" title="详细"
+						icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;"
+						rendered="#{wfiv.type eq commonBean.tihTaxRequestform2 and wfiv.status != commonBean.tihTaxWorkflowstatus1 ? true : false}">
+						<f:setPropertyActionListener
+							target="#{documentCheckinBean.wfInstancemstr}"
+							value="#{wfiv.wfInstancemstr}" />
+					</p:commandButton>
+					<!-- 上传文档审核流程 -->
+					<p:commandButton action="#{documentAuditBean.init()}"
+						update=":query_document_property_dialog_id"
+						oncomplete="query_document_property_dialog_var.show()" title="详细"
+						icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;"
+						rendered="#{wfiv.type eq commonBean.tihTaxRequestform1 and wfiv.status != commonBean.tihTaxWorkflowstatus1 ? true : false}">
+						<f:setPropertyActionListener
+							target="#{documentAuditBean.wfInstancemstr}"
+							value="#{wfiv.wfInstancemstr}" />
+					</p:commandButton>
+					<!-- 报送报表 -->
+					<p:commandButton
+						action="#{sendReportBean.queryProcessDialogByWfIns()}"
+						update=":processReportDlgId"
+						oncomplete="processReportDlgVar.show()" title="详细"
+						icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;"
+						rendered="#{wfiv.type eq commonBean.tihTaxRequestform4 and wfiv.status != commonBean.tihTaxWorkflowstatus1 ? true : false}">
+						<f:setPropertyActionListener
+							target="#{sendReportBean.wfInsWithIndexSend}"
+							value="#{wfiv.wfInstancemstr}" />
+					</p:commandButton>
+					<!-- 报送报表草稿 -->
+					<p:commandButton action="#{sendReportBean.showInfoToDrafts()}"
+						update=":createReportFormId"
+						oncomplete="createReportDlgVar.show()" title="详细"
+						icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;"
+						rendered="#{wfiv.type eq commonBean.tihTaxRequestform4 and wfiv.status eq commonBean.tihTaxWorkflowstatus1 ? true : false}">
+						<f:setPropertyActionListener
+							target="#{sendReportBean.wfInsDrafts}"
+							value="#{wfiv.wfInstancemstr}" />
+					</p:commandButton>
+					<!-- 情况反馈草稿-->
+					<p:commandButton action="#{feedBackBean.revertFeedBack()}"
+						update=":insert_feedback_dialog_id"
+						oncomplete="insert_feedback_dialog_var.show()" title="详细"
+						icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;"
+						rendered="#{wfiv.type eq commonBean.tihTaxRequestform5 and wfiv.status == commonBean.tihTaxWorkflowstatus1 ? true : false}">
+						<f:setPropertyActionListener
+							target="#{feedBackBean.wfInstancemstr}"
+							value="#{wfiv.wfInstancemstr}" />
+						<f:setPropertyActionListener target="#{feedBackBean.draft}"
+							value="true" />
+					</p:commandButton>
+					<!-- 情况反馈 -->
+					<p:commandButton action="#{feedBackBean.initDonextFeedBack()}"
+						update=":donext_feedback_dialog_id,:donextFeedbackFormId"
+						oncomplete="donext_feedback_dialog_var.show()" title="详细"
+						icon="ui-icon ui-icon-zoomin" style="width: 18px;height: 18px;"
+						rendered="#{wfiv.type eq commonBean.tihTaxRequestform5 and wfiv.status != commonBean.tihTaxWorkflowstatus1 ? true : false}">
+						<f:setPropertyActionListener
+							target="#{feedBackBean.wfInstancemstr}"
+							value="#{wfiv.wfInstancemstr}" />
+					</p:commandButton>
+
+					<p:commandButton onclick="confirmation.show()" title="终止"
+						icon="ui-icon ui-icon-locked" style="width: 18px;height: 18px;"
+						rendered="#{taskManagementBean.showStopWorkFlowButton and (wfiv.wfInstancemstr.status == commonBean.tihTaxWorkflowstatus2 ? true : false)}">
+						<f:setPropertyActionListener
+							target="#{taskManagementBean.wfInstancemstr}"
+							value="#{wfiv.wfInstancemstr}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+
+		<p:panel id="warrant" style="border: none; "
+			rendered="#{taskManagementBean.taskNodeMyAuthorized == taskManagementBean.nodeName}">
+			<f:facet name="header">
+				<h:outputText value="我的授权" />
+			</f:facet>
+			<div class="style1">
+				<h:panelGrid id="warrantFormItems" columns="4"
+					columnClasses="column1,column2,column1,column2">
+					<h:outputText value="授权人："
+						rendered="#{taskManagementBean.taskadminsFlag}" />
+					<p:inputText
+						value="#{taskManagementBean.authorizmstrSearchVo.authorizedBy}"
+						maxlength="48" rendered="#{taskManagementBean.taskadminsFlag}" />
+					<h:outputText value="被授权人：" />
+					<p:inputText
+						value="#{taskManagementBean.authorizmstrSearchVo.authorizedTo}"
+						maxlength="48" />
+					<h:outputText value="生效日期：" />
+					<p:calendar
+						value="#{taskManagementBean.authorizmstrSearchVo.startDatetime}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true"
+						readOnlyInputText="true" />
+					<h:outputText value="失效日期：" />
+					<p:calendar
+						value="#{taskManagementBean.authorizmstrSearchVo.endDatetime}"
+						pattern="yyyy-MM-dd" locale="cn" navigator="true"
+						readOnlyInputText="true" />
+				</h:panelGrid>
+				<div>
+					<p:commandButton
+						actionListener="#{taskManagementBean.queryWarrant()}"
+						update=":taskFrom:warrantDataTable" style="margin-right: 5px;"
+						value="#{msgs.btn_query}" icon="ui-icon ui-icon-search" />
+					<p:commandButton type="reset" update=":taskFrom:warrantFormItems"
+						value="#{msgs.btn_reset}" icon="ui-icon ui-icon-cancel"
+						style="margin-right: 5px;" />
+				</div>
+			</div>
+			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+				id="warrantDataTable" var="wav"
+				value="#{taskManagementBean.lazyWfAuthorizmstrVoModel}"
+				paginator="true" rows="10" paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+				rowIndexVar="index" style="margin-top:5px;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}"
+				rowStyleClass="#{index mod 2 == 1 ? 'lazy_datatable_row' : 'lazy_datatable_row2'}"
+				selectionMode="single"
+				selection="#{taskManagementBean.selectedWfInstancemstrVo}">
+				<f:facet name="header">
+					<div class="header">
+						<h:outputText value="授权情况列表" />
+						<p:commandButton value="创建授权" styleClass="header_button"
+							action="#{taskManagementBean.createWarrant()}"
+							update=":warrantDialogId"
+							oncomplete="warrantDialogWidgetVar.show();"
+							icon="ui-icon ui-icon-plus">
+							<f:setPropertyActionListener
+								target="#{taskManagementBean.excuteMethod}" value="insert" />
+						</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column headerText="授权人"
+					rendered="#{taskManagementBean.taskadminsFlag}">
+					<h:outputText value="#{wav.wfAuthorizmstr.authorizedBy}" />
+				</p:column>
+				<p:column headerText="被授权人">
+					<h:outputText value="#{wav.wfAuthorizmstr.authorizedTo}" />
+				</p:column>
+				<p:column headerText="授权日期">
+					<h:outputText value="#{wav.wfAuthorizmstr.updatedDatetime}">
+						<f:convertDateTime timeZone="GMT+8" pattern="yyyy-MM-dd" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="生效日期">
+					<h:outputText value="#{wav.wfAuthorizmstr.startDatetime}">
+						<f:convertDateTime timeZone="GMT+8" pattern="yyyy-MM-dd" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="失效日期">
+					<h:outputText value="#{wav.wfAuthorizmstr.endDatetime}">
+						<f:convertDateTime timeZone="GMT+8" pattern="yyyy-MM-dd" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="授权任务">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(wav.wfAuthorizmstr.type)}" />
+				</p:column>
+				<p:column headerText="操作" style="text-align: center;">
+					<p:commandButton
+						disabled="#{wav.wfAuthorizmstr.authorizedBy eq taskManagementBean.currentAdAccount ? false : true}"
+						action="#{taskManagementBean.updateWarrant()}"
+						update=":warrantDialogId"
+						oncomplete="warrantDialogWidgetVar.show()" title="编辑"
+						icon="ui-icon ui-icon-pencil" style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener
+							target="#{taskManagementBean.selectedWfAuthorizmstrVo}"
+							value="#{wav}" />
+						<f:setPropertyActionListener
+							target="#{taskManagementBean.excuteMethod}" value="update" />
+					</p:commandButton>
+					<p:commandButton
+						disabled="#{wav.wfAuthorizmstr.authorizedBy eq taskManagementBean.currentAdAccount ? false : true}"
+						oncomplete="deleteWarrantConfirmation.show()" title="删除"
+						icon="ui-icon ui-icon-close" style="width: 18px;height: 18px;">
+						<f:setPropertyActionListener
+							target="#{taskManagementBean.selectedWfAuthorizmstrVo}"
+							value="#{wav}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+
+		<p:panel id="email" style="border: none; "
+			rendered="#{taskManagementBean.taskNodeMailSet == taskManagementBean.nodeName or taskManagementBean.taskNodeMailTimed == taskManagementBean.nodeName}">
+			<p:treeTable id="emailDataTableNew" value="#{JobMBean.root}"
+				var="item" paginator="true" rows="10" paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+				rowIndexVar="index" style="margin-top:5px;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}">
+				<f:facet name="header">
+					<div class="header">
+						<h:outputText value="定时发送（邮件）" />
+						<p:commandButton value="添加" styleClass="header_button"
+							actionListener="#{JobMBean.createTimer()}" update=":jobNewId"
+							oncomplete="jobNew_dialog.show();" icon="ui-icon ui-icon-plus">
+							<f:setPropertyActionListener target="#{JobMBean.excuteMethod}"
+								value="add" />
+						</p:commandButton>
+					</div>
+				</f:facet>
+				<p:column headerText="名称" style="text-align: left;width: 150px;">
+					<h:outputText value="#{item.jobName}" />
+				</p:column>
+				<p:column headerText="描述" style="text-align: left;">
+					<h:outputText value="#{item.description}" />
+				</p:column>
+				<p:column headerText="开始时间" style="text-align: center;width: 120px;">
+					<h:outputText value="#{item.startDate}">
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="结束时间" style="text-align: center;width: 120px;">
+					<h:outputText value="#{item.endDate}">
+						<f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT+8" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="下一个执行时间"
+					style="text-align: center;width: 120px;">
+					<h:outputText value="#{item.nextTimeout}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="GMT+8" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="操作" style="width: 80px;">
+					<div style="text-align: center;">
+						<p:commandButton title="修改" oncomplete="jobNew_dialog.show();"
+							update=":jobNewId"
+							rendered="#{item.startDate eq null ? false : true }"
+							icon="ui-icon ui-icon-pencil" style="width: 18px;height: 18px;"
+							actionListener="#{JobMBean.resertPickList(item.jobId)}">
+							<f:setPropertyActionListener target="#{JobMBean.jobVo}"
+								value="#{item}" />
+							<f:setPropertyActionListener target="#{JobMBean.excuteMethod}"
+								value="edit" />
+						</p:commandButton>
+						<p:commandButton title="删除" oncomplete="deleteEmail.show();"
+							actionListener="#{JobMBean.initDialog(item.jobId)}"
+							icon="ui-icon ui-icon-close" style="width: 18px;height: 18px;"
+							rendered="#{item.startDate eq null ? false : true }">
+							<f:setPropertyActionListener target="#{JobMBean.jobVo}"
+								value="#{item}" />
+						</p:commandButton>
+						<p:commandButton title="删除"
+							oncomplete="handleEmail(xhr, status, args);"
+							style="width: 18px;height: 18px;"
+							actionListener="#{JobMBean.deletewf(item.jobId)}"
+							icon="ui-icon ui-icon-close"
+							rendered="#{item.startDate eq null ? true : false }">
+							<f:setPropertyActionListener target="#{JobMBean.jobVo}"
+								value="#{item}" />
+						</p:commandButton>
+					</div>
+				</p:column>
+
+			</p:treeTable>
+			<div>&#160;</div>
+			<p:dataTable emptyMessage="#{msgs.dataTable_empty}"
+				id="emailDataTable" var="wmcv"
+				value="#{taskManagementBean.mailConfigVoList}" paginator="true"
+				rows="10" paginatorPosition="bottom"
+				paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport} "
+				rowIndexVar="index" style="margin-top:5px;"
+				currentPageReportTemplate="#{component.rowCount == 0 ? '0/0' : '{currentPage}/{totalPages}'}">
+				<f:facet name="header">
+					<h:outputText value="实时发送（邮件、系统消息）" />
+				</f:facet>
+				<p:column headerText="任务类型">
+					<h:outputText
+						value="#{commonBean.getValueByDictCatKey(wmcv.wfMailConfig.type)}" />
+				</p:column>
+				<p:column headerText="发送邮件" style="width: 260px;">
+					<p:selectBooleanCheckbox value="#{wmcv.emailFlag}" />
+				</p:column>
+				<p:column headerText="发送系统消息" style="width: 220px;">
+					<p:selectBooleanCheckbox value="#{wmcv.sysNoticeFlag}" />
+				</p:column>
+			</p:dataTable>
+			<div style="text-align: center; position: relative; margin-top: 5px;">
+				<p:commandButton
+					actionListener="#{taskManagementBean.saveMailConfig}"
+					update=":taskFrom:emailDataTable,:growl" value="#{msgs.btn_ok}"
+					icon="ui-icon ui-icon-check" style="margin-right: 5px;" />
+				<p:commandButton type="button" value="#{msgs.btn_cancel}"
+					icon="ui-icon ui-icon-cancel" />
+			</div>
+
+		</p:panel>
+		<ui:include src="task_mail_info.xhtml" />
+	</h:form>
+	<script type="text/javascript">
+			function handleEmail(xhr, status, args) {
+				if (args.option == "1") {
+					deleteVar.show();
+				}
+				if (args.option == "2") {
+					deleteOneEmail.show();
+				}
+				
+				
+			}
+		</script>
+</ui:composition>

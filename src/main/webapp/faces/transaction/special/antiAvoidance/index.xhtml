@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/template.xhtml">
+	<ui:define name="title">用户管理</ui:define>
+	<ui:define name="styleAndScript">
+		<style type="text/css">
+			input[type='checkbox'] {
+				width: 10px;
+			}
+			input[type='radio'] {
+				width: 10px;
+			}
+			.checkboxCenter {
+				text-align: center;
+			}
+			.column90 {
+				text-align: left;
+				width: 180px;
+			}
+			.calender>input[type='text'] {
+				width: 180px;
+			}
+		</style>
+		<script>
+			function rowEdit(){
+				var rowEditor = document.getElementById("add_edit_anti:antiAvoidance_list:0:rowEditor");
+				var childNodes =  rowEditor.childNodes;
+				childNodes.item(0).click();
+			};
+		</script>
+	</ui:define>
+	<ui:define name="content">
+		<shiro:hasPermission name="affair:specialmanage:special">
+			<p:panel styleClass="panel1">
+				<p:growl id="specialGrowl" showDetail="true" life="10000" />
+				<ui:include src="breadcrumb.xhtml" />
+				<div style="position: relative; margin-top: 5px;">
+					<ui:include src="search_form.xhtml" />
+				</div>
+				<div style="position: relative; margin-top: 5px;">
+					<ui:include src="search_table.xhtml" />
+				</div>
+				<ui:include src="anti_edit.xhtml" />
+				<ui:include src="confirm_dialog.xhtml" />
+				<ui:include src="/faces/common/attachment/common_attachment_dialog.xhtml"/>
+				<ui:include src="/faces/common/attachment/common_confirm_dialog.xhtml"/>
+			</p:panel>
+			
+		</shiro:hasPermission>
+		<shiro:lacksPermission name="system:user:user">
+			<ui:include src="/errorshiro.xhtml" />
+		</shiro:lacksPermission>
+	</ui:define>
+</ui:composition>
