@@ -400,7 +400,7 @@ public class CompanyService {
 			jpql.append(" where o.defunctInd = 'N'");
 			jpql.append(" and o.zhrzzcjid = '40'");
 			jpql.append(" and o.bukrs = '").append(o.getBukrs()).append("'");
-			if(StringUtils.isBlankOrNull(o.getId())) {
+			if(!StringUtils.isBlankOrNull(o.getId())) {
 				jpql.append(" and o.id <> '").append(o.getId()).append("'");
 			}
 			Object values = null;
