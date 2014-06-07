@@ -1,6 +1,5 @@
 package com.wcs.common.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -142,7 +141,15 @@ public class CompanyBean {
 		if(!ValidateUtil.validateRequired(context , o.getBukrs(), "机构代码：")) {
 			validate = false;
 		}
+		if(!companyService.hasOrgBukrs(companyVo)) {
+			JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "机构代码：", "已存在的机构代码，请重新填写。"));
+			validate = false;
+		}
 		if(!ValidateUtil.validateRequired(context , c.getCode(), "公司代码：")) {
+			validate = false;
+		}
+		if(!companyService.hasCompanyCode(companyVo)) {
+			JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "公司代码：", "已存在的公司代码，请重新填写。"));
 			validate = false;
 		}
 		if(!ValidateUtil.validateRequired(context , c.getAddress(), "公司地址：")) {
@@ -154,6 +161,7 @@ public class CompanyBean {
 		if(!ValidateUtil.validateRequired(context , c.getProvince(), "省：")) {
 			validate = false;
 		}
+	
 		return validate;
     }
 
