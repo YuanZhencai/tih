@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:w="http://www.wcs-global.com/customtaglib">
+
+	<p:dialog header="#{userBean.user.usermstr.id == null ? '添加用户信息':'编辑用户信息'}" widgetVar="saveUserDialogVar"
+		id="saveUserDlg" width="480" resizable="false" modal="true">
+		<p:messages id="saveUserMsg" showDetail="true" />
+		<h:form id="saveUserDialogForm" prependId="false">
+			<h:panelGrid columns="4"
+				columnClasses="column1,column2,column1,column2">
+				<h:outputText value="用户帐号：" />
+				<h:column>
+					<p:inputText value="#{userBean.user.usermstr.adAccount}" disabled="#{userBean.user.usermstr.id != null}"
+						maxlength="49" />
+					<h:outputText style="color:red;" value="*" />	
+				</h:column>
+				<h:outputText value="用户姓名：" />
+				<h:column>
+					<p:inputText value="#{userBean.user.p.nachn}" />
+					<h:outputText style="color:red;" value="*" />	
+				</h:column>
+				<h:outputText value="所属公司：" />
+				<h:column>
+					<p:inputText id="company" value="#{userBean.user.o.stext}" style="width: 100px;" readonly="true"/>
+ 					<p:commandButton icon="ui-icon ui-icon-search" style="width: 27px; height: 27px; vertical-align:top;margin-left:5px;" title="请选择" update=":commonCompany,:datatableform" actionListener="#{companyCommonBean.init(':saveUserDialogForm','userBean','single','selectCompany')}" oncomplete="commoncompanyvar.show();" />
+					<h:outputText style="color:red;" value="*" />	
+				</h:column>
+				<h:outputText id="pernr" value="工号：" />
+				<p:inputText value="#{userBean.user.usermstr.pernr}" readonly="true"/>
+				<h:outputText value="邮件地址：" />
+				<p:inputText value="#{userBean.user.p.email}" />
+				<h:outputText value="电话号码：" />
+				<p:inputText value="#{userBean.user.p.telno}" />
+				<h:outputText value="手机号码：" />
+				<p:inputText value="#{userBean.user.p.celno}" />
+				<h:outputText value="性别：" />
+				<h:selectOneMenu value="#{userBean.user.p.gesch}" >
+					<f:selectItem itemLabel="男" itemValue="1" />
+					<f:selectItem itemLabel="女" itemValue="2" />
+				</h:selectOneMenu>
+				<h:outputText value="证件类型：" />
+				<h:selectOneMenu value="#{userBean.user.usermstr.identityType}" >
+					<f:selectItem itemLabel="身份证" itemValue="identityCard" />
+					<f:selectItem itemLabel="护照" itemValue="passport" />
+					<f:selectItem itemLabel="驾驶证" itemValue="drivingLicense" />
+					<f:selectItem itemLabel="社保卡" itemValue="socialSecurityCard" />
+				</h:selectOneMenu>
+				<h:outputText value="证件号：" />
+				<p:inputText value="#{userBean.user.usermstr.idtentityId}" />
+				<h:outputText value="入职时间：" />
+				<p:calendar value="#{userBean.user.usermstr.onboardDate}"
+					pattern="yyyy-MM-dd" locale="cn" navigator="true"
+					readOnlyInputText="true" />
+				<h:outputText value="出生日期：" />
+				<p:calendar value="#{userBean.user.usermstr.birthday}" pattern="yyyy-MM-dd"
+					locale="cn" navigator="true" readOnlyInputText="true" />
+				<h:outputText value="岗位描述：" />
+				<p:inputText value="#{userBean.user.usermstr.positionRemark}" />
+			</h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="column1,column2">
+				<h:outputText value="背景说明：" />
+				<p:inputTextarea value="#{userBean.user.usermstr.backgroundInfo}"
+					style="width: 361px;;height:60px;" autoResize="false"
+					effectDuration="400" />
+				<h:outputText value="有效：" />
+				<h:selectOneRadio value="#{userBean.user.usermstr.defunctInd}">
+					<f:selectItem itemLabel="#{msgs.txt_effective}" itemValue="N" />
+					<f:selectItem itemLabel="#{msgs.txt_effectiveLost}" itemValue="Y" />
+				</h:selectOneRadio>
+			</h:panelGrid>
+			<div
+				style="text-align: center; position: relative; padding-top: 10px;">
+				<p:commandButton actionListener="#{userBean.saveUser1()}"
+					update=":saveUserDialogForm,:saveUserMsg,:userGrowl,:userDataTableForm"
+					oncomplete="handleDialog(xhr, status, args);"
+					value="#{msgs.btn_ok}" icon="ui-icon ui-icon-check"
+					style="margin-right: 5px;" />
+				<p:commandButton type="button" onclick="saveUserDialogVar.hide()"
+					value="#{msgs.btn_cancel}" icon="ui-icon ui-icon-cancel" />
+			</div>
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

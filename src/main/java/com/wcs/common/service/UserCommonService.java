@@ -472,8 +472,8 @@ public class UserCommonService {
 	    sql.append(" p.*,lower(u.ad_account),u.POSITION_REMARK,o.* from Usermstr u");
 	    sql.append(" left join cas_usr_p cup on u.ad_account = cup.id");
 	    sql.append(" left join P p on cup.pernr=p.id");
-	    sql.append(" left join vw_org_and_com c on p.orgeh = c.oid");
-	    sql.append(" left join O o on o.id = c.id");
+//	    sql.append(" left join vw_org_and_com c on p.orgeh = c.oid");
+	    sql.append(" left join O o on o.bukrs = p.bukrs and o.zhrzzcjid = '40'");
 	    sql.append(" left join Userpositionorg upo on u.id=upo.usermstr_id and upo.defunct_ind='N'");
 	    sql.append(" left join Positionorg po on po.id=upo.positionorg_id and upo.defunct_ind='N'");
 	    sql.append(" left join Userrole ur on u.id=ur.usermstr_id and ur.defunct_ind='N'");

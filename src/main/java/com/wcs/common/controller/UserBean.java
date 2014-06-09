@@ -16,13 +16,19 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.DateConverter;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.wcs.base.util.JSFUtils;
 import com.wcs.common.controller.helper.PageModel;
+import com.wcs.common.controller.vo.CompanyManagerModel;
+import com.wcs.common.controller.vo.CompanyVo;
 import com.wcs.common.controller.vo.PSearchVo;
 import com.wcs.common.controller.vo.PVo;
 import com.wcs.common.controller.vo.UserPositionVo;
@@ -37,8 +43,8 @@ import com.wcs.common.model.Rolemstr;
 import com.wcs.common.model.Usermstr;
 import com.wcs.common.model.Userpositionorg;
 import com.wcs.common.model.Userrole;
+import com.wcs.common.service.CompanyService;
 import com.wcs.common.service.UserService;
-import com.wcs.tih.util.DateUtil;
 import com.wcs.tih.util.ValidateUtil;
 
 /**
@@ -62,8 +68,12 @@ import com.wcs.tih.util.ValidateUtil;
 public class UserBean {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private static final String ISSUCC = "issucc";
+	
 	@EJB
 	private UserService userService;
+	@EJB
+	private CompanyService companyService;
+	
 	private UserSearchVo userSearchVo;
 	private UsermstrVo selectedUsermstrVo;
 	private LazyDataModel<UsermstrVo> lazyUsermstrVoModel;
@@ -86,6 +96,8 @@ public class UserBean {
 	private boolean showBtn;
 	private UserPositionVo searchUserPositionVo;
 
+	private UsermstrVo user = new UsermstrVo();
+
 	/**
 	 * <p>
 	 * Description: 初始化
@@ -101,6 +113,89 @@ public class UserBean {
 		roleList = this.userService.getAllRole();
 		queryUser();
 	}
+
+	// ============================================Yuan=============================================//
+
+	public void createUser() {
+		user = new UsermstrVo();
+		user.getUsermstr().setDefunctInd("N");
+	}
+
+	public void editUser() {
+		user = new UsermstrVo();
+		try {
+			ConvertUtils.register(new DateConverter(null), java.util.Date.class);
+			BeanUtils.copyProperties(user, selectedUsermstrVo);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+	public void saveUser1() {
+		System.out.println("UserBean.saveUser1()");
+		if (validateUser(user)) {
+			try {
+				selectedUsermstrVo = new UsermstrVo();
+				BeanUtils.copyProperties(selectedUsermstrVo, user);
+				userService.saveUser(selectedUsermstrVo);
+				queryUser();
+				JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_INFO, "操作成功", ""));
+				JSFUtils.handleDialogByWidgetVar("saveUserDialogVar", "close");
+			} catch (Exception e) {
+				JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "操作失败", ""));
+				logger.error(e.getMessage(), e);
+			}
+		}
+	}
+
+	public boolean validateUser(UsermstrVo usermstrVo) {
+		Usermstr u = usermstrVo.getUsermstr();
+		P p = usermstrVo.getP();
+		O o = usermstrVo.getO();
+		boolean validate = true;
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (!ValidateUtil.validateRequired(context, u.getAdAccount(), "用户账号：")) {
+			validate = false;
+		} else if (userService.hasUser(usermstrVo)) {
+			JSFUtils.addMessage(new FacesMessage(FacesMessage.SEVERITY_ERROR, "用户账号：", "已存在的用户账号。"));
+		}
+		if (!ValidateUtil.validateRequired(context, p.getNachn(), "用户姓名：")) {
+			validate = false;
+		}
+		if (!ValidateUtil.validateRequired(context, o.getId(), "所属公司：")) {
+			validate = false;
+		}
+		if (!ValidateUtil.validateMaxlength(context, u.getIdtentityId(), "证件号：", 50)) {
+			validate = false;
+		}
+		if (!ValidateUtil.validateStartTimeGTEndTime(context, u.getBirthday(), new Date(), "出生日期：", "不能大于当前日期")) {
+			validate = false;
+		}
+		if (!ValidateUtil.validateStartTimeGTEndTime(context, u.getBirthday(), u.getOnboardDate(), "入职日期：", "不能小于出生日期")) {
+			validate = false;
+		}
+
+		return validate;
+	}
+
+	public void selectCompany(CompanyManagerModel company) {
+		Map<String, Object> filter = new HashMap<String, Object>();
+		List<Long> companyIds = new ArrayList<Long>();
+		companyIds.add(company.getId());
+		filter.put("companyIds", companyIds);
+		List<CompanyVo> companyVos = companyService.findCompanysByIds(filter);
+		if(companyVos.size() > 0) {
+			O o = companyVos.get(0).getO();
+			user.setO(o);
+			Usermstr u = user.getUsermstr();
+			if(u.getId() == null) {
+				// 只有添加的時候需要 設置員工編號
+				u.setPernr((o.getBukrs() + "##" + new Date().getTime()));
+			}
+		}
+	}
+	
+	// ============================================Yuan=============================================//
 
 	/**
 	 * <p>
@@ -644,6 +739,14 @@ public class UserBean {
 
 	public void setSearchUserPositionVo(UserPositionVo searchUserPositionVo) {
 		this.searchUserPositionVo = searchUserPositionVo;
+	}
+
+	public UsermstrVo getUser() {
+		return user;
+	}
+
+	public void setUser(UsermstrVo user) {
+		this.user = user;
 	}
 
 }

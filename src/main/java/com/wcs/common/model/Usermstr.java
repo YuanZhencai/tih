@@ -2,7 +2,6 @@ package com.wcs.common.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class Usermstr extends com.wcs.base.model.IdEntity implements Serializabl
 	private String idtentityId;
 
 	@Column(name="ONBOARD_DATE")
-	private Timestamp onboardDate;
+	private Date onboardDate;
 
 	private String pernr;
 	
@@ -136,11 +135,11 @@ public class Usermstr extends com.wcs.base.model.IdEntity implements Serializabl
 		this.idtentityId = idtentityId;
 	}
 
-	public Timestamp getOnboardDate() {
+	public Date getOnboardDate() {
 		return this.onboardDate;
 	}
 
-	public void setOnboardDate(Timestamp onboardDate) {
+	public void setOnboardDate(Date onboardDate) {
 		this.onboardDate = onboardDate;
 	}
 

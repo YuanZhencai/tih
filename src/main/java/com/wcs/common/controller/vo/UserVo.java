@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.wcs.common.controller.helper.IdModel;
-import com.wcs.common.model.Usermstr;
 
 public class UserVo extends IdModel implements Serializable {
 

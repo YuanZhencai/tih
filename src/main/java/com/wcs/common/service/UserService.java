@@ -41,7 +41,6 @@ import com.wcs.common.model.Userrole;
 @Stateless
 public class UserService {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     
     @PersistenceContext
     private EntityManager em;
@@ -68,16 +67,15 @@ public class UserService {
     	String userName = loginService.getCurrentUserName();
     	Date date = new Date();
     	Usermstr usermstr = userVo.getUsermstr();
+    	P p = userVo.getP();
+    	O o = userVo.getO();
     	usermstr.setCreatedBy(userName);
     	usermstr.setCreatedDatetime(date);
     	usermstr.setUpdatedBy(userName);
     	usermstr.setUpdatedDatetime(date);
-    	P p = userVo.getP();
-    	p.setId(usermstr.getAdAccount());
+    	p.setId(usermstr.getPernr());
     	p.setDefunctInd(usermstr.getDefunctInd());
-    	// ......
-    	// ......
-    	// ......
+    	p.setBukrs(o.getBukrs());
     	CasUsrP cup = userVo.getCup();
     	cup.setDefunctInd(usermstr.getDefunctInd());
     	cup.setId(usermstr.getAdAccount());
@@ -99,6 +97,8 @@ public class UserService {
 		userVo.setEmail(p.getEmail());
 		userVo.setTelephone(p.getTelno());
 		userVo.setPhone(p.getCelno());
+		userVo.setEffective(usermstr.getDefunctInd());
+		userVo.setJobNumber(usermstr.getPernr());
 		return userVo;
     }
     
@@ -106,16 +106,14 @@ public class UserService {
     	String userName = loginService.getCurrentUserName();
     	Date date = new Date();
     	Usermstr usermstr = userVo.getUsermstr();
+    	O o = userVo.getO();
     	usermstr.setUpdatedBy(userName);
     	usermstr.setUpdatedDatetime(date);
     	P p = userVo.getP();
     	p.setDefunctInd(usermstr.getDefunctInd());
-    	// ......
-    	// ......
-    	// ......
+    	p.setBukrs(o.getBukrs());
     	CasUsrP cup = userVo.getCup();
     	cup.setDefunctInd(usermstr.getDefunctInd());
-    	cup.setId(usermstr.getAdAccount());
     	cup.setPernr(usermstr.getPernr());
     	entityService.update(usermstr);
     	entityService.update(p);
@@ -125,6 +123,19 @@ public class UserService {
     }
     
     public boolean hasUser(UsermstrVo userVo) {
+    	Usermstr u = userVo.getUsermstr();
+    	if("N".equals(u.getDefunctInd())) {
+    		StringBuffer jpql = new StringBuffer();
+    		jpql.append(" select u from Usermstr u");
+    		jpql.append(" where u.defunctInd = 'N'");
+    		jpql.append(" and u.adAccount = '").append(u.getAdAccount()).append("'");
+    		if(u.getId() != null) {
+    			jpql.append(" and u.id <> ").append(u.getId());
+    		}
+    		Object values = null;
+			List<Usermstr> us = entityService.find(jpql.toString(), values);
+			return us.size() > 0;
+    	}
 		return false;
     }
     
